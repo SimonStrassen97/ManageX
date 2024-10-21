@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: myproject_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./backend
+    container_name: django-app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgres://postgres:password@db:5432/myproject_db
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db  # Make sure the database is up before the backend starts
+
+  frontend:
+    build: ./frontend
+    container_name: react-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend  # Make sure backend is running before frontend
+
+volumes:
+  postgres-data:
