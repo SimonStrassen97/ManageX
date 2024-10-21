@@ -3,3 +3,6 @@
 # packages
 **/venv/
 **/node_modules/
+
+
+**/__pycache__/
