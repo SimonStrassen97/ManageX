@@ -1,9 +1,8 @@
 import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { ProjectList } from "./components/ProjectOverview/ProjectOverview";
 import { GanttChart } from "./components/Gantt/GanttChart";
 import { Navbar } from "./components/Navbar/Navbar";
+import { ProjectOverview } from "./components/ProjectOverview/ProjectOverview";
 
 // Define the Route type
 interface RouteConfig {
@@ -14,7 +13,7 @@ interface RouteConfig {
 
 // Define the routes array with explicit typing
 const routes: RouteConfig[] = [
-  { path: "/projects", label: "Projects", component: <ProjectList /> },
+  { path: "/projects", label: "Projects", component: <ProjectOverview /> },
   { path: "/gantt", label: "Gantt", component: <GanttChart /> },
   {
     path: "/",
@@ -29,12 +28,14 @@ function App() {
       <div className="App">
         <header className="App-header">
           <Navbar routes={routes} />
+        </header>
+        <main className="flex">
           <Routes>
             {routes.map(({ path, component }) => (
               <Route key={path} path={path} element={component} />
             ))}
           </Routes>
-        </header>
+        </main>
       </div>
     </Router>
   );
