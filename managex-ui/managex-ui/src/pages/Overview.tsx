@@ -1,12 +1,15 @@
-import React from "react"
 import { Sidebar } from "../layouts/Sidebar"
+import { ProjectList } from "../features/projectList/ProjectList"
 import { Header } from "../layouts/Header"
 
-export const MyProjects = () => {
+import React from "react"
+
+export const Overview = () => {
   return (
     <>
       <Header></Header>
       <Sidebar></Sidebar>
+      <ProjectList></ProjectList>
     </>
   )
 }
