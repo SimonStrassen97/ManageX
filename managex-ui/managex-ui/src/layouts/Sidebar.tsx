@@ -6,57 +6,64 @@ import {
   setEndDate,
   setStatus,
 } from "../features/filter/filterSlice"
+import { StatusType, statusOptions } from "../features/filter/filterSlice"
+import { fetchProjectOverviewData } from "../api/projectApi"
 
 export const Sidebar: React.FC = () => {
+  const filter = useSelector((state: RootState) => state.filter)
   const dispatch = useDispatch()
-  const { startDate, endDate, status } = useSelector(
-    (state: RootState) => state.filter,
-  )
 
-  const handleFilter = () => {
-    console.log("Filters Applied:", { startDate, endDate, status })
+  const handleFilter = async () => {
+    try {
+      const data = await fetchProjectOverviewData({
+        startDate: filter.startDate,
+        endDate: filter.endDate,
+        status: filter.status,
+      })
+      console.log(data)
+    } catch (error) {
+      console.error("Error fetching data:", error)
+    }
   }
 
   return (
-    <aside className="sidebar">
-      <h2>Filters</h2>
-      <div className="filter-section">
-        <label htmlFor="start-date">Start Date:</label>
+    <div>
+      <h3>Filters</h3>
+      <label>
+        Start Date:
         <input
           type="date"
-          id="start-date"
-          value={startDate}
+          value={filter.startDate}
           onChange={e => dispatch(setStartDate(e.target.value))}
         />
-      </div>
-
-      <div className="filter-section">
-        <label htmlFor="end-date">End Date:</label>
+      </label>
+      <br />
+      <label>
+        End Date:
         <input
           type="date"
-          id="end-date"
-          value={endDate}
+          value={filter.endDate}
           onChange={e => dispatch(setEndDate(e.target.value))}
         />
-      </div>
-
-      <div className="filter-section">
-        <label htmlFor="status">Status:</label>
+      </label>
+      <br />
+      <label>
+        Status:
         <select
-          id="status"
-          value={status}
-          onChange={e => dispatch(setStatus(e.target.value))}
+          value={filter.status}
+          onChange={e => dispatch(setStatus(e.target.value as StatusType))}
         >
           <option value="">All</option>
-          <option value="completed">Completed</option>
-          <option value="pending">Pending</option>
-          <option value="in-progress">In Progress</option>
+          {statusOptions.map(status => (
+            <option key={status} value={status}>
+              {status.charAt(0).toUpperCase() + status.slice(1)}{" "}
+              {/* Capitalize the status */}
+            </option>
+          ))}
         </select>
-      </div>
-
-      <button className="filter-button" onClick={handleFilter}>
-        Apply Filters
-      </button>
-    </aside>
+      </label>
+      <br />
+      <button onClick={handleFilter}>Filter</button>
+    </div>
   )
 }

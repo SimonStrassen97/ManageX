@@ -6,8 +6,14 @@ class StatusLookUp(models.Model):
     # lookup for project status
     # read: all
     # rest: admin
+    STATUS_CHOICES = [
+    ('started', 'Open'),
+    ('finished', 'Closed'),
+    ('planned', 'Planned'),
+    ]
+        
     status_id = models.IntegerField(unique=True)
-    status_label = models.CharField(max_length=25)
+    status_label = models.CharField(max_length=25, choices=STATUS_CHOICES)
 
     def __str__(self):
         return self.status_label

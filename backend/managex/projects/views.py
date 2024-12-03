@@ -13,7 +13,9 @@ class ProjectsOverviewView(generics.ListAPIView):
         status = self.request.query_params.get('status', None)
         project_number = self.request.query_params.get('project_number', None)
         project_name = self.request.query_params.get('project_name', None)
-
+        project_start_date = self.request.query_params.get('project_start_date', None)
+        project_end_date = self.request.query_params.get('project_end_date', None)
+        
         # Apply filters if provided
         if project_lead:
             queryset = queryset.filter(project_lead__username=project_lead)  # Filter by project lead

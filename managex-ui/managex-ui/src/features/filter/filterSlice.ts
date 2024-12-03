@@ -1,17 +1,31 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
+// types.ts
+
+// Define a constant object for status options (with lowercase values)
+export const Status = {
+  STARTED: "started",
+  FINISHED: "finished",
+  PLANNED: "planned",
+} as const // `as const` ensures the type is literal
+
+// Define StatusType based on the object values (lowercase)
+export type StatusType = (typeof Status)[keyof typeof Status]
+
+// Extract an array of the status values
+export const statusOptions: StatusType[] = Object.values(Status)
+
 // Define the state shape
 interface FiltersState {
   startDate: string
   endDate: string
-  status: string
+  status: StatusType // Use the lowercase StatusType
 }
 
-// Initial state
 const initialState: FiltersState = {
   startDate: "",
   endDate: "",
-  status: "",
+  status: Status.STARTED, // Use lowercase Status values
 }
 
 // Create the slice
@@ -25,7 +39,7 @@ const filtersSlice = createSlice({
     setEndDate: (state, action: PayloadAction<string>) => {
       state.endDate = action.payload
     },
-    setStatus: (state, action: PayloadAction<string>) => {
+    setStatus: (state, action: PayloadAction<StatusType>) => {
       state.status = action.payload
     },
   },
