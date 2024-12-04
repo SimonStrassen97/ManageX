@@ -1,6 +1,6 @@
 import React from "react"
-import { Sidebar } from "../layouts/Sidebar"
-import { Header } from "../layouts/Header"
+import { Sidebar } from "../components/layout/Sidebar"
+import { Header } from "../components/layout/Header"
 
 export const GanttChart = () => {
   return (

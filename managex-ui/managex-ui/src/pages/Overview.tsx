@@ -1,6 +1,6 @@
-import { Sidebar } from "../layouts/Sidebar"
+import { Sidebar } from "../components/layout/Sidebar"
 import { ProjectList } from "../features/projectList/ProjectList"
-import { Header } from "../layouts/Header"
+import { Header } from "../components/layout/Header"
 
 import React from "react"
 
