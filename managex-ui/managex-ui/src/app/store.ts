@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit"
 import { authReducer } from "../features/auth/authSlice"
 import { filterReducer } from "../features/filter/filterSlice"
+import { projectReducer } from "../features/projectList/projectSlice"
 
 export const store = configureStore({
   reducer: {
-    auth: authReducer, // Only include the auth slice
-    filter: filterReducer,
+    auth: authReducer,
+    filters: filterReducer,
+    projects: projectReducer,
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware(), // Default middleware for async logic
 })

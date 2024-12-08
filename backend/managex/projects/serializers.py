@@ -40,6 +40,5 @@ class ProjectSerializer(serializers.ModelSerializer):
             'project_status',
             'confirmed_project_status',
             'budget',
-            'timeline',
-            'DATECREATE',
+            'timeline'
         ]

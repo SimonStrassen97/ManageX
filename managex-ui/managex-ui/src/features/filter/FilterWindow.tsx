@@ -5,16 +5,12 @@ import { fetchProjectOverviewData } from "../../api/projectApi"
 import { DatePicker } from "../../components/filter/DatePicker"
 import { Dropdown } from "../../components/Dropdown"
 import { Button } from "../../components/Button"
-import {
-  setStartDate,
-  setEndDate,
-  setStatus,
-  StatusType,
-  statusOptions,
-} from "./filterSlice"
+import { setStartDate, setEndDate, setStatus } from "./filterSlice"
+import { StatusType, statusOptions } from "./filterTypes"
+import { setProjects } from "../projectList/projectSlice"
 
 export const FilterWindow: React.FC = () => {
-  const filter = useSelector((state: RootState) => state.filter)
+  const filter = useSelector((state: RootState) => state.filters)
   const dispatch = useDispatch()
 
   const handleFilter = async () => {
@@ -24,12 +20,13 @@ export const FilterWindow: React.FC = () => {
     }
 
     try {
-      const data = await fetchProjectOverviewData({
+      const projects = await fetchProjectOverviewData({
         startDate: filter.startDate,
         endDate: filter.endDate,
         status: filter.status,
       })
-      console.log("Fetched Data:", data)
+      dispatch(setProjects(projects))
+      console.log("Fetched Data:", projects)
     } catch (error) {
       console.error("Error fetching data:", error)
     }
