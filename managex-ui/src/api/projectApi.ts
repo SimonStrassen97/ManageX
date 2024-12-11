@@ -1,4 +1,9 @@
 import axiosInstance from "./axiosConfig"
+import { SerializedProject } from "./server-response-types"
+
+const transformResponse = (input: SerializedProject): any => {
+  return {}
+}
 
 export const fetchProjectOverviewData = async (
   filters: { [key: string]: string } = {},
