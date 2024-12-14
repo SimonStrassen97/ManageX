@@ -9,7 +9,7 @@ class StatusLookUpSerializer(serializers.ModelSerializer):
 class CurrencyLookUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CurrencyLookUp
-        fields = ['currency_id', 'currency_label', 'exchange_rate_LC']
+        fields = ['currency_label', 'exchange_rate_LC']
 
 class ProjectBudgetSerializer(serializers.ModelSerializer):
     currency = CurrencyLookUpSerializer()

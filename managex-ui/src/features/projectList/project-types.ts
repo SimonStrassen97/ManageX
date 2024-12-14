@@ -1,22 +1,57 @@
-// Define the structure for a single project
+// export interface ProjectState {
+//   project_name: string
+//   project_number: string
+//   project_lead: string
+//   project_status: string
+//   confirmed_project_status: string
+
+//   amount?: null | number
+//   currency_label?: null | string
+//   exchange_rate?: null | number
+
+//   start_date: Date
+//   order_date: null | Date
+//   acceptance_date: null | Date
+//   delivery_date: null | Date
+//   finish_date: Date
+// }
+
+// // Define the state shape for the slice
+// export interface Projects {
+//   projects: ProjectState[] // An array to hold multiple projects
+// }
+
+export interface Budget {
+  amount: number
+  currency: Currency
+}
+
+interface Currency {
+  currency_label: string
+  exchange_rate: number
+}
+
 export interface Timeline {
   start_date: Date
-  order_date: Date
-  acceptance_date: Date
-  delivery_date: Date
+  order_date: Date | null
+  acceptance_date: Date | null
+  delivery_date: Date | null
   finish_date: Date
 }
 
-export interface Project {
-  project_number: number
+export interface ProjectInfo {
   project_name: string
   project_lead: string
   project_status: string
   confirmed_project_status: string
-  project_timeline: Timeline
+}
+export interface ProjectState {
+  project_number: string
+  project_info: ProjectInfo
+  budget?: Budget | null
+  timeline: Timeline
 }
 
-// Define the state shape for the slice
-export interface ProjectState {
-  projects: Project[] // An array to hold multiple projects
+export interface Projects {
+  projects: ProjectState[]
 }

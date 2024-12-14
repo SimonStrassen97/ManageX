@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 
 class StatusLookUp(models.Model):
@@ -7,9 +8,9 @@ class StatusLookUp(models.Model):
     # read: all
     # rest: admin
     STATUS_CHOICES = [
-    ('started', 'Open'),
-    ('finished', 'Closed'),
     ('planned', 'Planned'),
+    ('started', 'Started'),
+    ('finished', 'Finished'),
     ]
         
     status_id = models.IntegerField(unique=True)
@@ -51,7 +52,7 @@ class ProjectBudget(models.Model):
     # edit: PPM and above
     # delete: admin 
     project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name="budget")
-    budget = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
     currency = models.ForeignKey(CurrencyLookUp, on_delete=models.SET_NULL, null=True, related_name='project_budgets')
     approval_date = models.DateField(null=True, blank=True)
     
@@ -66,10 +67,25 @@ class ProjectTimeline(models.Model):
     # delete: admin
     project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name="timeline")
     start_date = models.DateField()
-    order_date = models.DateField()
+    order_date = models.DateField(null=True, blank=True)
     acceptance_date = models.DateField(null=True, blank=True)
     delivery_date = models.DateField(null=True, blank=True)
-    finish_date = models.DateField(null=True, blank=True)
+    finish_date = models.DateField()
+
+    def clean(self):
+        # Validate that the dates are in ascending order
+        dates = [
+            ('start_date', self.start_date),
+            ('order_date', self.order_date),
+            ('acceptance_date', self.acceptance_date),
+            ('delivery_date', self.delivery_date),
+            ('finish_date', self.finish_date),
+        ]
+        # Filter out None values to handle optional dates
+        filtered_dates = [date for name, date in dates if date is not None]
+        
+        if filtered_dates != sorted(filtered_dates):
+            raise ValidationError("Dates must be in ascending order: start_date <= order_date <= acceptance_date <= delivery_date <= finish_date.")
 
     def __str__(self):
         return f"Project {self.project.project_number} is planned from {self.start_date} to {self.finish_date}"

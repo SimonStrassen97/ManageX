@@ -18,7 +18,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
 @admin.register(ProjectBudget)
 class ProjectBudgetAdmin(admin.ModelAdmin):
-    list_display = ('budget', 'approval_date')
+    list_display = ('amount', 'approval_date')
     search_fields = ('project.project_number',)
 
 @admin.register(ProjectTimeline)
