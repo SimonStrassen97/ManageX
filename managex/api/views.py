@@ -20,7 +20,7 @@ class ProjectsOverviewView(generics.ListAPIView):
         if project_lead:
             queryset = queryset.filter(project_lead__username=project_lead)  # Filter by project lead
         if status:
-            queryset = queryset.filter(confirmed_project_status__status_label=status)  # Filter by status
+            queryset = queryset.filter(project_status__status_label=status)  # Filter by status
         if project_number:
             queryset = queryset.filter(project_number=project_number)  # Filter by project number
         if project_name:

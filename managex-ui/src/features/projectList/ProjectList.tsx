@@ -13,24 +13,38 @@ export const ProjectList = () => {
         <table>
           <thead>
             <tr>
-              {/* Dynamically generate table headers from Project keys */}
-              {Object.keys(projects[0]).map(key => (
-                <th key={key}>{key}</th>
-              ))}
+              {/* Define table headers explicitly */}
+              <th>Project Number</th>
+              <th>Project Name</th>
+              <th>Project Lead</th>
+              <th>Status</th>
+              <th>Budget (Amount)</th>
+              <th>Budget (Currency)</th>
+              <th>Timeline (Start Date)</th>
+              <th>Timeline (Finish Date)</th>
             </tr>
           </thead>
           <tbody>
             {projects.map(project => (
               <tr key={project.project_number}>
-                {Object.values(project).map((value, index) => (
-                  <td key={index}>{value}</td>
-                ))}
+                <td>{project.project_number}</td>
+                <td>{project.project_info.project_name}</td>
+                <td>{project.project_info.project_lead}</td>
+                <td>{project.project_info.project_status}</td>
+                <td>{project.budget?.amount || "N/A"}</td>
+                <td>{project.budget?.currency.currency_label || "N/A"}</td>
+                <td>
+                  {new Date(project.timeline.start_date).toLocaleDateString()}
+                </td>
+                <td>
+                  {new Date(project.timeline.finish_date).toLocaleDateString()}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        <p>No projects available.</p> // Render a fallback message if the array is empty
+        <p>No projects available.</p> // Fallback if no projects exist
       )}
     </div>
   )

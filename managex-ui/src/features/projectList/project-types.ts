@@ -26,7 +26,7 @@ export interface Budget {
   currency: Currency
 }
 
-interface Currency {
+export interface Currency {
   currency_label: string
   exchange_rate: number
 }

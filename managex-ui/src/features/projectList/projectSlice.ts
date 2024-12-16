@@ -11,6 +11,9 @@ const projectSlice = createSlice({
   name: "projects",
   initialState,
   reducers: {
+    setProjects: (state, action: PayloadAction<Projects>) => {
+      state.projects = action.payload.projects
+    },
     // Add a single project to the list
     addProject: (state, action: PayloadAction<ProjectState>) => {
       state.projects.push(action.payload)
@@ -34,7 +37,8 @@ const projectSlice = createSlice({
 })
 
 // Named exports for the actions
-export const { addProject, removeProject, updateProject } = projectSlice.actions
+export const { setProjects, addProject, removeProject, updateProject } =
+  projectSlice.actions
 
 // Named export for the reducer
 export const projectReducer = projectSlice.reducer

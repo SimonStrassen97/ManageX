@@ -1,5 +1,8 @@
 import axiosInstance from "./axiosConfig"
-import { SerializedProjects } from "./server-response-types"
+import {
+  SerializedProjects,
+  SerializedProjectState,
+} from "./server-response-types"
 import {
   ProjectState,
   Projects,
@@ -7,6 +10,7 @@ import {
   Budget,
   Timeline,
 } from "../features/projectList/project-types"
+import { createAsyncThunk } from "@reduxjs/toolkit"
 
 class ResponseHandler {
   static convert(serializedProjects: SerializedProjects): Projects {
@@ -53,11 +57,16 @@ class ResponseHandler {
   }
 }
 
-export const fetchProjectOverviewData = async (
-  filters: { [key: string]: string } = {},
-): Promise<Projects> => {
-  const params = new URLSearchParams(filters).toString() //  filters object to URL string
-  const response = await axiosInstance.get(`api/projects/?${params}`) // Use backticks here
-  const projects_data = ResponseHandler.convert(response.data)
-  return projects_data
-}
+export const fetchProjectOverviewData = createAsyncThunk(
+  "projects/fetchOverviewData", // Action type string
+  async (filters: { [key: string]: string } = {}) => {
+    // Keep your existing logic here
+    const params = new URLSearchParams(filters).toString()
+    const response = await axiosInstance.get<SerializedProjectState[]>(
+      `api/projects/?${params}`,
+    )
+    const serializedProjects: SerializedProjects = { projects: response.data }
+    const projects_data = ResponseHandler.convert(serializedProjects)
+    return projects_data // Return the data to be used in the slice
+  },
+)

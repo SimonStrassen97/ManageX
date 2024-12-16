@@ -16,7 +16,7 @@ class ProjectBudgetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.ProjectBudget
-        fields = ['budget', 'currency', 'approval_date']
+        fields = ['amount', 'currency', 'approval_date']
 
 class ProjectTimelineSerializer(serializers.ModelSerializer):
     class Meta:
