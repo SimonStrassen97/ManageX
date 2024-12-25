@@ -1,34 +1,33 @@
 import React from "react"
 import { useSelector, useDispatch } from "react-redux"
-import { RootState } from "../../app/store"
-import { fetchProjectOverviewData } from "../../api/projectApi"
-import { DatePicker } from "../../components/filter/DatePicker"
+import { RootState, AppDispatch } from "../../app/store"
+import { fetchProjectsThunk } from "../projects/projectThunks"
+import { DatePicker } from "../../components/DatePicker"
 import { Dropdown } from "../../components/Dropdown"
 import { Button } from "../../components/Button"
 import { setStartDate, setEndDate, setStatus } from "./filterSlice"
-import { StatusType, statusOptions } from "./filter-types"
-import { setProjects } from "../projectList/projectSlice"
+import { Status, statusOptions } from "./filter-types"
 
 export const FilterWindow: React.FC = () => {
   const filter = useSelector((state: RootState) => state.filters)
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>() // Type-safe dispatch
 
-  const handleFilter = async () => {
+  const handleFilter = () => {
     if (new Date(filter.startDate) > new Date(filter.endDate)) {
       alert("Start date cannot be after end date!")
       return
     }
 
     try {
-      const projects = await fetchProjectOverviewData({
-        startDate: filter.startDate,
-        endDate: filter.endDate,
-        status: filter.status,
-      })
-      dispatch(setProjects(projects))
-      console.log("Fetched Data:", projects)
+      dispatch(
+        fetchProjectsThunk({
+          startDate: filter.startDate,
+          endDate: filter.endDate,
+          status: filter.status,
+        }),
+      )
     } catch (error) {
-      console.error("Error fetching data:", error)
+      console.error("Error dispatching thunk:", error)
     }
   }
 
@@ -45,7 +44,7 @@ export const FilterWindow: React.FC = () => {
         value={filter.endDate}
         onChange={date => dispatch(setEndDate(date))}
       />
-      <Dropdown<StatusType>
+      <Dropdown<Status>
         label="Status"
         value={filter.status}
         options={statusOptions}

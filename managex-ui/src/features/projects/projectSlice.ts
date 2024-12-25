@@ -1,9 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { Projects, ProjectState } from "./project-types"
+import { fetchProjectsThunk } from "./projectThunks"
 
 // Define the initial state
 const initialState: Projects = {
-  projects: [], // Initialize as an empty array
+  projects: [],
+  loading: false,
+  error: null,
 }
 
 // Create the slice
@@ -33,6 +36,22 @@ const projectSlice = createSlice({
         state.projects[index] = action.payload
       }
     },
+  },
+  extraReducers: builder => {
+    builder
+      .addCase(fetchProjectsThunk.pending, state => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(fetchProjectsThunk.fulfilled, (state, action) => {
+        state.loading = false
+        state.projects = action.payload.projects
+        state.error = null
+      })
+      .addCase(fetchProjectsThunk.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.error.message || "An error occurred"
+      })
   },
 })
 

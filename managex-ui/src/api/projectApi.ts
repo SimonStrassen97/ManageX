@@ -9,10 +9,16 @@ import {
   ProjectInfo,
   Budget,
   Timeline,
-} from "../features/projectList/project-types"
-import { createAsyncThunk } from "@reduxjs/toolkit"
+} from "../features/projects/project-types"
 
 class ResponseHandler {
+  static parseDateString = (dateString: string | null): Date | null => {
+    if (!dateString) return null
+    const date = new Date(dateString)
+    date.setHours(0, 0, 0, 0)
+    return date
+  }
+
   static convert(serializedProjects: SerializedProjects): Projects {
     const projects: ProjectState[] = serializedProjects.projects.map(
       serializedProject => {
@@ -35,13 +41,22 @@ class ResponseHandler {
           : null
 
         const timeline: Timeline = {
-          start_date: serializedProject.timeline.start_date,
-          order_date: serializedProject.timeline.order_date,
-          acceptance_date: serializedProject.timeline.acceptance_date,
-          delivery_date: serializedProject.timeline.delivery_date,
-          finish_date: serializedProject.timeline.finish_date,
+          start_date: this.parseDateString(
+            serializedProject.timeline.start_date,
+          ) as Date,
+          order_date: this.parseDateString(
+            serializedProject.timeline.order_date,
+          ),
+          acceptance_date: this.parseDateString(
+            serializedProject.timeline.acceptance_date,
+          ),
+          delivery_date: this.parseDateString(
+            serializedProject.timeline.delivery_date,
+          ),
+          finish_date: this.parseDateString(
+            serializedProject.timeline.finish_date,
+          ) as Date,
         }
-
         const projectState: ProjectState = {
           project_number: serializedProject.project_number,
           project_info: projectInfo,
@@ -53,20 +68,28 @@ class ResponseHandler {
       },
     )
 
-    return { projects }
+    return {
+      projects,
+      loading: false,
+      error: null,
+    }
   }
 }
 
-export const fetchProjectOverviewData = createAsyncThunk(
-  "projects/fetchOverviewData", // Action type string
-  async (filters: { [key: string]: string } = {}) => {
-    // Keep your existing logic here
-    const params = new URLSearchParams(filters).toString()
-    const response = await axiosInstance.get<SerializedProjectState[]>(
-      `api/projects/?${params}`,
-    )
-    const serializedProjects: SerializedProjects = { projects: response.data }
-    const projects_data = ResponseHandler.convert(serializedProjects)
-    return projects_data // Return the data to be used in the slice
-  },
-)
+export const fetchProjects = async (
+  filters: { [key: string]: string } = {},
+): Promise<Projects> => {
+  const params = new URLSearchParams(filters).toString()
+  const response = await axiosInstance.get<SerializedProjectState[]>(
+    `api/projects/?${params}`,
+  )
+  const serializedProjects: SerializedProjects = { projects: response.data }
+  return ResponseHandler.convert(serializedProjects)
+}
+
+export const addProject = async (): Promise<ProjectState> => {
+  const response =
+    await axiosInstance.post<SerializedProjectState>(`api/projects/`)
+  const serializedProject: SerializedProjectState = response.data
+  return ResponseHandler.convert({ projects: [serializedProject] }).projects[0]
+}

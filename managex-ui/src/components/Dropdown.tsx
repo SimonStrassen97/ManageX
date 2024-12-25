@@ -1,6 +1,6 @@
 import React from "react"
 
-type DropdownProps<T> = {
+interface DropdownProps<T> {
   label: string
   value: T
   options: T[]

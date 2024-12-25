@@ -25,7 +25,7 @@ class CurrencyLookUp(models.Model):
     # rest: admin
     currency_id = models.IntegerField(unique=True)
     currency_label = models.CharField(max_length=25)
-    exchange_rate_LC = models.DecimalField(max_digits=10, decimal_places=4)
+    exchange_rate_LC = models.FloatField()
 
     def __str__(self):
         return self.currency_label
@@ -52,12 +52,12 @@ class ProjectBudget(models.Model):
     # edit: PPM and above
     # delete: admin 
     project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name="budget")
-    amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
+    amount = models.FloatField(blank=True)
     currency = models.ForeignKey(CurrencyLookUp, on_delete=models.SET_NULL, null=True, related_name='project_budgets')
     approval_date = models.DateField(null=True, blank=True)
     
     def __str__(self):
-        return f'Approval for {self.project.project_name} given on {self.approval_date} for {self.budget}'
+        return f'Approval for {self.project.project_name} given on {self.approval_date} for {self.amount}'
     
 class ProjectTimeline(models.Model):
     # used to create projects

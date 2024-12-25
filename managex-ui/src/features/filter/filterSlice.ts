@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { FilterState, Status, StatusType } from "./filter-types"
+import { FilterState, Status } from "./filter-types"
 
 const initialState: FilterState = {
   startDate: "",
@@ -18,7 +18,7 @@ const filterSlice = createSlice({
     setEndDate: (state, action: PayloadAction<string>) => {
       state.endDate = action.payload
     },
-    setStatus: (state, action: PayloadAction<StatusType>) => {
+    setStatus: (state, action: PayloadAction<Status>) => {
       state.status = action.payload
     },
   },

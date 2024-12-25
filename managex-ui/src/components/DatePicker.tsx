@@ -1,6 +1,6 @@
 import React from "react"
 
-type DatePickerProps = {
+interface DatePickerProps {
   label: string
   value: string
   onChange: (date: string) => void

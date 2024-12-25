@@ -1,11 +1,11 @@
 import React from "react"
 
-type ButtonProps = {
-  label: string // Text to display on the button
-  onClick: () => void // Function to handle button click
-  type?: "button" | "submit" | "reset" // Button type
-  className?: string // Additional CSS classes for styling
-  disabled?: boolean // Disable button functionality
+interface ButtonProps {
+  label: string
+  onClick?: () => void
+  type?: "button" | "submit" | "reset"
+  className?: string
+  disabled?: boolean
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -18,7 +18,7 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <button
       type={type}
-      className={`btn ${className}`} // Default 'btn' class with optional additional styles
+      className={className} // Default 'btn' class with optional additional styles
       onClick={onClick}
       disabled={disabled}
     >
