@@ -1,8 +1,11 @@
 import React, { useState } from "react"
-import { useDispatch } from "react-redux"
-import { ProjectState, ProjectInfo, Timeline } from "./project-types"
-import { addProject } from "./projectSlice"
+import { useSelector, useDispatch } from "react-redux"
+import { RootState, AppDispatch } from "../../app/store"
+import { ProjectState } from "./project-types"
+import { addProjectThunk } from "./projectThunks"
 import { DatePicker, Button, Dropdown, Input } from "../../components"
+import { dateToString, stringToDate } from "../../utils/transforms"
+import { validateProject } from "./projectValidator"
 
 interface AddProjectModalProps {
   isOpen: boolean
@@ -18,11 +21,11 @@ const initialFormData: ProjectState = {
     confirmed_project_status: "",
   },
   timeline: {
-    start_date: new Date(),
+    start_date: dateToString(new Date())!,
     order_date: null,
     acceptance_date: null,
     delivery_date: null,
-    finish_date: new Date(),
+    finish_date: dateToString(new Date())!,
   },
   budget: {
     amount: 0,
@@ -37,43 +40,20 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>() // Type-safe dispatch
   const [formData, setFormData] = useState<ProjectState>(initialFormData)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {}
-
-    if (!formData.project_number.trim()) {
-      newErrors.project_number = "Project number is required"
-    } else if (!formData.project_info?.project_name?.trim()) {
-      newErrors.project_name = "Project name is required"
-    } else if (!formData.project_info?.project_lead?.trim()) {
-      newErrors.project_lead = "Project lead is required"
-    } else if (
-      formData.timeline.start_date > formData.timeline.finish_date ||
-      formData.timeline.start_date < new Date()
-    ) {
-      newErrors.start_date = "Invalid start date"
-    } else if (
-      formData.budget?.amount === undefined ||
-      formData.budget?.amount < 0
-    ) {
-      newErrors.amount = "Invalid budget amount"
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!validateForm()) {
+    const newErrors = validateProject(formData)
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
       return
     }
 
     try {
-      dispatch(addProject(formData))
+      dispatch(addProjectThunk(formData))
       setFormData(initialFormData)
       onClose()
     } catch (error) {
@@ -82,7 +62,6 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
   }
 
   if (!isOpen) return null
-
   return (
     <div className="modal-overlay">
       <div className="modal-content">
@@ -139,18 +118,37 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
           <DatePicker
             label="Start Date"
             value={
-              formData.timeline?.start_date?.toISOString() ||
-              new Date().toISOString()
+              formData.timeline.start_date // Non-null assertion
             }
             onChange={date =>
               setFormData(prev => ({
                 ...prev,
                 timeline: {
                   ...prev.timeline,
-                  start_date: new Date(date),
+                  start_date: date,
                 },
               }))
             }
+            required
+            error={errors.start_date}
+          />
+
+          <DatePicker
+            label="Finish Date"
+            value={
+              formData.timeline.finish_date // Non-null assertion
+            }
+            onChange={date =>
+              setFormData(prev => ({
+                ...prev,
+                timeline: {
+                  ...prev.timeline,
+                  finish_date: date,
+                },
+              }))
+            }
+            required
+            error={errors.finish_date}
           />
 
           <Input

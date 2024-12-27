@@ -9,11 +9,11 @@ export interface Currency {
 }
 
 export interface Timeline {
-  start_date: Date
-  order_date: Date | null
-  acceptance_date: Date | null
-  delivery_date: Date | null
-  finish_date: Date
+  start_date: string
+  order_date: string | null
+  acceptance_date: string | null
+  delivery_date: string | null
+  finish_date: string
 }
 
 export interface ProjectInfo {

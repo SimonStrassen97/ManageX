@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from . import models
+from django.contrib.auth.models import User
 
 class StatusLookUpSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,6 +35,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Project
         fields = [
+            'id',
             'project_name',
             'project_number',
             'project_lead',
@@ -42,3 +44,8 @@ class ProjectSerializer(serializers.ModelSerializer):
             'budget',
             'timeline'
         ]
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name']

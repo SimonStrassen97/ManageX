@@ -1,9 +1,10 @@
 from rest_framework import generics
 from rest_framework.response import Response
 from .models import Project
-from .serializers import ProjectSerializer
+from django.contrib.auth.models import User
+from .serializers import ProjectSerializer, UserListSerializer
 
-class ProjectsOverviewView(generics.ListAPIView):
+class ProjectsView(generics.ListAPIView):
     serializer_class = ProjectSerializer
 
     def get_queryset(self):
@@ -28,22 +29,6 @@ class ProjectsOverviewView(generics.ListAPIView):
 
         return queryset
 
-class GanttChartView(generics.ListAPIView):
-    serializer_class = ProjectSerializer
-
-    def get_queryset(self):
-        queryset = Project.objects.filter(confirmed_project_status__status_label='started')
-        # Get query parameters for filtering
-        project_lead = self.request.query_params.get('project_lead', None)
-        project_number = self.request.query_params.get('project_number', None)
-        project_name = self.request.query_params.get('project_name', None)
-
-        # Apply filters if provided
-        if project_lead:
-            queryset = queryset.filter(project_lead__username=project_lead)  # Filter by project lead
-        if project_number:
-            queryset = queryset.filter(project_number=project_number)  # Filter by project number
-        if project_name:
-            queryset = queryset.filter(project_name__icontains=project_name)  # Filter by project name
-
-        return queryset
+class UsersView(generics.ListAPIView):
+    serializer_class = UserListSerializer
+    queryset = User.objects.all()

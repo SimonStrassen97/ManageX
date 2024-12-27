@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import { fetchProjects, addProject } from "../../api/projectApi"
+import { ProjectState } from "./project-types"
 
 export const fetchProjectsThunk = createAsyncThunk(
   "projects/fetchFilteredProjects",
@@ -10,7 +11,7 @@ export const fetchProjectsThunk = createAsyncThunk(
 
 export const addProjectThunk = createAsyncThunk(
   "projects/addProject",
-  async () => {
-    return await addProject()
+  async (project: ProjectState) => {
+    return await addProject(project)
   },
 )
