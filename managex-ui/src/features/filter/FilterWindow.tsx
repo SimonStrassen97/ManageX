@@ -6,7 +6,7 @@ import { DatePicker } from "../../components/DatePicker"
 import { Dropdown } from "../../components/Dropdown"
 import { Button } from "../../components/Button"
 import { setStartDate, setEndDate, setStatus } from "./filterSlice"
-import { Status, statusOptions } from "./filter-types"
+import { Status, statusOptions, FilterState } from "./filter-types"
 
 export const FilterWindow: React.FC = () => {
   const filter = useSelector((state: RootState) => state.filters)
@@ -19,13 +19,7 @@ export const FilterWindow: React.FC = () => {
     }
 
     try {
-      dispatch(
-        fetchProjectsThunk({
-          startDate: filter.startDate,
-          endDate: filter.endDate,
-          status: filter.status,
-        }),
-      )
+      dispatch(fetchProjectsThunk(filter))
     } catch (error) {
       console.error("Error dispatching thunk:", error)
     }

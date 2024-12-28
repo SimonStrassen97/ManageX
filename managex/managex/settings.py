@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,6 +50,21 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',  # Require authentication for all views, unless overridden
     ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),  # Custom: 10 minutes
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Default: 1 day
+    'ROTATE_REFRESH_TOKENS': False,  # Default: False
+    'BLACKLIST_AFTER_ROTATION': False,  # Default: False
+    'ALGORITHM': 'HS256',  # Default: HS256
+    'SIGNING_KEY': SECRET_KEY,  # Default: settings.SECRET_KEY
+    'VERIFYING_KEY': None,  # Default: None
+    'AUTH_HEADER_TYPES': ('Bearer',),  # Default: Bearer
+    'USER_ID_FIELD': 'id',  # Default: id
+    'USER_ID_CLAIM': 'user_id',  # Default: user_id
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),  # Default: AccessToken
+    'TOKEN_TYPE_CLAIM': 'token_type',  # Default: token_type
 }
 
 MIDDLEWARE = [

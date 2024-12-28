@@ -1,29 +1,54 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { loginThunk } from "./authThunks"
+import { AuthState } from "./auth-types"
 
-interface AuthState {
-  isAuthenticated: boolean
-  user: string | null // Adjust type if needed
+// Helper functions for localStorage management
+const saveToLocalStorage = (key: string, value: any) => {
+  localStorage.setItem(key, JSON.stringify(value))
+}
+
+const removeFromLocalStorage = (key: string) => {
+  localStorage.removeItem(key)
 }
 
 const initialState: AuthState = {
-  isAuthenticated: false,
+  token: null,
   user: null,
+  loading: false,
+  error: null,
 }
 
-export const authSlice = createSlice({
+const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<string>) => {
-      state.isAuthenticated = true
-      state.user = action.payload // Example: Set user email
-    },
     logout: state => {
-      state.isAuthenticated = false
+      state.token = null
       state.user = null
+      removeFromLocalStorage("token")
+      removeFromLocalStorage("user")
     },
+  },
+  extraReducers: builder => {
+    builder
+      .addCase(loginThunk.pending, state => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(loginThunk.fulfilled, (state, action) => {
+        const { token, user } = action.payload
+        state.token = token
+        state.user = user
+        saveToLocalStorage("token", token)
+        saveToLocalStorage("user", user)
+        state.loading = false
+      })
+      .addCase(loginThunk.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.error.message || "Error logging in"
+      })
   },
 })
 
-export const { login, logout } = authSlice.actions
+export const { logout } = authSlice.actions
 export const authReducer = authSlice.reducer

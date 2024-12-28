@@ -27,6 +27,30 @@ export interface SerializedProjectState {
   timeline: SerializedTimeline
 }
 
+export interface SerializedUser {
+  id: number
+  username: string
+  first_name: string
+  last_name: string
+}
+
+export interface SerializedUserList {
+  users: SerializedUser[]
+}
+
 export interface SerializedProjects {
   projects: SerializedProjectState[]
+}
+
+export interface SerializedUserDetailed {
+  id: number
+  username: string
+  first_name: string
+  last_name: string
+  email: string
+}
+
+export interface SerializedToken {
+  access: string
+  refresh: string
 }

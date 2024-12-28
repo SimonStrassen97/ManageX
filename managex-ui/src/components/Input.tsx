@@ -6,6 +6,7 @@ interface InputProps {
   type: string
   value: string | number
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  placeholder?: string
   className?: string
   required?: boolean
   error?: string
@@ -16,6 +17,7 @@ export const Input: React.FC<InputProps> = ({
   type,
   value,
   onChange,
+  placeholder = "",
   className = "",
   required = false,
   error,

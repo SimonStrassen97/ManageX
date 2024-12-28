@@ -1,40 +1,47 @@
-// src/pages/Login.tsx
 import React, { useState } from "react"
 import { useDispatch } from "react-redux"
-import { login } from "../features/auth/authSlice"
+import { RootState, AppDispatch } from "../app/store"
+import { loginThunk } from "../features/auth/authThunks"
 import { useNavigate } from "react-router-dom"
+import { LoginData } from "../features/auth/auth-types"
+import { Input, Button } from "../components"
 
 export const Login = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>() // Type-safe dispatch
   const navigate = useNavigate()
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
 
-  const handleLogin = () => {
-    if (username === "user" && password === "password") {
-      dispatch(login("user"))
+  const handleLogin = async () => {
+    try {
+      const loginData: LoginData = { username, password }
+      dispatch(loginThunk(loginData))
       navigate("/home") // Redirect to home after successful login
-    } else {
-      alert("Invalid credentials")
+    } catch (err) {
+      setError("Invalid credentials")
     }
   }
 
   return (
     <div>
       <h2>Login</h2>
-      <input
+      <Input
+        label="Username"
         type="text"
         placeholder="Username"
         value={username}
         onChange={e => setUsername(e.target.value)}
       />
-      <input
+      <Input
+        label="Password"
         type="password"
         placeholder="Password"
         value={password}
         onChange={e => setPassword(e.target.value)}
       />
-      <button onClick={handleLogin}>Login</button>
+      <Button label="Login" onClick={handleLogin} />
+      {error && <p>{error}</p>}
     </div>
   )
 }

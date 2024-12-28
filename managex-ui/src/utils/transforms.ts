@@ -10,6 +10,18 @@ import {
   Timeline,
 } from "../features/projects/project-types"
 
+import {
+  SerializedUserList,
+  SerializedUser,
+} from "../api/server-response-types"
+import { UserList, User } from "../features/users/users-types"
+
+import { SerializedToken } from "../api/server-response-types"
+import { Token } from "../features/auth/auth-types"
+
+import { SerializedUserDetailed } from "../api/server-response-types"
+import { CurrentUser } from "../features/auth/auth-types"
+
 export function stringToDate(dateString: string | null): Date | null {
   if (!dateString) return null
   const date = new Date(dateString)
@@ -108,6 +120,83 @@ export class ProjectTransformer {
       projects: [project],
       loading: false,
       error: null,
+    }
+  }
+}
+
+export class UserTransformer {
+  static serializeUser(user: User): SerializedUser {
+    return {
+      id: user.id,
+      username: user.username,
+      first_name: user.first_name,
+      last_name: user.last_name,
+    }
+  }
+
+  static serializeUsers(users: UserList): SerializedUserList {
+    const serializedUsers: SerializedUser[] = users.users.map(user =>
+      this.serializeUser(user),
+    )
+    return { users: serializedUsers }
+  }
+
+  static deserializeUser(serializedUser: SerializedUser): User {
+    return {
+      id: serializedUser.id,
+      username: serializedUser.username,
+      first_name: serializedUser.first_name,
+      last_name: serializedUser.last_name,
+    }
+  }
+
+  static deserializeUsers(serializedUsers: SerializedUserList): UserList {
+    const users: User[] = serializedUsers.users.map(serializedUser =>
+      this.deserializeUser(serializedUser),
+    )
+
+    return {
+      users,
+      loading: false,
+      error: null,
+    }
+  }
+}
+
+export class CurrentUserTransformer {
+  static serializeUser(user: CurrentUser): SerializedUserDetailed {
+    return {
+      id: user.id,
+      username: user.username,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+    }
+  }
+
+  static deserializeUser(serializedUser: SerializedUserDetailed): CurrentUser {
+    return {
+      id: serializedUser.id,
+      username: serializedUser.username,
+      first_name: serializedUser.first_name,
+      last_name: serializedUser.last_name,
+      email: serializedUser.email,
+    }
+  }
+}
+
+export class TokenTransformer {
+  static serializeToken(token: Token): SerializedToken {
+    return {
+      access: token.access,
+      refresh: token.refresh,
+    }
+  }
+
+  static deserializeToken(serializedToken: SerializedToken): Token {
+    return {
+      access: serializedToken.access,
+      refresh: serializedToken.refresh,
     }
   }
 }
