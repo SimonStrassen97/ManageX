@@ -1,0 +1,13 @@
+# .env
+.env
+
+# packages
+venv/
+
+# ignore pycache folder
+**/__pycache__/
+
+
+#ignore db
+**db.sqlite3
+.db

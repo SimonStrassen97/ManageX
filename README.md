@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+
 # Django + React Project Management Tool
 
 ## Goal
