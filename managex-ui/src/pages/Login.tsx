@@ -1,8 +1,9 @@
 import React, { useState } from "react"
-import { useDispatch } from "react-redux"
-import { RootState, AppDispatch } from "../app/store"
-import { loginThunk } from "../features/auth/authThunks"
+import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
+import { RootState, AppDispatch } from "../app/store"
+import { authThunk } from "../features/auth/authThunks"
+import { fetchCurrentUserThunk } from "../features/users/userThunks"
 import { LoginData } from "../features/auth/auth-types"
 import { Input, Button } from "../components"
 
@@ -11,16 +12,19 @@ export const Login = () => {
   const navigate = useNavigate()
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
+  const { loading, error } = useSelector((state: RootState) => state.auth)
 
   const handleLogin = async () => {
-    try {
-      const loginData: LoginData = { username, password }
-      dispatch(loginThunk(loginData))
+    const loginData: LoginData = { username, password }
+    const resultAction = await dispatch(authThunk(loginData))
+    if (authThunk.fulfilled.match(resultAction)) {
+      await dispatch(fetchCurrentUserThunk())
       navigate("/home") // Redirect to home after successful login
-    } catch (err) {
-      setError("Invalid credentials")
     }
+  }
+
+  const goToRegister = () => {
+    navigate("/register")
   }
 
   return (
@@ -32,6 +36,7 @@ export const Login = () => {
         placeholder="Username"
         value={username}
         onChange={e => setUsername(e.target.value)}
+        error={error}
       />
       <Input
         label="Password"
@@ -39,9 +44,10 @@ export const Login = () => {
         placeholder="Password"
         value={password}
         onChange={e => setPassword(e.target.value)}
+        error={error}
       />
       <Button label="Login" onClick={handleLogin} />
-      {error && <p>{error}</p>}
+      <Button label="Register" onClick={goToRegister} />
     </div>
   )
 }

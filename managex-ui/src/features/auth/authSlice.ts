@@ -1,21 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { loginThunk } from "./authThunks"
+import { authThunk, refreshThunk } from "./authThunks"
 import { AuthState } from "./auth-types"
 
-// Helper functions for localStorage management
-const saveToLocalStorage = (key: string, value: any) => {
-  localStorage.setItem(key, JSON.stringify(value))
-}
-
-const removeFromLocalStorage = (key: string) => {
-  localStorage.removeItem(key)
-}
-
 const initialState: AuthState = {
-  token: null,
-  user: null,
   loading: false,
   error: null,
+  isAuthenticated: !!localStorage.getItem("access_token"),
 }
 
 const authSlice = createSlice({
@@ -23,29 +13,48 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: state => {
-      state.token = null
-      state.user = null
-      removeFromLocalStorage("token")
-      removeFromLocalStorage("user")
+      state.isAuthenticated = false
+      localStorage.removeItem("access_token")
+      localStorage.removeItem("refresh_token")
+      localStorage.removeItem("user")
     },
   },
   extraReducers: builder => {
     builder
-      .addCase(loginThunk.pending, state => {
+      .addCase(authThunk.pending, state => {
         state.loading = true
         state.error = null
       })
-      .addCase(loginThunk.fulfilled, (state, action) => {
-        const { token, user } = action.payload
-        state.token = token
-        state.user = user
-        saveToLocalStorage("token", token)
-        saveToLocalStorage("user", user)
+      .addCase(authThunk.fulfilled, (state, action) => {
+        const token = action.payload
+        state.isAuthenticated = true
+        localStorage.setItem("access_token", token.access)
+        localStorage.setItem("refresh_token", token.refresh)
         state.loading = false
       })
-      .addCase(loginThunk.rejected, (state, action) => {
+      .addCase(authThunk.rejected, (state, action) => {
         state.loading = false
-        state.error = action.error.message || "Error logging in"
+        state.error = action.payload as string
+        state.isAuthenticated = false
+      })
+      .addCase(refreshThunk.pending, state => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(refreshThunk.fulfilled, (state, action) => {
+        const token = action.payload
+        state.isAuthenticated = true
+        localStorage.setItem("access_token", token.access)
+        localStorage.setItem("refresh_token", token.refresh)
+        state.loading = false
+      })
+      .addCase(refreshThunk.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload as string
+        state.isAuthenticated = false
+        localStorage.removeItem("access_token")
+        localStorage.removeItem("refresh_token")
+        localStorage.removeItem("user")
       })
   },
 })

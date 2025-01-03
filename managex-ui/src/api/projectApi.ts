@@ -1,9 +1,6 @@
 import axiosInstance from "./axiosConfig"
-import {
-  SerializedProjects,
-  SerializedProjectState,
-} from "./server-response-types"
-import { ProjectState, Projects } from "../features/projects/project-types"
+import { SerializedProject } from "./server-response-types"
+import { Project } from "../features/projects/project-types"
 import { ProjectTransformer } from "../utils/transforms"
 import { FilterState } from "../features/filter/filter-types"
 
@@ -20,30 +17,24 @@ const convertFilterStateToParams = (
 
 export const fetchProjects = async (
   filters: FilterState,
-): Promise<Projects> => {
+): Promise<Project[]> => {
   const paramsObj = convertFilterStateToParams(filters)
   const params = new URLSearchParams(paramsObj).toString()
 
-  const response = await axiosInstance.get<SerializedProjectState[]>(
+  const response = await axiosInstance.get<SerializedProject[]>(
     `api/projects/?${params}`,
   )
   // transform the response data to the ProjectState type
-  const serializedProjects: SerializedProjects = { projects: response.data }
-  return ProjectTransformer.deserializeProjects(serializedProjects)
+  return ProjectTransformer.deserializeProjects(response.data)
 }
 
-export const addProject = async (
-  project: ProjectState,
-): Promise<ProjectState> => {
+export const addProject = async (project: Project): Promise<Project> => {
   // transform the project to the serialized format
   const serializedProject = ProjectTransformer.serializeProject(project)
-  const response = await axiosInstance.post<SerializedProjectState>(
+  const response = await axiosInstance.post<SerializedProject>(
     "api/projects/create",
     serializedProject,
   )
   // transform the response data to the ProjectState type
-  const deserializedProject = ProjectTransformer.deserializeProjects({
-    projects: [response.data],
-  }).projects[0]
-  return deserializedProject
+  return ProjectTransformer.deserializeProject(response.data)
 }

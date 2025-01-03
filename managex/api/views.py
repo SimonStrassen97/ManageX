@@ -45,7 +45,7 @@ class CreateProjectView(generics.CreateAPIView):
     serializer_class = ProjectSerializer
     queryset = Project.objects.all()
 
-class DeleteProjectView(generics.DestroyAPIViewAPIView):
+class DeleteProjectView(generics.DestroyAPIView):
     serializer_class = ProjectSerializer
     queryset = Project.objects.all()
     lookup_field = 'id'

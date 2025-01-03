@@ -17,7 +17,7 @@ interface SerializedTimeline {
   finish_date: string
 }
 
-export interface SerializedProjectState {
+export interface SerializedProject {
   project_name: string
   project_number: string
   project_lead: string
@@ -38,15 +38,7 @@ export interface SerializedUserList {
   users: SerializedUser[]
 }
 
-export interface SerializedProjects {
-  projects: SerializedProjectState[]
-}
-
-export interface SerializedUserDetailed {
-  id: number
-  username: string
-  first_name: string
-  last_name: string
+export interface SerializedUserDetailed extends SerializedUser {
   email: string
 }
 

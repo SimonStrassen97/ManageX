@@ -1,3 +1,4 @@
+// Domain Types
 export interface Budget {
   amount: number
   currency: Currency
@@ -22,15 +23,17 @@ export interface ProjectInfo {
   project_status: string
   confirmed_project_status: string
 }
-export interface ProjectState {
+
+export interface Project {
   project_number: string
   project_info: ProjectInfo
   budget?: Budget | null
   timeline: Timeline
 }
 
-export interface Projects {
-  projects: ProjectState[]
+// State Management Types
+export interface ProjectsState {
+  projects: Project[]
   loading: boolean
   error: string | null
 }

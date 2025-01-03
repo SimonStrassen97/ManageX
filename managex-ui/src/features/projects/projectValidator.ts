@@ -1,9 +1,7 @@
-import { ProjectState, Projects } from "./project-types"
+import { Project } from "./project-types"
 import { stringToDate } from "../../utils/transforms"
 
-export const validateProject = (
-  project: ProjectState,
-): Record<string, string> => {
+export const validateProject = (project: Project): Record<string, string> => {
   const newErrors: Record<string, string> = {}
 
   if (!project.project_number.trim()) {
@@ -34,11 +32,11 @@ export const validateProject = (
 }
 
 export const validateProjects = (
-  projects: Projects,
+  projects: Project[],
 ): Record<string, Record<string, string>> => {
   const allErrors: Record<string, Record<string, string>> = {}
 
-  projects.projects.forEach((project, index) => {
+  projects.forEach((project, index) => {
     const projectErrors = validateProject(project)
     if (Object.keys(projectErrors).length > 0) {
       allErrors[`project_${index}`] = projectErrors

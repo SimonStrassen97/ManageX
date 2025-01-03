@@ -1,11 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import { fetchProjects, addProject } from "../../api/projectApi"
-import { Projects, ProjectState } from "./project-types"
+import { Project } from "./project-types"
 import { FilterState } from "../filter/filter-types"
 
 // Define the async thunk for fetching projects with filters
 export const fetchProjectsThunk = createAsyncThunk<
-  Projects,
+  Project[],
   FilterState,
   { rejectValue: string }
 >(
@@ -27,19 +27,17 @@ export const fetchProjectsThunk = createAsyncThunk<
 )
 
 // Define the async thunk for adding a project
-export const addProjectThunk = createAsyncThunk<ProjectState, ProjectState>(
+export const addProjectThunk = createAsyncThunk<Project, Project>(
   "projects/addProject",
-  async (project: ProjectState, { rejectWithValue }) => {
+  async (project: Project, { rejectWithValue }) => {
     try {
       const newProject = await addProject(project)
       return newProject
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        return rejectWithValue(error.message || "Failed to add project")
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data)
       } else {
-        return rejectWithValue(
-          "An unknown error occurred while adding the project",
-        )
+        return rejectWithValue("An unknown error occurred.")
       }
     }
   },

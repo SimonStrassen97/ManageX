@@ -1,7 +1,7 @@
 import React, { useState } from "react"
-import { useSelector, useDispatch } from "react-redux"
-import { RootState, AppDispatch } from "../../app/store"
-import { ProjectState } from "./project-types"
+import { useDispatch } from "react-redux"
+import { AppDispatch } from "../../app/store"
+import { Project } from "./project-types"
 import { addProjectThunk } from "./projectThunks"
 import { DatePicker, Button, Dropdown, Input } from "../../components"
 import { dateToString, stringToDate } from "../../utils/transforms"
@@ -12,7 +12,7 @@ interface AddProjectModalProps {
   onClose: () => void
 }
 
-const initialFormData: ProjectState = {
+const initialFormData: Project = {
   project_number: "",
   project_info: {
     project_name: "",
@@ -41,7 +41,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
   onClose,
 }) => {
   const dispatch = useDispatch<AppDispatch>() // Type-safe dispatch
-  const [formData, setFormData] = useState<ProjectState>(initialFormData)
+  const [formData, setFormData] = useState<Project>(initialFormData)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   const handleSubmit = (e: React.FormEvent) => {

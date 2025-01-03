@@ -1,10 +1,7 @@
+import { SerializedProject } from "../api/server-response-types"
 import {
-  SerializedProjects,
-  SerializedProjectState,
-} from "../api/server-response-types"
-import {
-  ProjectState,
-  Projects,
+  Project,
+  ProjectsState,
   ProjectInfo,
   Budget,
   Timeline,
@@ -14,13 +11,13 @@ import {
   SerializedUserList,
   SerializedUser,
 } from "../api/server-response-types"
-import { UserList, User } from "../features/users/users-types"
+import { UsersState, User } from "../features/users/user-types"
 
 import { SerializedToken } from "../api/server-response-types"
-import { Token } from "../features/auth/auth-types"
+import { AuthToken } from "../features/auth/auth-types"
 
 import { SerializedUserDetailed } from "../api/server-response-types"
-import { CurrentUser } from "../features/auth/auth-types"
+import { CurrentUser } from "../features/users/user-types"
 
 export function stringToDate(dateString: string | null): Date | null {
   if (!dateString) return null
@@ -34,7 +31,7 @@ export function dateToString(date: Date | null): string | null {
 }
 
 export class ProjectTransformer {
-  static serializeProject(project: ProjectState): SerializedProjectState {
+  static serializeProject(project: Project): SerializedProject {
     return {
       project_number: project.project_number,
       project_name: project.project_info.project_name,
@@ -60,16 +57,14 @@ export class ProjectTransformer {
     }
   }
 
-  static serializeProjects(projects: Projects): SerializedProjects {
-    const serializedProjects: SerializedProjectState[] = projects.projects.map(
-      project => this.serializeProject(project),
+  static serializeProjects(projects: Project[]): SerializedProject[] {
+    const serializedProjects: SerializedProject[] = projects.map(project =>
+      this.serializeProject(project),
     )
-    return { projects: serializedProjects }
+    return serializedProjects
   }
 
-  static deserializeProject(
-    serializedProject: SerializedProjectState,
-  ): ProjectState {
+  static deserializeProject(serializedProject: SerializedProject): Project {
     const projectInfo: ProjectInfo = {
       project_name: serializedProject.project_name,
       project_lead: serializedProject.project_lead,
@@ -103,97 +98,77 @@ export class ProjectTransformer {
     }
   }
 
-  static deserializeProjects(serializedProjects: SerializedProjects): Projects {
-    const projects: ProjectState[] = serializedProjects.projects.map(
-      serializedProject => this.deserializeProject(serializedProject),
+  static deserializeProjects(
+    serializedProjects: SerializedProject[],
+  ): Project[] {
+    const projects: Project[] = serializedProjects.map(serializedProject =>
+      this.deserializeProject(serializedProject),
     )
 
-    return {
-      projects,
-      loading: false,
-      error: null,
-    }
+    return projects
   }
 
-  static createProjectsFromProject(project: ProjectState): Projects {
-    return {
-      projects: [project],
-      loading: false,
-      error: null,
-    }
+  static createProjectsFromProject(project: Project): Project[] {
+    return [project]
   }
 }
 
 export class UserTransformer {
-  static serializeUser(user: User): SerializedUser {
-    return {
+  static serializeUser(
+    user: User | CurrentUser,
+  ): SerializedUser | SerializedUserDetailed {
+    const baseUser = {
       id: user.id,
       username: user.username,
       first_name: user.first_name,
       last_name: user.last_name,
     }
+
+    return {
+      ...baseUser,
+      email: "email" in user ? user.email : "", // Fallback for missing email
+    }
   }
 
-  static serializeUsers(users: UserList): SerializedUserList {
-    const serializedUsers: SerializedUser[] = users.users.map(user =>
-      this.serializeUser(user),
+  static deserializeUser(
+    serializedUser: SerializedUser | SerializedUserDetailed,
+  ): SerializedUserDetailed {
+    const baseUser = {
+      id: serializedUser.id,
+      username: serializedUser.username,
+      first_name: serializedUser.first_name,
+      last_name: serializedUser.last_name,
+    }
+
+    return {
+      ...baseUser,
+      email: "email" in serializedUser ? serializedUser.email : "", // Fallback for missing email
+    }
+  }
+
+  static serializeUsers(users: User[]): SerializedUserList {
+    const serializedUsers: SerializedUser[] = users.map(
+      user => this.serializeUser(user) as SerializedUser,
     )
     return { users: serializedUsers }
   }
 
-  static deserializeUser(serializedUser: SerializedUser): User {
-    return {
-      id: serializedUser.id,
-      username: serializedUser.username,
-      first_name: serializedUser.first_name,
-      last_name: serializedUser.last_name,
-    }
-  }
-
-  static deserializeUsers(serializedUsers: SerializedUserList): UserList {
-    const users: User[] = serializedUsers.users.map(serializedUser =>
-      this.deserializeUser(serializedUser),
+  static deserializeUsers(serializedUsers: SerializedUserList): User[] {
+    return serializedUsers.users.map(
+      serializedUser => this.deserializeUser(serializedUser) as User,
     )
-
-    return {
-      users,
-      loading: false,
-      error: null,
-    }
-  }
-}
-
-export class CurrentUserTransformer {
-  static serializeUser(user: CurrentUser): SerializedUserDetailed {
-    return {
-      id: user.id,
-      username: user.username,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email: user.email,
-    }
-  }
-
-  static deserializeUser(serializedUser: SerializedUserDetailed): CurrentUser {
-    return {
-      id: serializedUser.id,
-      username: serializedUser.username,
-      first_name: serializedUser.first_name,
-      last_name: serializedUser.last_name,
-      email: serializedUser.email,
-    }
   }
 }
 
 export class TokenTransformer {
-  static serializeToken(token: Token): SerializedToken {
+  static serializeToken(token: AuthToken): SerializedToken {
     return {
       access: token.access,
       refresh: token.refresh,
     }
   }
 
-  static deserializeToken(serializedToken: SerializedToken): Token {
+  static deserializeToken(serializedToken: SerializedToken): AuthToken {
     return {
       access: serializedToken.access,
       refresh: serializedToken.refresh,

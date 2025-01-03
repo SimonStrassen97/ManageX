@@ -1,7 +1,17 @@
 import React from "react"
 import { Link } from "react-router-dom"
+import { Button } from "../Button"
+import { useDispatch } from "react-redux"
+import { logout } from "../../features/auth/authSlice"
+import { AppDispatch } from "../../app/store"
 
 export const Header = () => {
+  const dispatch = useDispatch<AppDispatch>() // Type-safe dispatch
+
+  const handleLogout = () => {
+    dispatch(logout())
+  }
+
   return (
     <div>
       <header>
@@ -17,6 +27,9 @@ export const Header = () => {
           </li>
           <li>
             <Link to="/myprojects">My Projects</Link>
+          </li>
+          <li>
+            <Button label="Logout" onClick={handleLogout} />
           </li>
         </ul>
       </nav>

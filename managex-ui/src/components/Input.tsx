@@ -9,7 +9,7 @@ interface InputProps {
   placeholder?: string
   className?: string
   required?: boolean
-  error?: string
+  error?: string | null
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -20,7 +20,7 @@ export const Input: React.FC<InputProps> = ({
   placeholder = "",
   className = "",
   required = false,
-  error,
+  error = null,
 }) => {
   return (
     <div className={`form-group ${className}`}>
@@ -28,6 +28,7 @@ export const Input: React.FC<InputProps> = ({
       <input
         type={type}
         value={value}
+        placeholder={placeholder}
         onChange={onChange}
         required={required}
         className={className}
