@@ -118,3 +118,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         validated_data.pop('password_confirm')
         user = User.objects.create_user(**validated_data)
         return user
+    
+
+class ProjectFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ProjectFile
+        fields = ['project_number', 'file', 'filename']

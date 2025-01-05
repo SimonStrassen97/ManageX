@@ -1,8 +1,14 @@
-from rest_framework import generics
+import os
+from django.http import FileResponse
+from comtypes.client import CreateObject
+from rest_framework import generics, status
 from rest_framework.response import Response
-from .models import Project
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
+from .models import Project, ProjectFile
 from django.contrib.auth.models import User
-from .serializers import ProjectSerializer, UserListSerializer, UserRegistrationSerializer, UserDetailSerializer
+from .serializers import ProjectSerializer, ProjectFileSerializer
+from .serializers import UserListSerializer, UserRegistrationSerializer, UserDetailSerializer
 
 
 #########################
@@ -89,3 +95,82 @@ class UserDetailView(generics.RetrieveAPIView):
     serializer_class = UserDetailSerializer
     queryset = User.objects.all()
     lookup_field = 'id'  # Fetch user by ID
+
+
+#########################
+# File views
+#########################
+
+class FileUploadView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def convert_to_pdf(self, pptx_path):
+        powerpoint = CreateObject("Powerpoint.Application")
+        pdf_path = pptx_path.replace('.pptx', '.pdf')
+        try:
+            deck = powerpoint.Presentations.Open(pptx_path)
+            deck.SaveAs(pdf_path, 32)  # 32 is PDF format
+            deck.Close()
+        finally:
+            powerpoint.Quit()
+        return pdf_path
+
+    def post(self, request):
+        file = request.FILES.get('file')
+        project_number = request.data.get('project_number')
+
+        if not file or not project_number:
+            return Response({'error': 'Both file and project_number required'}, 
+                          status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            project = Project.objects.get(project_number=project_number)
+        except Project.DoesNotExist:
+            return Response({'error': 'Project not found'}, 
+                          status=status.HTTP_404_NOT_FOUND)
+
+        file_type = os.path.splitext(file.name)[1].lower()
+        
+        if file_type == '.pptx':
+            # Convert PPTX to PDF
+            temp_path = os.path.join('media/temp', file.name)
+            with open(temp_path, 'wb') as temp_file:
+                for chunk in file.chunks():
+                    temp_file.write(chunk)
+            
+            pdf_path = self.convert_to_pdf(temp_path)
+            
+            with open(pdf_path, 'rb') as pdf_file:
+                project_file = ProjectFile.objects.create(
+                    project=project,
+                    file=pdf_file,
+                    original_filename=file.name.replace('.pptx', '.pdf')
+                )
+            
+            os.remove(temp_path)
+            os.remove(pdf_path)
+        else:
+            project_file = ProjectFile.objects.create(
+                project=project,
+                file=file,
+                original_filename=file.name
+            )
+
+        serializer = ProjectFileSerializer(project_file)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class FileRetrievalView(APIView):
+    def get(self, request, project_number):
+        try:
+            project_file = ProjectFile.objects.get(project__project_number=project_number)
+            return Response({
+                'id': project_file.id,
+                'filename': project_file.filename,
+                'uploaded_at': project_file.DATECREATE,
+                'download_url': request.build_absolute_uri(project_file.file.url)
+            })
+        except ProjectFile.DoesNotExist:
+            return Response(
+                {'error': 'No file found for this project'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )

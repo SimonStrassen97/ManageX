@@ -3,7 +3,7 @@ import { ErrorMessage } from "./ErrorMessage"
 
 interface DatePickerProps {
   label: string
-  value: string
+  value: string | undefined
   onChange: (date: string) => void
   required?: boolean
   error?: string

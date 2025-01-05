@@ -2,6 +2,7 @@
 from django.urls import path
 from .views import ProjectsView, CreateProjectView, DeleteProjectView, UpdateProjectView, RetrieveProjectView
 from .views import UserListView, UserRegistrationView, UserDetailView, CurrentUserView
+from .views import FileUploadView, FileRetrievalView
 
 urlpatterns = [
     path('api/projects/', ProjectsView.as_view(), name='projects'),  # All projects with filtering
@@ -13,6 +14,6 @@ urlpatterns = [
     path('api/users/<int:id>/', UserDetailView.as_view(), name='user_detail'),  # Retrieve a user
     path('api/users/register/', UserRegistrationView.as_view(), name='register_user'),  # Register a new user
     path('api/users/me/', CurrentUserView.as_view(), name='current_user'),  # Authenticated user's details
-
-]
-
+    path('api/files/upload/', FileUploadView.as_view(), name='file_upload'),  # Upload a file
+    path('api/files/retrieve/<int:project_number>/', FileRetrievalView.as_view(), name='file_download'),  # Download a file
+] 

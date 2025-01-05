@@ -6,6 +6,9 @@ import { addProjectThunk } from "./projectThunks"
 import { DatePicker, Button, Dropdown, Input } from "../../components"
 import { dateToString, stringToDate } from "../../utils/transforms"
 import { validateProject } from "./projectValidator"
+import { FileUploader } from "../../components/FileUploader"
+import { ProjectFile } from "../files/file-types"
+import { uploadFileThunk } from "../files/fileThunks"
 
 interface AddProjectModalProps {
   isOpen: boolean
@@ -22,9 +25,9 @@ const initialFormData: Project = {
   },
   timeline: {
     start_date: dateToString(new Date())!,
-    order_date: null,
-    acceptance_date: null,
-    delivery_date: null,
+    order_date: "",
+    acceptance_date: "",
+    delivery_date: "",
     finish_date: dateToString(new Date())!,
   },
   budget: {
@@ -42,7 +45,11 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>() // Type-safe dispatch
   const [formData, setFormData] = useState<Project>(initialFormData)
+  const [investFile, setInvestFile] = useState<File | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
+
+  const ACCEPTED_TYPES =
+    ".pdf,.pptx,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation"
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,6 +61,12 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
 
     try {
       dispatch(addProjectThunk(formData))
+      const uploadFile: ProjectFile = {
+        file: investFile || null,
+        project_number: formData.project_number,
+        filename: investFile?.name || "",
+      }
+      dispatch(uploadFileThunk(uploadFile))
       setFormData(initialFormData)
       onClose()
     } catch (error) {
@@ -134,6 +147,53 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
           />
 
           <DatePicker
+            label="Acceptance Date"
+            value={formData.timeline.acceptance_date as string}
+            onChange={date =>
+              setFormData(prev => ({
+                ...prev,
+                timeline: {
+                  ...prev.timeline,
+                  acceptance_date: date,
+                },
+              }))
+            }
+            required
+            error={errors.acceptance_date}
+          />
+
+          <DatePicker
+            label="Order Date"
+            value={formData.timeline.order_date as string}
+            onChange={date =>
+              setFormData(prev => ({
+                ...prev,
+                timeline: {
+                  ...prev.timeline,
+                  order_date: date,
+                },
+              }))
+            }
+            required
+            error={errors.order_date}
+          />
+
+          <DatePicker
+            label="Delivery Date"
+            value={formData.timeline.delivery_date as string}
+            onChange={date =>
+              setFormData(prev => ({
+                ...prev,
+                timeline: {
+                  ...prev.timeline,
+                  delivery_date: date,
+                },
+              }))
+            }
+            required
+            error={errors.delivery_date}
+          />
+          <DatePicker
             label="Finish Date"
             value={
               formData.timeline.finish_date // Non-null assertion
@@ -188,6 +248,14 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
                 },
               }))
             }
+          />
+          <FileUploader
+            accept={ACCEPTED_TYPES}
+            multiple={false}
+            onFileChange={(file: File | null) => {
+              setInvestFile(file)
+            }}
+            error={errors.files}
           />
           <div className="modal-actions">
             <Button label="Add Project" type="submit" />

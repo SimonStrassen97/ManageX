@@ -38,7 +38,7 @@ export const fetchCurrentUserThunk = createAsyncThunk<
 })
 
 export const registerUserThunk = createAsyncThunk<
-  NewUser,
+  CurrentUser,
   NewUser,
   { rejectValue: string }
 >("users/registerUser", async (newUserData: NewUser, { rejectWithValue }) => {

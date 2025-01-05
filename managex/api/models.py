@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+import os
 
 
 class StatusLookUp(models.Model):
@@ -12,8 +13,6 @@ class StatusLookUp(models.Model):
     ('started', 'Started'),
     ('finished', 'Finished'),
     ]
-        
-    status_id = models.IntegerField(unique=True)
     status_label = models.CharField(max_length=25, choices=STATUS_CHOICES)
 
     def __str__(self):
@@ -23,7 +22,6 @@ class CurrencyLookUp(models.Model):
     # lookup for project status
     # read: all
     # rest: admin
-    currency_id = models.IntegerField(unique=True)
     currency_label = models.CharField(max_length=25)
     exchange_rate_LC = models.FloatField()
 
@@ -89,4 +87,22 @@ class ProjectTimeline(models.Model):
 
     def __str__(self):
         return f"Project {self.project.project_number} is planned from {self.start_date} to {self.finish_date}"
+
+
+
+def validate_file_extension(value):
+    ext = os.path.splitext(value.name)[1]
+    valid_extensions = ['.pdf', '.pptx']
+    if ext.lower() not in valid_extensions:
+        raise ValidationError('Unsupported file extension.')
+        
+class ProjectFile(models.Model):
+    project_number = models.OneToOneField(Project, on_delete=models.CASCADE, related_name='file')
+    file = models.FileField(upload_to='project_files/', validators=[validate_file_extension])
+    filename = models.CharField(max_length=255)
+    DATECREATE = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.project.project_number} - {self.filename}"
+
 

@@ -46,3 +46,9 @@ export interface SerializedToken {
   access: string
   refresh: string
 }
+
+export interface SerializedProjectFile {
+  project_number: string
+  file: string
+  original_filename: string
+}

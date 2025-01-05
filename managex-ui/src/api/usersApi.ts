@@ -11,13 +11,15 @@ export const fetchUsers = async (): Promise<User[]> => {
 }
 
 export const fetchCurrentUser = async (): Promise<SerializedUserDetailed> => {
-  const response = await axiosInstance.post("/api/users/me/")
+  const response = await axiosInstance.get("/api/users/me/")
   const serializedUserDetailed: SerializedUserDetailed = response.data
   return UserTransformer.deserializeUser(serializedUserDetailed)
 }
 
-export const registerUser = async (newUser: NewUser): Promise<NewUser> => {
+export const registerUser = async (
+  newUser: NewUser,
+): Promise<SerializedUserDetailed> => {
   const response = await axiosInstance.post("/api/users/register/", newUser)
-  const serializedUser: NewUser = response.data
-  return serializedUser
+  const serializedUser: SerializedUserDetailed = response.data
+  return UserTransformer.deserializeUser(serializedUser)
 }
