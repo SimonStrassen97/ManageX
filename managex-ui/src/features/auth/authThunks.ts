@@ -1,6 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import { fetchToken, refreshToken } from "../../api/authApi"
 import { LoginData, AuthToken } from "./auth-types"
+import { TokenTransformer } from "../../utils/transforms"
+import { handleThunkError } from "../../utils/error-handling"
 
 // Define the async thunk for login action
 export const authThunk = createAsyncThunk<
@@ -9,27 +11,11 @@ export const authThunk = createAsyncThunk<
   { rejectValue: string }
 >("auth/login", async (loginData: LoginData, { rejectWithValue }) => {
   try {
-    // Fetch the token using the credentials
-    const authToken = await fetchToken(loginData)
-    if (!authToken || !authToken.access || !authToken.refresh) {
-      return rejectWithValue("Failed to obtain token.")
-    }
-
+    const response = await fetchToken(loginData)
+    const authToken = TokenTransformer.deserializeToken(response.data)
     return authToken
   } catch (error: any) {
-    if (error.response && error.response.data) {
-      return rejectWithValue(
-        error.response.data.detail || "Invalid credentials.",
-      )
-    } else if (error.message) {
-      // Network or client-side error
-      console.error("Network or client-side error:", error.message);
-      throw new Error("A network error occurred. Please try again.");
-    } else {
-      // Unknown error
-      console.error("Unknown error:", error);
-      throw new Error("An unknown error occurred.");
-    }
+    return handleThunkError(error, rejectWithValue)
   }
 })
 
@@ -40,23 +26,10 @@ export const refreshThunk = createAsyncThunk<
   { rejectValue: string }
 >("auth/refresh", async (refreshTokenValue: string, { rejectWithValue }) => {
   try {
-    const newToken = await refreshToken({ refreshToken: refreshTokenValue })
-    if (!newToken || !newToken.access || !newToken.refresh) {
-      return rejectWithValue("Failed to refresh token.")
-    }
-
+    const response = await refreshToken({ refreshToken: refreshTokenValue })
+    const newToken = TokenTransformer.deserializeToken(response.data)
     return newToken
   } catch (error: any) {
-    if (error.response && error.response.data) {
-      return rejectWithValue(
-        error.response.data.detail || "Failed to refresh token.",
-      )
-    } else if (error.message) {
-      console.error("Network or client-side error:", error.message);
-      throw new Error("A network error occurred. Please try again.");
-    } else {
-      console.error("Unknown error:", error);
-      throw new Error("An unknown error occurred.");
-    }
-}
+    return handleThunkError(error, rejectWithValue)
+  }
 })

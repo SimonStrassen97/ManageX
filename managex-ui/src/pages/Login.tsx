@@ -8,40 +8,27 @@ import { LoginData } from "../features/auth/auth-types"
 import { Input, Button } from "../components"
 
 export const Login = () => {
-  const dispatch = useDispatch<AppDispatch>() // Type-safe dispatch
+  const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const { error: authError } = useSelector((state: RootState) => state.auth)
-  const [generalError, setGeneralError] = useState<string | null>(null);
+  const { error: userError } = useSelector((state: RootState) => state.users)
 
   const handleLogin = async () => {
-    const loginData: LoginData = { username, password };
+    const loginData: LoginData = { username, password }
     try {
-      const authResult = await dispatch(authThunk(loginData)).unwrap();
-      try {
-        const fetchUserResult = await dispatch(fetchCurrentUserThunk()).unwrap();
-        navigate("/home"); // Redirect to home after successful login and fetching current user
-      } catch (fetchUserError) {
-        setGeneralError("Failed to fetch current user. Please try again later.");
-      }
-    } catch (error) {
-      console.error("Login failed:", error);
-      if (error instanceof Error) {
-        setGeneralError(error.message); // Handle the login error (e.g., show an error message to the user)
-      } else {
-        setGeneralError("An unknown error occurred.");
-      }
+      await dispatch(authThunk(loginData)).unwrap()
+      await dispatch(fetchCurrentUserThunk()).unwrap()
+      navigate("/home")
+    } catch (error: any) {
+      console.error("Login failed:", error)
     }
-  };
+  }
 
   const goToRegister = () => {
     navigate("/register")
   }
-
-  const closeGeneralError = () => {
-    setGeneralError(null);
-  };
 
   return (
     <div>
@@ -52,7 +39,7 @@ export const Login = () => {
         placeholder="Username"
         value={username}
         onChange={e => setUsername(e.target.value)}
-        error={authError}
+        error={authError || userError}
       />
       <Input
         label="Password"
@@ -60,17 +47,10 @@ export const Login = () => {
         placeholder="Password"
         value={password}
         onChange={e => setPassword(e.target.value)}
-        error={authError}
+        error={authError || userError}
       />
       <Button label="Login" onClick={handleLogin} />
       <Button label="Register" onClick={goToRegister} />
-
-      {generalError && (
-        <div className="error-popup">
-          <p>{generalError}</p>
-          <button onClick={closeGeneralError}>Close</button>
-        </div>
-      )}
     </div>
   )
 }

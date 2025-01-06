@@ -2,6 +2,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit"
 import { fetchProjects, addProject } from "../../api/projectApi"
 import { Project } from "./project-types"
 import { FilterState } from "../filter/filter-types"
+import { ProjectTransformer } from "../../utils/transforms"
+import { handleThunkError } from "../../utils/error-handling"
 
 // Define the async thunk for fetching projects with filters
 export const fetchProjectsThunk = createAsyncThunk<
@@ -12,16 +14,11 @@ export const fetchProjectsThunk = createAsyncThunk<
   "projects/fetchFilteredProjects",
   async (filters: FilterState, { rejectWithValue }) => {
     try {
-      const projects = await fetchProjects(filters)
+      const response = await fetchProjects(filters)
+      const projects = ProjectTransformer.deserializeProjects(response.data)
       return projects
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        return rejectWithValue(error.message || "Failed to fetch projects")
-      } else {
-        return rejectWithValue(
-          "An unknown error occurred while fetching projects",
-        )
-      }
+    } catch (error: any) {
+      return handleThunkError(error, rejectWithValue)
     }
   },
 )
@@ -31,14 +28,11 @@ export const addProjectThunk = createAsyncThunk<Project, Project>(
   "projects/addProject",
   async (project: Project, { rejectWithValue }) => {
     try {
-      const newProject = await addProject(project)
+      const response = await addProject(project)
+      const newProject = ProjectTransformer.deserializeProject(response.data)
       return newProject
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        return rejectWithValue(error.response.data)
-      } else {
-        return rejectWithValue("An unknown error occurred.")
-      }
+      return handleThunkError(error, rejectWithValue)
     }
   },
 )
