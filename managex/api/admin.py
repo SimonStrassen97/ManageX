@@ -3,17 +3,17 @@ from .models import Project, StatusLookUp, ProjectBudget, ProjectTimeline, Curre
 
 @admin.register(StatusLookUp)
 class StatusLookUpAdmin(admin.ModelAdmin):
-    list_display = ('status_id', 'status_label')
+    list_display = ('id', 'status_label')
     search_fields = ('status_label',)
 
 @admin.register(CurrencyLookUp)
 class CurrencyLookUpAdmin(admin.ModelAdmin):
-    list_display = ('currency_id', 'currency_label', 'exchange_rate_LC')
+    list_display = ('id', 'currency_label', 'exchange_rate_LC')
     search_fields = ('currency_label',)
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('project_name', 'project_number', 'project_lead')
+    list_display = ('id', 'project_name', 'project_number', 'project_lead', 'timeline')
     search_fields = ('project_name', 'project_number')
 
 @admin.register(ProjectBudget)

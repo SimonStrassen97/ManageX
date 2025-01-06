@@ -13,11 +13,11 @@ const axiosInstance = axios.create({
 // Request interceptor to add the token to headers
 axiosInstance.interceptors.request.use(
   config => {
-    const access_token = localStorage.getItem("access_token")
-    if (access_token) {
-      config.headers.Authorization = `Bearer ${JSON.parse(access_token)}`
-    }
-    return config
+      const access_token = localStorage.getItem("access_token")
+      if (access_token) {
+        config.headers.Authorization = `Bearer ${JSON.parse(access_token)}`
+      }
+      return config
   },
   error => {
     return Promise.reject(error)
@@ -29,9 +29,14 @@ axiosInstance.interceptors.response.use(
   response => response,
   error => {
     if (error.response) {
-      return Promise.reject(error)
+      // Server responded with a status other than 2xx
+      console.error("Response error:", error.response); // Log the error response
+      return Promise.reject(error); // Ensure the error is propagated
+    } else {
+      // Network error or other issues
+      console.error("Error in response interceptor:", error);
     }
   },
-)
+);
 
 export default axiosInstance

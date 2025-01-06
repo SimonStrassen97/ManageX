@@ -22,9 +22,13 @@ export const authThunk = createAsyncThunk<
         error.response.data.detail || "Invalid credentials.",
       )
     } else if (error.message) {
-      return rejectWithValue(error.message)
+      // Network or client-side error
+      console.error("Network or client-side error:", error.message);
+      throw new Error("A network error occurred. Please try again.");
     } else {
-      return rejectWithValue("An unknown error occurred.")
+      // Unknown error
+      console.error("Unknown error:", error);
+      throw new Error("An unknown error occurred.");
     }
   }
 })
@@ -48,9 +52,11 @@ export const refreshThunk = createAsyncThunk<
         error.response.data.detail || "Failed to refresh token.",
       )
     } else if (error.message) {
-      return rejectWithValue(error.message)
+      console.error("Network or client-side error:", error.message);
+      throw new Error("A network error occurred. Please try again.");
     } else {
-      return rejectWithValue("An unknown error occurred.")
+      console.error("Unknown error:", error);
+      throw new Error("An unknown error occurred.");
     }
-  }
+}
 })

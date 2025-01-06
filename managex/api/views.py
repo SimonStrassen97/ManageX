@@ -84,7 +84,7 @@ class UserRegistrationView(generics.CreateAPIView):
 
 # View to retrieve the authenticated user's info
 class CurrentUserView(generics.RetrieveAPIView):
-    serializer_class = UserListSerializer
+    serializer_class = UserDetailSerializer
 
     def get_object(self):
         return self.request.user

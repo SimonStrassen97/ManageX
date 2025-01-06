@@ -32,7 +32,7 @@ export const addProject = async (project: Project): Promise<Project> => {
   // transform the project to the serialized format
   const serializedProject = ProjectTransformer.serializeProject(project)
   const response = await axiosInstance.post<SerializedProject>(
-    "api/projects/create",
+    "api/projects/create/",
     serializedProject,
   )
   // transform the response data to the ProjectState type
