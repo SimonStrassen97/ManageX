@@ -1,23 +1,11 @@
 import { SerializedProject } from "../api/server-response-types"
 import {
   Project,
-  ProjectsState,
   ProjectInfo,
   Budget,
   Timeline,
 } from "../features/projects/project-types"
 
-import {
-  SerializedUserList,
-  SerializedUser,
-} from "../api/server-response-types"
-import { UsersState, User } from "../features/users/user-types"
-
-import { SerializedToken } from "../api/server-response-types"
-import { AuthToken } from "../features/auth/auth-types"
-
-import { SerializedUserDetailed } from "../api/server-response-types"
-import { CurrentUser } from "../features/users/user-types"
 
 export function stringToDate(dateString: string | null): Date | null {
   if (!dateString) return null
@@ -113,6 +101,12 @@ export class ProjectTransformer {
   }
 }
 
+import { SerializedUserDetailed } from "../api/server-response-types"
+import { CurrentUser } from "../features/users/user-types"
+import { SerializedUser } from "../api/server-response-types"
+import { User } from "../features/users/user-types"
+
+
 export class UserTransformer {
   static serializeUser(
     user: User | CurrentUser,
@@ -146,19 +140,22 @@ export class UserTransformer {
     }
   }
 
-  static serializeUsers(users: User[]): SerializedUserList {
+  static serializeUsers(users: User[]): SerializedUser[] {
     const serializedUsers: SerializedUser[] = users.map(
       user => this.serializeUser(user) as SerializedUser,
     )
-    return { users: serializedUsers }
+    return serializedUsers 
   }
 
-  static deserializeUsers(serializedUsers: SerializedUserList): User[] {
-    return serializedUsers.users.map(
+  static deserializeUsers(serializedUsers: SerializedUser[]): User[] {
+    return serializedUsers.map(
       serializedUser => this.deserializeUser(serializedUser) as User,
     )
   }
 }
+
+import { SerializedToken } from "../api/server-response-types"
+import { AuthToken } from "../features/auth/auth-types"
 
 export class TokenTransformer {
   static serializeToken(token: AuthToken): SerializedToken {
@@ -173,5 +170,32 @@ export class TokenTransformer {
       access: serializedToken.access,
       refresh: serializedToken.refresh,
     }
+  }
+}
+
+
+import { SerializedProjectFile } from "../api/server-response-types";
+import { ProjectFile, ProjectFileUpload } from "../features/files/file-types";
+
+export class FileTransformer {
+  static serializeFile(projectFileUpload: ProjectFileUpload): ProjectFileUpload {
+    return {
+      file: projectFileUpload.file,
+      project_number: projectFileUpload.project_number
+    }
+  }
+
+  static deserializeFile(serializedFile: SerializedProjectFile): ProjectFile {
+    return {
+      id: serializedFile.id,
+      project_number: serializedFile.project_number,
+      file: serializedFile.file, // File content is not returned from the server
+      filename: serializedFile.filename,
+      DATECREATE: serializedFile.DATECREATE,
+    };
+  }
+
+  static deserializeFiles(serializedFiles: SerializedProjectFile[]): ProjectFile[] {
+    return serializedFiles.map(this.deserializeFile);
   }
 }

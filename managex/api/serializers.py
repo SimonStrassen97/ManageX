@@ -118,9 +118,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         validated_data.pop('password_confirm')
         user = User.objects.create_user(**validated_data)
         return user
-    
 
 class ProjectFileSerializer(serializers.ModelSerializer):
+    project_number = serializers.CharField(source='project_number.project_number')
+    file = serializers.SerializerMethodField()
+
     class Meta:
         model = models.ProjectFile
-        fields = ['project_number', 'file', 'filename']
+        fields = ['id', 'project_number', 'file', 'filename', 'DATECREATE']
+
+    def get_file(self, obj):
+        request = self.context.get('request')
+        return request.build_absolute_uri(obj.file.url)

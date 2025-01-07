@@ -1,50 +1,51 @@
-import { createAsyncThunk } from "@reduxjs/toolkit"
-import { fetchUsers, fetchCurrentUser, registerUser } from "../../api/usersApi"
-import { CurrentUser, User, NewUser } from "./user-types"
-import { UserTransformer } from "../../utils/transforms"
-import { handleThunkError } from "../../utils/error-handling"
+// src/features/users/userThunks.ts
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { fetchUsers, fetchCurrentUser, registerUser } from "../../api/usersApi";
+import { CurrentUser, User, NewUser } from "./user-types";
+import { UserTransformer } from "../../utils/transforms";
+import { handleError, AppError} from "../../utils/error-handling";
 
 // Define the async thunk for fetching users
 export const fetchUsersThunk = createAsyncThunk<
   User[],
   void,
-  { rejectValue: string }
+  { rejectValue: AppError }
 >("users/fetchUserList", async (_, { rejectWithValue }) => {
   try {
-    const response = await fetchUsers()
-    const users = UserTransformer.deserializeUsers(response.data)
-    return users
+    const response = await fetchUsers();
+    const users = UserTransformer.deserializeUsers(response.data);
+    return users;
   } catch (error: any) {
-    return handleThunkError(error, rejectWithValue)
+    return handleError(error, rejectWithValue);
   }
-})
+});
 
 // Define the async thunk for fetching the current user
 export const fetchCurrentUserThunk = createAsyncThunk<
   CurrentUser,
   void,
-  { rejectValue: string }
+  { rejectValue: AppError }
 >("users/fetchCurrentUser", async (_, { rejectWithValue }) => {
   try {
-    const response = await fetchCurrentUser()
-    const user = UserTransformer.deserializeUser(response.data)
-    return user
+    const response = await fetchCurrentUser();
+    const user = UserTransformer.deserializeUser(response.data);
+    return user;
   } catch (error: any) {
-    return handleThunkError(error, rejectWithValue)
+    return handleError(error, rejectWithValue);
   }
-})
+});
 
 // Define the async thunk for registering a new user
 export const registerUserThunk = createAsyncThunk<
   CurrentUser,
   NewUser,
-  { rejectValue: string }
+  { rejectValue: AppError }
 >("users/registerUser", async (newUserData: NewUser, { rejectWithValue }) => {
   try {
-    const response = await registerUser(newUserData)
-    const user = UserTransformer.deserializeUser(response.data)
-    return user
+    const response = await registerUser(newUserData);
+    const user = UserTransformer.deserializeUser(response.data);
+    return user;
   } catch (error: any) {
-    return handleThunkError(error, rejectWithValue)
+    return handleError(error, rejectWithValue);
   }
-})
+});

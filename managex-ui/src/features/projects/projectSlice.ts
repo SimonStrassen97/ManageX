@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { fetchProjectsThunk, addProjectThunk } from "./projectThunks"
 import { ProjectsState } from "./project-types"
+import { AppError } from "../../utils/error-handling"
 
 // Define the initial state
 const initialState: ProjectsState = {
@@ -27,7 +28,7 @@ const projectSlice = createSlice({
       })
       .addCase(fetchProjectsThunk.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload as string
+        state.error = action.payload as AppError
       })
       .addCase(addProjectThunk.pending, state => {
         state.loading = true
@@ -40,7 +41,7 @@ const projectSlice = createSlice({
       })
       .addCase(addProjectThunk.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload as string
+        state.error = action.payload as AppError
       })
   },
 })

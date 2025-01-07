@@ -6,7 +6,7 @@ import { RootState } from "./app/store"
 import { GanttChart } from "./pages/GanttChart"
 import { Overview } from "./pages/Overview"
 import { MyProjects } from "./pages/MyProjects"
-import { Login } from "./pages/Login"
+import { Login } from "./features/auth/Login"
 import { Register } from "./pages/Register"
 import { PrivateRoute } from "./components/PrivateRoutes"
 

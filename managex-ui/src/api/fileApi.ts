@@ -1,8 +1,9 @@
 import axiosInstance from "./axiosConfig"
-import { ProjectFile } from "../features/files/file-types"
+import { SerializedProjectFile } from "./server-response-types"
+import { ProjectFileUpload } from "../features/files/file-types"
 
-export const uploadFile = async (projectFile: ProjectFile) => {
-  return await axiosInstance.post<ProjectFile>(
+export const uploadFile = async (projectFile: ProjectFileUpload) => {
+  return await axiosInstance.post<SerializedProjectFile>(
     "/api/files/upload/",
     projectFile,
     {
@@ -13,6 +14,6 @@ export const uploadFile = async (projectFile: ProjectFile) => {
   )
 }
 
-export const fetchProjectFiles = async (project_number: string) => {
-  return await axiosInstance.get<ProjectFile>(`/api/files/${project_number}/`)
+export const fetchProjectFile = async (project_number: string) => {
+  return await axiosInstance.get<SerializedProjectFile>(`/api/files/${project_number}/`)
 }

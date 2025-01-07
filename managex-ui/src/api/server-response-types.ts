@@ -34,10 +34,6 @@ export interface SerializedUser {
   last_name: string
 }
 
-export interface SerializedUserList {
-  users: SerializedUser[]
-}
-
 export interface SerializedUserDetailed extends SerializedUser {
   email: string
 }
@@ -48,7 +44,9 @@ export interface SerializedToken {
 }
 
 export interface SerializedProjectFile {
-  project_number: string
-  file: string
-  original_filename: string
+  id: number;
+  project_number: string;
+  file: string; // URL or path to the file
+  filename: string;
+  DATECREATE: string; // Date string
 }

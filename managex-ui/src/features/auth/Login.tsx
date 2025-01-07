@@ -1,11 +1,11 @@
 import React, { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import { RootState, AppDispatch } from "../app/store"
-import { authThunk } from "../features/auth/authThunks"
-import { fetchCurrentUserThunk } from "../features/users/userThunks"
-import { LoginData } from "../features/auth/auth-types"
-import { Input, Button } from "../components"
+import { RootState, AppDispatch } from "../../app/store"
+import { authThunk } from "./authThunks"
+import { fetchCurrentUserThunk } from "../users/userThunks"
+import { LoginData } from "./auth-types"
+import { Input, Button } from "../../components"
 
 export const Login = () => {
   const dispatch = useDispatch<AppDispatch>()

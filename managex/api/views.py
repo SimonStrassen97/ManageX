@@ -101,6 +101,7 @@ class UserDetailView(generics.RetrieveAPIView):
 # File views
 #########################
 
+
 class FileUploadView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
@@ -142,33 +143,29 @@ class FileUploadView(APIView):
             
             with open(pdf_path, 'rb') as pdf_file:
                 project_file = ProjectFile.objects.create(
-                    project=project,
+                    project_number=project,
                     file=pdf_file,
-                    original_filename=file.name.replace('.pptx', '.pdf')
+                    filename=file.name.replace('.pptx', '.pdf')
                 )
             
             os.remove(temp_path)
             os.remove(pdf_path)
         else:
             project_file = ProjectFile.objects.create(
-                project=project,
+                project_number=project,
                 file=file,
-                original_filename=file.name
+                filename=file.name
             )
 
-        serializer = ProjectFileSerializer(project_file)
+        serializer = ProjectFileSerializer(project_file, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class FileRetrievalView(APIView):
     def get(self, request, project_number):
         try:
-            project_file = ProjectFile.objects.get(project__project_number=project_number)
-            return Response({
-                'id': project_file.id,
-                'filename': project_file.filename,
-                'uploaded_at': project_file.DATECREATE,
-                'download_url': request.build_absolute_uri(project_file.file.url)
-            })
+            project_file = ProjectFile.objects.get(project_number__project_number=project_number)
+            serializer = ProjectFileSerializer(project_file, context={'request': request})
+            return Response(serializer.data)
         except ProjectFile.DoesNotExist:
             return Response(
                 {'error': 'No file found for this project'}, 
