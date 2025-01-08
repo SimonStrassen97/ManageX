@@ -6,7 +6,6 @@ import {
   Timeline,
 } from "../features/projects/project-types"
 
-
 export function stringToDate(dateString: string | null): Date | null {
   if (!dateString) return null
   const date = new Date(dateString)
@@ -28,6 +27,7 @@ export class ProjectTransformer {
       confirmed_project_status: project.project_info.confirmed_project_status,
       budget: project.budget
         ? {
+            approval_date: project.budget.approval_date,
             amount: project.budget.amount,
             currency: {
               currency_label: project.budget.currency.currency_label,
@@ -63,6 +63,7 @@ export class ProjectTransformer {
     const budget: Budget | null = serializedProject.budget
       ? {
           amount: serializedProject.budget.amount,
+          approval_date: serializedProject.budget.approval_date,
           currency: {
             currency_label: serializedProject.budget.currency.currency_label,
             exchange_rate: serializedProject.budget.currency.exchange_rate,
@@ -79,6 +80,7 @@ export class ProjectTransformer {
     }
 
     return {
+      project_id: serializedProject.id as number,
       project_number: serializedProject.project_number,
       project_info: projectInfo,
       budget: budget,
@@ -101,11 +103,39 @@ export class ProjectTransformer {
   }
 }
 
+import { SerializedStatus } from "../api/server-response-types"
+import { Status } from "../features/projects/project-types"
+
+export class StatusTransformer {
+  static serializeStatus(status: Status): SerializedStatus {
+    return {
+      id: status.id,
+      status_label: status.status_label,
+    }
+  }
+
+  static deserializeStatus(serializedStatus: SerializedStatus): Status {
+    return {
+      id: serializedStatus.id,
+      status_label: serializedStatus.status_label,
+    }
+  }
+
+  static serializeStatuses(statuses: Status[]): SerializedStatus[] {
+    return statuses.map(status => this.serializeStatus(status))
+  }
+
+  static deserializeStatuses(serializedStatuses: SerializedStatus[]): Status[] {
+    return serializedStatuses.map(serializedStatus =>
+      this.deserializeStatus(serializedStatus),
+    )
+  }
+}
+
 import { SerializedUserDetailed } from "../api/server-response-types"
 import { CurrentUser } from "../features/users/user-types"
 import { SerializedUser } from "../api/server-response-types"
 import { User } from "../features/users/user-types"
-
 
 export class UserTransformer {
   static serializeUser(
@@ -144,7 +174,7 @@ export class UserTransformer {
     const serializedUsers: SerializedUser[] = users.map(
       user => this.serializeUser(user) as SerializedUser,
     )
-    return serializedUsers 
+    return serializedUsers
   }
 
   static deserializeUsers(serializedUsers: SerializedUser[]): User[] {
@@ -173,15 +203,16 @@ export class TokenTransformer {
   }
 }
 
-
-import { SerializedProjectFile } from "../api/server-response-types";
-import { ProjectFile, ProjectFileUpload } from "../features/files/file-types";
+import { SerializedProjectFile } from "../api/server-response-types"
+import { ProjectFile, ProjectFileUpload } from "../features/files/file-types"
 
 export class FileTransformer {
-  static serializeFile(projectFileUpload: ProjectFileUpload): ProjectFileUpload {
+  static serializeFile(
+    projectFileUpload: ProjectFileUpload,
+  ): ProjectFileUpload {
     return {
       file: projectFileUpload.file,
-      project_number: projectFileUpload.project_number
+      project_number: projectFileUpload.project_number,
     }
   }
 
@@ -192,10 +223,12 @@ export class FileTransformer {
       file: serializedFile.file, // File content is not returned from the server
       filename: serializedFile.filename,
       DATECREATE: serializedFile.DATECREATE,
-    };
+    }
   }
 
-  static deserializeFiles(serializedFiles: SerializedProjectFile[]): ProjectFile[] {
-    return serializedFiles.map(this.deserializeFile);
+  static deserializeFiles(
+    serializedFiles: SerializedProjectFile[],
+  ): ProjectFile[] {
+    return serializedFiles.map(this.deserializeFile)
   }
 }

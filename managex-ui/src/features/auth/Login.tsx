@@ -39,7 +39,7 @@ export const Login = () => {
         placeholder="Username"
         value={username}
         onChange={e => setUsername(e.target.value)}
-        error={authError || userError}
+        error={authError?.message || userError?.message}
       />
       <Input
         label="Password"
@@ -47,7 +47,7 @@ export const Login = () => {
         placeholder="Password"
         value={password}
         onChange={e => setPassword(e.target.value)}
-        error={authError || userError}
+        error={authError?.message || userError?.message}
       />
       <Button label="Login" onClick={handleLogin} />
       <Button label="Register" onClick={goToRegister} />

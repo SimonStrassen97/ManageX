@@ -8,7 +8,7 @@ class StatusLookUpAdmin(admin.ModelAdmin):
 
 @admin.register(CurrencyLookUp)
 class CurrencyLookUpAdmin(admin.ModelAdmin):
-    list_display = ('id', 'currency_label', 'exchange_rate_LC')
+    list_display = ('id', 'currency_label', 'exchange_rate')
     search_fields = ('currency_label',)
 
 @admin.register(Project)

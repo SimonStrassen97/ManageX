@@ -1,5 +1,5 @@
 import axiosInstance from "./axiosConfig"
-import { SerializedProject } from "./server-response-types"
+import { SerializedProject, SerializedStatus } from "./server-response-types"
 import { Project } from "../features/projects/project-types"
 import { FilterState } from "../features/filter/filter-types"
 import { ProjectTransformer } from "../utils/transforms"
@@ -27,4 +27,12 @@ export const addProject = async (project: Project) => {
     "api/projects/create/",
     serializedProject,
   )
+}
+
+export const checkProjectNumberAvailability = async (projectNumber: string) => {
+  return await axiosInstance.get(`/api/projects/check/${projectNumber}/`)
+}
+
+export const fetchStatusList = async () => {
+  return await axiosInstance.get<SerializedStatus[]>("/api/status/")
 }

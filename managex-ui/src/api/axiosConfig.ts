@@ -1,7 +1,4 @@
 import axios from "axios"
-import { useSelector, useDispatch } from "react-redux"
-import { RootState, AppDispatch } from "../app/store"
-import { logout } from "../features/auth/authSlice"
 
 const axiosInstance = axios.create({
   baseURL: "http://127.0.0.1:8000", // Base URL for Django backend
@@ -29,13 +26,13 @@ axiosInstance.interceptors.response.use(
   response => response,
   error => {
     if (error.response) {
-      // Server responded with a status other than 2xx
-      console.error("Response error:", error.response) // Log the error response
-      return Promise.reject(error) // Ensure the error is propagated
+      // Handle server-side errors
+      console.error("Response error:", error.response)
     } else {
-      // Network error or other issues
-      console.error("Error in response interceptor:", error)
+      // Handle network or other unexpected errors
+      console.error("Network or unexpected error:", error.message)
     }
+    return Promise.reject(error) // Propagate the error
   },
 )
 

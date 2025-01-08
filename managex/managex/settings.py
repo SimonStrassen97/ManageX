@@ -83,6 +83,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Another alias for the same frontend
 ]
 
+CORS_ALLOW_HEADERS = [
+    "authorization",
+    "content-type",
+]
+
 ROOT_URLCONF = 'managex.urls'
 
 TEMPLATES = [

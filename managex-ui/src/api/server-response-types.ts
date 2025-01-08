@@ -1,6 +1,12 @@
+export interface SerializedStatus {
+  id: number
+  status_label: string
+}
+
 interface SerializedBudget {
   amount: number
   currency: SerializedCurrency
+  approval_date: string | null
 }
 
 interface SerializedCurrency {
@@ -18,6 +24,7 @@ interface SerializedTimeline {
 }
 
 export interface SerializedProject {
+  id?: number
   project_name: string
   project_number: string
   project_lead: string
@@ -44,9 +51,9 @@ export interface SerializedToken {
 }
 
 export interface SerializedProjectFile {
-  id: number;
-  project_number: string;
-  file: string; // URL or path to the file
-  filename: string;
-  DATECREATE: string; // Date string
+  id: number
+  project_number: string
+  file: string // URL or path to the file
+  filename: string
+  DATECREATE: string // Date string
 }

@@ -1,10 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { fetchProjectsThunk, addProjectThunk } from "./projectThunks"
-import { ProjectsState } from "./project-types"
+import {
+  fetchProjectsThunk,
+  addProjectThunk,
+  fetchStatusListThunk,
+} from "./projectThunks"
+import { Project, Status, ProjectsState, StatusState } from "./project-types"
 import { AppError } from "../../utils/error-handling"
 
 // Define the initial state
-const initialState: ProjectsState = {
+const initialProjectState: ProjectsState = {
   projects: [],
   loading: false,
   error: null,
@@ -13,7 +17,7 @@ const initialState: ProjectsState = {
 // Create the slice
 const projectSlice = createSlice({
   name: "projects",
-  initialState,
+  initialState: initialProjectState,
   reducers: {},
   extraReducers: builder => {
     builder
@@ -21,11 +25,14 @@ const projectSlice = createSlice({
         state.loading = true
         state.error = null
       })
-      .addCase(fetchProjectsThunk.fulfilled, (state, action) => {
-        state.loading = false
-        state.projects = action.payload
-        state.error = null
-      })
+      .addCase(
+        fetchProjectsThunk.fulfilled,
+        (state, action: PayloadAction<Project[]>) => {
+          state.loading = false
+          state.projects = action.payload
+          state.error = null
+        },
+      )
       .addCase(fetchProjectsThunk.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload as AppError
@@ -34,11 +41,14 @@ const projectSlice = createSlice({
         state.loading = true
         state.error = null
       })
-      .addCase(addProjectThunk.fulfilled, (state, action) => {
-        state.loading = false
-        state.projects.push(action.payload)
-        state.error = null
-      })
+      .addCase(
+        addProjectThunk.fulfilled,
+        (state, action: PayloadAction<Project>) => {
+          state.loading = false
+          state.projects.push(action.payload)
+          state.error = null
+        },
+      )
       .addCase(addProjectThunk.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload as AppError
@@ -47,3 +57,35 @@ const projectSlice = createSlice({
 })
 
 export const projectReducer = projectSlice.reducer
+
+const initialStatusState: StatusState = {
+  statuses: [],
+  loading: false,
+  error: null,
+}
+
+const statusSlice = createSlice({
+  name: "statuses",
+  initialState: initialStatusState,
+  reducers: {},
+  extraReducers: builder => {
+    builder
+      .addCase(fetchStatusListThunk.pending, state => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(
+        fetchStatusListThunk.fulfilled,
+        (state, action: PayloadAction<Status[]>) => {
+          state.loading = false
+          state.statuses = action.payload
+        },
+      )
+      .addCase(fetchStatusListThunk.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.error.message || "Failed to fetch statuses"
+      })
+  },
+})
+
+export const statusReducer = statusSlice.reducer

@@ -23,7 +23,7 @@ class CurrencyLookUp(models.Model):
     # read: all
     # rest: admin
     currency_label = models.CharField(max_length=25)
-    exchange_rate_LC = models.FloatField()
+    exchange_rate = models.FloatField()
 
     def __str__(self):
         return self.currency_label

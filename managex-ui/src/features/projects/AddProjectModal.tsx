@@ -1,14 +1,19 @@
-import React, { useState } from "react"
-import { useDispatch } from "react-redux"
-import { AppDispatch } from "../../app/store"
+import React, { useState, useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { AppDispatch, RootState } from "../../app/store"
 import { Project } from "./project-types"
-import { addProjectThunk } from "./projectThunks"
+import {
+  addProjectThunk,
+  checkProjectNumberAvailabilityThunk,
+} from "./projectThunks"
 import { DatePicker, Button, Dropdown, Input } from "../../components"
 import { dateToString, stringToDate } from "../../utils/transforms"
 import { validateProject } from "./projectValidator"
 import { FileUploader } from "../../components/FileUploader"
-import { ProjectFile } from "../files/file-types"
+import { ProjectFileUpload } from "../files/file-types"
 import { uploadFileThunk } from "../files/fileThunks"
+import { fetchUsersThunk } from "../users/userThunks"
+import { fetchStatusListThunk } from "../projects/projectThunks"
 
 interface AddProjectModalProps {
   isOpen: boolean
@@ -19,7 +24,7 @@ const initialFormData: Project = {
   project_number: "",
   project_info: {
     project_name: "",
-    project_lead: "",
+    project_lead: localStorage.getItem("username") || "",
     project_status: "planned",
     confirmed_project_status: "",
   },
@@ -32,6 +37,7 @@ const initialFormData: Project = {
   },
   budget: {
     amount: 0,
+    approval_date: null,
     currency: {
       currency_label: "CHF",
       exchange_rate: 1.0,
@@ -48,30 +54,45 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
   const [investFile, setInvestFile] = useState<File | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
+  const users = useSelector((state: RootState) => state.users.users)
+  const statuses = useSelector((state: RootState) => state.status.statuses)
+
+  useEffect(() => {
+    dispatch(fetchUsersThunk())
+    dispatch(fetchStatusListThunk())
+  }, [dispatch])
+
   const ACCEPTED_TYPES =
     ".pdf,.pptx,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation"
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const newErrors = validateProject(formData)
+
+    const newErrors = await validateProject(formData)
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors)
       return
     }
 
     try {
-      dispatch(addProjectThunk(formData))
-      const uploadFile: ProjectFile = {
+      await dispatch(addProjectThunk(formData))
+      const uploadFile: ProjectFileUpload = {
         file: investFile || null,
         project_number: formData.project_number,
-        filename: investFile?.name || "",
       }
-      dispatch(uploadFileThunk(uploadFile))
+      await dispatch(uploadFileThunk(uploadFile))
       setFormData(initialFormData)
       onClose()
     } catch (error) {
       console.error("Error adding project:", error)
     }
+  }
+
+  const handleClose = () => {
+    setFormData(initialFormData)
+    setInvestFile(null)
+    setErrors({})
+    onClose()
   }
 
   if (!isOpen) return null
@@ -90,10 +111,8 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
                 project_number: e.target.value,
               }))
             }
-            required
             error={errors.project_number}
           />
-
           <Input
             label="Project Name"
             type="text"
@@ -107,32 +126,29 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
                 },
               }))
             }
-            required
             error={errors.project_name}
           />
-
-          <Input
+          <Dropdown
             label="Project Lead"
-            type="text"
             value={formData.project_info?.project_lead || ""}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            options={users.map(user => ({
+              value: user.id,
+              label: user.username,
+            }))}
+            onChange={(project_lead: string) =>
               setFormData(prev => ({
                 ...prev,
                 project_info: {
                   ...prev.project_info,
-                  project_lead: e.target.value,
+                  project_lead,
                 },
               }))
             }
-            required
             error={errors.project_lead}
           />
-
           <DatePicker
             label="Start Date"
-            value={
-              formData.timeline.start_date // Non-null assertion
-            }
+            value={formData.timeline.start_date}
             onChange={date =>
               setFormData(prev => ({
                 ...prev,
@@ -145,7 +161,6 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
             required
             error={errors.start_date}
           />
-
           <DatePicker
             label="Acceptance Date"
             value={formData.timeline.acceptance_date as string}
@@ -161,7 +176,6 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
             required
             error={errors.acceptance_date}
           />
-
           <DatePicker
             label="Order Date"
             value={formData.timeline.order_date as string}
@@ -177,7 +191,6 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
             required
             error={errors.order_date}
           />
-
           <DatePicker
             label="Delivery Date"
             value={formData.timeline.delivery_date as string}
@@ -190,14 +203,11 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
                 },
               }))
             }
-            required
             error={errors.delivery_date}
           />
           <DatePicker
             label="Finish Date"
-            value={
-              formData.timeline.finish_date // Non-null assertion
-            }
+            value={formData.timeline.finish_date}
             onChange={date =>
               setFormData(prev => ({
                 ...prev,
@@ -207,19 +217,18 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
                 },
               }))
             }
-            required
             error={errors.finish_date}
           />
-
           <Input
             label="Budget Amount"
             type="number"
-            value={formData.budget?.amount || 0}
+            value={formData.budget?.amount || ""}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setFormData(prev => ({
                 ...prev,
                 budget: {
                   ...prev.budget,
+                  approval_date: prev.budget?.approval_date || null,
                   amount: Number(e.target.value),
                   currency: prev.budget?.currency || {
                     currency_label: "CHF",
@@ -228,10 +237,8 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
                 },
               }))
             }
-            required
             error={errors.amount}
           />
-
           <Dropdown
             label="Currency"
             value={formData.budget?.currency.currency_label || "CHF"}
@@ -240,6 +247,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
               setFormData(prev => ({
                 ...prev,
                 budget: {
+                  approval_date: prev.budget?.approval_date || null,
                   amount: prev.budget?.amount || 0,
                   currency: {
                     currency_label: currency,
@@ -259,7 +267,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
           />
           <div className="modal-actions">
             <Button label="Add Project" type="submit" />
-            <Button label="Cancel" type="button" onClick={onClose} />
+            <Button label="Cancel" type="button" onClick={handleClose} />
           </div>
         </form>
       </div>

@@ -1,9 +1,14 @@
 import { AppError } from "../../utils/error-handling"
 
-// Domain Types
+export interface Status {
+  id: number
+  status_label: string
+}
+
 export interface Budget {
   amount: number
   currency: Currency
+  approval_date: string | null
 }
 
 export interface Currency {
@@ -27,6 +32,7 @@ export interface ProjectInfo {
 }
 
 export interface Project {
+  project_id?: number
   project_number: string
   project_info: ProjectInfo
   budget?: Budget | null
@@ -38,4 +44,10 @@ export interface ProjectsState {
   projects: Project[]
   loading: boolean
   error: AppError | null
+}
+
+export interface StatusState {
+  statuses: Status[]
+  loading: boolean
+  error: string | null
 }

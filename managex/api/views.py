@@ -5,10 +5,11 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
-from .models import Project, ProjectFile
+from .models import Project, ProjectFile, StatusLookUp
 from django.contrib.auth.models import User
-from .serializers import ProjectSerializer, ProjectFileSerializer
+from .serializers import ProjectFetchSerializer, ProjectWriteSerializer, ProjectFileSerializer, ProjectExistsSerializer
 from .serializers import UserListSerializer, UserRegistrationSerializer, UserDetailSerializer
+from .serializers import StatusLookUpSerializer
 
 
 #########################
@@ -19,7 +20,7 @@ from .serializers import UserListSerializer, UserRegistrationSerializer, UserDet
 
 # View to get list of projects
 class ProjectsView(generics.ListAPIView):
-    serializer_class = ProjectSerializer
+    serializer_class = ProjectFetchSerializer
 
     def get_queryset(self):
         queryset = Project.objects.all()
@@ -48,24 +49,33 @@ class ProjectsView(generics.ListAPIView):
         return queryset
 
 class CreateProjectView(generics.CreateAPIView):
-    serializer_class = ProjectSerializer
+    serializer_class = ProjectWriteSerializer
     queryset = Project.objects.all()
 
 class DeleteProjectView(generics.DestroyAPIView):
-    serializer_class = ProjectSerializer
+    serializer_class = ProjectFetchSerializer
     queryset = Project.objects.all()
     lookup_field = 'id'
 
 class UpdateProjectView(generics.UpdateAPIView):
-    serializer_class = ProjectSerializer
+    serializer_class = ProjectWriteSerializer
     queryset = Project.objects.all()
     lookup_field = 'id'
 
 class RetrieveProjectView(generics.RetrieveAPIView):
-    serializer_class = ProjectSerializer
+    serializer_class = ProjectFetchSerializer
     queryset = Project.objects.all()
     lookup_field = 'id'
 
+class CheckProjectView(APIView):
+    def get(self, request, project_number):
+        exists = Project.objects.filter(project_number=project_number).exists()
+        serializer = ProjectExistsSerializer({"exists": exists})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class StatusListView(generics.ListAPIView):
+    serializer_class = StatusLookUpSerializer
+    queryset = StatusLookUp.objects.all()
 
 #########################
 # User views

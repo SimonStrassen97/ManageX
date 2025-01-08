@@ -1,16 +1,21 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { useSelector, useDispatch } from "react-redux"
-import { RootState, AppDispatch } from "../../app/store"
 import { fetchProjectsThunk } from "../projects/projectThunks"
 import { DatePicker } from "../../components/DatePicker"
 import { Dropdown } from "../../components/Dropdown"
 import { Button } from "../../components/Button"
 import { setStartDate, setEndDate, setStatus } from "./filterSlice"
 import { Status, statusOptions, FilterState } from "./filter-types"
+import { RootState, AppDispatch } from "../../app/store"
 
 export const FilterWindow: React.FC = () => {
   const filter = useSelector((state: RootState) => state.filters)
   const dispatch = useDispatch<AppDispatch>() // Type-safe dispatch
+
+  useEffect(() => {
+    // Fetch projects only if the filter state has changed
+    dispatch(fetchProjectsThunk(filter))
+  }, [dispatch])
 
   const handleFilter = () => {
     if (new Date(filter.startDate) > new Date(filter.endDate)) {
@@ -44,11 +49,7 @@ export const FilterWindow: React.FC = () => {
         options={statusOptions}
         onChange={status => dispatch(setStatus(status))}
       />
-      <Button
-        label="Apply Filters"
-        onClick={handleFilter}
-        className="btn-primary"
-      />
+      <Button label="Apply Filters" onClick={handleFilter} />
     </div>
   )
 }

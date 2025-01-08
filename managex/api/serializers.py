@@ -1,39 +1,38 @@
 from rest_framework import serializers
-from . import models
+from .models import Project, ProjectBudget, ProjectTimeline, StatusLookUp, CurrencyLookUp, ProjectFile
 from django.contrib.auth.models import User
 
 class StatusLookUpSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.StatusLookUp
-        fields = ['status_id', 'status_label']
+        model = StatusLookUp
+        fields = ['id', 'status_label']
 
 class CurrencyLookUpSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.CurrencyLookUp
+        model = CurrencyLookUp
         fields = ['currency_label', 'exchange_rate_LC']
 
 class ProjectBudgetSerializer(serializers.ModelSerializer):
     currency = CurrencyLookUpSerializer()
 
     class Meta:
-        model = models.ProjectBudget
+        model = ProjectBudget
         fields = ['amount', 'currency', 'approval_date']
 
 class ProjectTimelineSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.ProjectTimeline
+        model = ProjectTimeline
         fields = ['start_date', 'order_date', 'acceptance_date', 'delivery_date', 'finish_date']
 
-class ProjectSerializer(serializers.ModelSerializer):
-    # Including related fields
-    project_lead = serializers.StringRelatedField()  # This will display the project lead's name (from User)
+class ProjectFetchSerializer(serializers.ModelSerializer):
+    project_lead = serializers.StringRelatedField()  # Display the project lead's name (from User)
     project_status = serializers.StringRelatedField()
     confirmed_project_status = serializers.StringRelatedField()
-    budget = ProjectBudgetSerializer(read_only=True)  # One-to-Many relation to ProjectBudget
-    timeline = ProjectTimelineSerializer(read_only=True)  # One-to-Many relation to ProjectTimeline
+    budget = ProjectBudgetSerializer()
+    timeline = ProjectTimelineSerializer()
 
     class Meta:
-        model = models.Project
+        model = Project
         fields = [
             'id',
             'project_name',
@@ -44,18 +43,58 @@ class ProjectSerializer(serializers.ModelSerializer):
             'budget',
             'timeline'
         ]
+        read_only_fields = ['id', 'project_lead', 'project_status', 'confirmed_project_status']
+        
+class ProjectWriteSerializer(serializers.ModelSerializer):
+    project_lead_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), write_only=True, source='project_lead'
+    )
+    project_status_id = serializers.PrimaryKeyRelatedField(
+        queryset=StatusLookUp.objects.all(), write_only=True, source='project_status'
+    )
+    confirmed_project_status_id = serializers.PrimaryKeyRelatedField(
+        queryset=StatusLookUp.objects.all(), write_only=True, source='confirmed_project_status', required=False
+    )
+    budget = ProjectBudgetSerializer()
+    timeline = ProjectTimelineSerializer()
+
+    class Meta:
+        model = Project
+        fields = [
+            'project_name',
+            'project_number',
+            'project_lead_id',
+            'project_status_id',
+            'confirmed_project_status_id',
+            'budget',
+            'timeline'
+        ]
+
+    def create(self, validated_data):
+        # Separate nested fields for ProjectBudget and ProjectTimeline to create those objects
+        budget_data = validated_data.pop('budget')
+        timeline_data = validated_data.pop('timeline')
+
+        # Create the Project instance
+        project = Project.objects.create(**validated_data)
+
+        # Create related budget and timeline instances
+        ProjectBudget.objects.create(project=project, **budget_data)
+        ProjectTimeline.objects.create(project=project, **timeline_data)
+
+        return project
 
     def update(self, instance, validated_data):
         # Handle updates to the related fields (budget and timeline)
-        if 'budget' in validated_data:
-            budget_data = validated_data.pop('budget')
+        budget_data = validated_data.pop('budget', None)
+        if budget_data:
             instance.budget.amount = budget_data.get('amount', instance.budget.amount)
             instance.budget.currency = budget_data.get('currency', instance.budget.currency)
             instance.budget.approval_date = budget_data.get('approval_date', instance.budget.approval_date)
             instance.budget.save()
 
-        if 'timeline' in validated_data:
-            timeline_data = validated_data.pop('timeline')
+        timeline_data = validated_data.pop('timeline', None)
+        if timeline_data:
             instance.timeline.start_date = timeline_data.get('start_date', instance.timeline.start_date)
             instance.timeline.order_date = timeline_data.get('order_date', instance.timeline.order_date)
             instance.timeline.acceptance_date = timeline_data.get('acceptance_date', instance.timeline.acceptance_date)
@@ -72,21 +111,10 @@ class ProjectSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
     
-    def create(self, validated_data):
-        # Separate nested fields for ProjectBudget and ProjectTimeline to create those objects
-        budget_data = validated_data.pop('budget')
-        timeline_data = validated_data.pop('timeline')
-
-        # Create the Project instance
-        project = models.Project.objects.create(**validated_data)
-
-        # Create related budget and timeline instances
-        models.ProjectBudget.objects.create(project=project, **budget_data)
-        models.ProjectTimeline.objects.create(project=project, **timeline_data)
-
-        return project
-
+class ProjectExistsSerializer(serializers.Serializer):
+    exists = serializers.BooleanField()
 
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -124,7 +152,7 @@ class ProjectFileSerializer(serializers.ModelSerializer):
     file = serializers.SerializerMethodField()
 
     class Meta:
-        model = models.ProjectFile
+        model = ProjectFile
         fields = ['id', 'project_number', 'file', 'filename', 'DATECREATE']
 
     def get_file(self, obj):
