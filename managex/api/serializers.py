@@ -10,14 +10,19 @@ class StatusLookUpSerializer(serializers.ModelSerializer):
 class CurrencyLookUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = CurrencyLookUp
-        fields = ['currency_label', 'exchange_rate_LC']
+        fields = ['currency_label', 'exchange_rate']
 
 class ProjectBudgetSerializer(serializers.ModelSerializer):
-    currency = CurrencyLookUpSerializer()
+    currency = serializers.PrimaryKeyRelatedField(queryset=CurrencyLookUp.objects.all())
 
     class Meta:
         model = ProjectBudget
         fields = ['amount', 'currency', 'approval_date']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['currency'] = CurrencyLookUpSerializer(instance.currency).data
+        return representation
 
 class ProjectTimelineSerializer(serializers.ModelSerializer):
     class Meta:
@@ -46,14 +51,14 @@ class ProjectFetchSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'project_lead', 'project_status', 'confirmed_project_status']
         
 class ProjectWriteSerializer(serializers.ModelSerializer):
-    project_lead_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), write_only=True, source='project_lead'
+    project_lead = serializers.SlugRelatedField(
+        queryset=User.objects.all(), slug_field='username',
     )
-    project_status_id = serializers.PrimaryKeyRelatedField(
-        queryset=StatusLookUp.objects.all(), write_only=True, source='project_status'
+    project_status = serializers.SlugRelatedField(
+        queryset=StatusLookUp.objects.all(), slug_field='status_label', 
     )
-    confirmed_project_status_id = serializers.PrimaryKeyRelatedField(
-        queryset=StatusLookUp.objects.all(), write_only=True, source='confirmed_project_status', required=False
+    confirmed_project_status = serializers.SlugRelatedField(
+        queryset=StatusLookUp.objects.all(), slug_field='status_label', required=False, allow_null=True,
     )
     budget = ProjectBudgetSerializer()
     timeline = ProjectTimelineSerializer()
@@ -63,9 +68,9 @@ class ProjectWriteSerializer(serializers.ModelSerializer):
         fields = [
             'project_name',
             'project_number',
-            'project_lead_id',
-            'project_status_id',
-            'confirmed_project_status_id',
+            'project_lead',
+            'project_status',
+            'confirmed_project_status',
             'budget',
             'timeline'
         ]

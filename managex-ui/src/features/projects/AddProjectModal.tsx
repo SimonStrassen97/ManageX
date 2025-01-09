@@ -24,7 +24,7 @@ const initialFormData: Project = {
   project_number: "",
   project_info: {
     project_name: "",
-    project_lead: localStorage.getItem("username") || "",
+    project_lead: localStorage.getItem("user") || "",
     project_status: "planned",
     confirmed_project_status: "",
   },
@@ -131,10 +131,8 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
           <Dropdown
             label="Project Lead"
             value={formData.project_info?.project_lead || ""}
-            options={users.map(user => ({
-              value: user.id,
-              label: user.username,
-            }))}
+            options={users.map(user => user.username)}
+            disable_all={true}
             onChange={(project_lead: string) =>
               setFormData(prev => ({
                 ...prev,
@@ -144,7 +142,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
                 },
               }))
             }
-            error={errors.project_lead}
+            //error={errors.project_lead}
           />
           <DatePicker
             label="Start Date"

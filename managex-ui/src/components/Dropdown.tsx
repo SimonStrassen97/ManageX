@@ -5,6 +5,7 @@ interface DropdownProps<T> {
   value: T
   options: T[]
   onChange: (value: T) => void
+  disable_all?: boolean
 }
 
 export const Dropdown = <T extends string | number>({
@@ -12,13 +13,18 @@ export const Dropdown = <T extends string | number>({
   value,
   options,
   onChange,
+  disable_all = false,
 }: DropdownProps<T>) => {
   return (
     <div>
       <label>
         {label}:
         <select value={value} onChange={e => onChange(e.target.value as T)}>
-          <option value="">All</option>
+          {!disable_all && (
+            <option value="">
+              All
+            </option>
+          )}
           {options.map(option => (
             <option key={option} value={option}>
               {String(option).charAt(0).toUpperCase() + String(option).slice(1)}

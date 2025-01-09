@@ -37,7 +37,7 @@ class Project(models.Model):
     project_number = models.CharField(max_length=10, unique=True)
     project_lead = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     project_status = models.ForeignKey(StatusLookUp, on_delete=models.SET_NULL, null=True, related_name='proposed_status_projects')
-    confirmed_project_status = models.ForeignKey(StatusLookUp, on_delete=models.SET_NULL, null=True, related_name='approved_status_projects', related_query_name='status')
+    confirmed_project_status = models.ForeignKey(StatusLookUp, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_status_projects', related_query_name='status')
     DATECREATE = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
