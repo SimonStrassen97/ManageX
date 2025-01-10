@@ -31,7 +31,7 @@ export class ProjectTransformer {
             amount: project.budget.amount,
             currency: {
               currency_label: project.budget.currency.currency_label,
-              exchange_rate: project.budget.currency.exchange_rate,
+              exchange_rate: project.budget.currency.exchange_rate as number,
             },
           }
         : null,

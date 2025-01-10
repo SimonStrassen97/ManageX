@@ -40,7 +40,6 @@ const initialFormData: Project = {
     approval_date: null,
     currency: {
       currency_label: "CHF",
-      exchange_rate: 1.0,
     },
   },
 }
@@ -80,8 +79,8 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
         file: investFile || null,
         project_number: formData.project_number,
       }
-      await dispatch(uploadFileThunk(uploadFile))
-      setFormData(initialFormData)
+      //await dispatch(uploadFileThunk(uploadFile))
+      //setFormData(initialFormData)
       onClose()
     } catch (error) {
       console.error("Error adding project:", error)
@@ -142,7 +141,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
                 },
               }))
             }
-            //error={errors.project_lead}
+            error={errors.project_lead}
           />
           <DatePicker
             label="Start Date"
@@ -230,7 +229,6 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
                   amount: Number(e.target.value),
                   currency: prev.budget?.currency || {
                     currency_label: "CHF",
-                    exchange_rate: 1.0,
                   }, // Ensure currency is included
                 },
               }))
@@ -249,7 +247,6 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
                   amount: prev.budget?.amount || 0,
                   currency: {
                     currency_label: currency,
-                    exchange_rate: prev.budget?.currency.exchange_rate || 1.0,
                   },
                 },
               }))

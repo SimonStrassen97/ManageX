@@ -30,7 +30,16 @@ export const addProject = async (project: Project) => {
 }
 
 export const checkProjectNumberAvailability = async (projectNumber: string) => {
-  return await axiosInstance.get(`/api/projects/check/${projectNumber}/`)
+  try {
+    const response = await axiosInstance.get(
+      `/api/projects/check/${projectNumber}/`,
+    )
+    const isAvailable = !response.data.exists
+    return isAvailable // Return true if the project number is available
+  } catch (error) {
+    console.error("Error checking project number availability:", error)
+    return false // Return false if there is an error
+  }
 }
 
 export const fetchStatusList = async () => {

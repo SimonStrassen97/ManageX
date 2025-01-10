@@ -13,7 +13,7 @@ export interface Budget {
 
 export interface Currency {
   currency_label: string
-  exchange_rate: number
+  exchange_rate?: number
 }
 
 export interface Timeline {

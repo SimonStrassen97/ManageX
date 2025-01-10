@@ -13,7 +13,7 @@ class CurrencyLookUpAdmin(admin.ModelAdmin):
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('id', 'project_name', 'project_number', 'project_lead', 'timeline')
+    list_display = ('id', 'project_name', 'project_number', 'project_lead', 'timeline', 'project_status', 'confirmed_project_status', 'budget')
     search_fields = ('project_name', 'project_number')
 
 @admin.register(ProjectBudget)

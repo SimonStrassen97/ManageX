@@ -12,16 +12,36 @@ class CurrencyLookUpSerializer(serializers.ModelSerializer):
         model = CurrencyLookUp
         fields = ['currency_label', 'exchange_rate']
 
+class CurrencyLabelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CurrencyLookUp
+        fields = ['currency_label']
+
 class ProjectBudgetSerializer(serializers.ModelSerializer):
-    currency = serializers.PrimaryKeyRelatedField(queryset=CurrencyLookUp.objects.all())
+    currency = CurrencyLabelSerializer()
 
     class Meta:
         model = ProjectBudget
         fields = ['amount', 'currency', 'approval_date']
 
+    def create(self, validated_data):
+        currency_data = validated_data.pop('currency')
+        currency = CurrencyLookUp.objects.get(currency_label=currency_data['currency_label'])
+        budget = ProjectBudget.objects.create(currency=currency, **validated_data)
+        return budget
+
+    def update(self, instance, validated_data):
+        currency_data = validated_data.pop('currency')
+        currency = CurrencyLookUp.objects.get(currency_label=currency_data['currency_label'])
+        instance.currency = currency
+        instance.amount = validated_data.get('amount', instance.amount)
+        instance.approval_date = validated_data.get('approval_date', instance.approval_date)
+        instance.save()
+        return instance
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['currency'] = CurrencyLookUpSerializer(instance.currency).data
+        representation['currency'] = CurrencyLabelSerializer(instance.currency).data
         return representation
 
 class ProjectTimelineSerializer(serializers.ModelSerializer):
@@ -52,13 +72,13 @@ class ProjectFetchSerializer(serializers.ModelSerializer):
         
 class ProjectWriteSerializer(serializers.ModelSerializer):
     project_lead = serializers.SlugRelatedField(
-        queryset=User.objects.all(), slug_field='username',
+        slug_field='username', queryset=User.objects.all()
     )
     project_status = serializers.SlugRelatedField(
-        queryset=StatusLookUp.objects.all(), slug_field='status_label', 
+        slug_field='status_label', queryset=StatusLookUp.objects.all()
     )
     confirmed_project_status = serializers.SlugRelatedField(
-        queryset=StatusLookUp.objects.all(), slug_field='status_label', required=False, allow_null=True,
+        slug_field='status_label', queryset=StatusLookUp.objects.all(), required=False, allow_null=True
     )
     budget = ProjectBudgetSerializer()
     timeline = ProjectTimelineSerializer()
@@ -80,14 +100,19 @@ class ProjectWriteSerializer(serializers.ModelSerializer):
         budget_data = validated_data.pop('budget')
         timeline_data = validated_data.pop('timeline')
 
+        # Handle the currency field in the budget data
+        currency_data = budget_data.pop('currency')
+        currency = CurrencyLookUp.objects.get(currency_label=currency_data['currency_label'])
+
         # Create the Project instance
         project = Project.objects.create(**validated_data)
 
         # Create related budget and timeline instances
-        ProjectBudget.objects.create(project=project, **budget_data)
+        ProjectBudget.objects.create(project=project, currency=currency, **budget_data)
         ProjectTimeline.objects.create(project=project, **timeline_data)
 
         return project
+
 
     def update(self, instance, validated_data):
         # Handle updates to the related fields (budget and timeline)
