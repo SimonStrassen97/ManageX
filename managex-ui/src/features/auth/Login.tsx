@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { RootState, AppDispatch } from "../../app/store"
 import { authThunk } from "./authThunks"
 import { fetchCurrentUserThunk } from "../users/userThunks"
-import { LoginData } from "./auth-types"
+import { LoginData } from "../../types/auth-types"
 import { Input, Button } from "../../components"
 
 export const Login = () => {

@@ -1,10 +1,10 @@
 // src/features/files/fileThunks.ts
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { uploadFile, fetchProjectFile } from "../../api/fileApi";
-import { ProjectFile, ProjectFileUpload } from "./file-types";
+import { ProjectFile, ProjectFileUpload } from "../../types/file-types";
 import { handleError, AppError } from "../../utils/error-handling";
 import { FileTransformer } from "../../utils/transforms";
-import { SerializedProjectFile } from "../../api/server-response-types";
+import { SerializedProjectFile } from "../../types/server-response-types";
 
 // Define the async thunk for uploading a file
 export const uploadFileThunk = createAsyncThunk<

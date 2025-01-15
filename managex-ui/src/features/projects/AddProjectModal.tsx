@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "../../app/store"
-import { Project } from "./project-types"
+import { Project } from "../../types/project-types"
 import {
   addProjectThunk,
   checkProjectNumberAvailabilityThunk,
@@ -10,7 +10,7 @@ import { DatePicker, Button, Dropdown, Input } from "../../components"
 import { dateToString, stringToDate } from "../../utils/transforms"
 import { validateProject } from "./projectValidator"
 import { FileUploader } from "../../components/FileUploader"
-import { ProjectFileUpload } from "../files/file-types"
+import { ProjectFileUpload } from "../../types/file-types"
 import { uploadFileThunk } from "../files/fileThunks"
 import { fetchUsersThunk } from "../users/userThunks"
 import { fetchStatusListThunk } from "../projects/projectThunks"

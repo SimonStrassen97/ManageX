@@ -1,7 +1,7 @@
 // src/features/users/userSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { fetchUsersThunk, fetchCurrentUserThunk, registerUserThunk } from "./userThunks";
-import { User, CurrentUser, CurrentUserState, UsersState } from "./user-types";
+import { User, CurrentUser, CurrentUserState, UsersState } from "../../types/user-types";
 import { AppError } from "../../utils/error-handling";
 
 // Define the initial state for users

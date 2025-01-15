@@ -1,7 +1,7 @@
 // src/features/files/fileSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { uploadFileThunk, fetchFileThunk } from "./fileThunks";
-import { ProjectFile, FilesState } from "./file-types";
+import { ProjectFile, FilesState } from "../../types/file-types";
 import { AppError } from "../../utils/error-handling";
 
 

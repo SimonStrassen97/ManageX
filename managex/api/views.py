@@ -5,11 +5,12 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
-from .models import Project, ProjectFile, StatusLookUp
+from .models import Project, ProjectFile, StatusLookUp, CurrencyLookUp
 from django.contrib.auth.models import User
-from .serializers import ProjectFetchSerializer, ProjectWriteSerializer, ProjectFileSerializer, ProjectExistsSerializer
-from .serializers import UserListSerializer, UserRegistrationSerializer, UserDetailSerializer
-from .serializers import StatusLookUpSerializer
+from .serializers.project_serializers import ProjectReadSerializer, ProjectWriteSerializer, ProjectExistsSerializer
+from .serializers.project_serializers import StatusSerializer, CurrencySerializer
+from .serializers.user_serializers import UserSerializer, UserRegistrationSerializer
+from .serializers.file_serializers import ProjectFileSerializer
 
 
 #########################
@@ -19,8 +20,8 @@ from .serializers import StatusLookUpSerializer
 # Split up views to handle permissions 
 
 # View to get list of projects
-class ProjectsView(generics.ListAPIView):
-    serializer_class = ProjectFetchSerializer
+class ProjectsListView(generics.ListAPIView):
+    serializer_class = ProjectReadSerializer
 
     def get_queryset(self):
         queryset = Project.objects.all()
@@ -48,34 +49,38 @@ class ProjectsView(generics.ListAPIView):
 
         return queryset
 
-class CreateProjectView(generics.CreateAPIView):
+class ProjectCreateView(generics.CreateAPIView):
     serializer_class = ProjectWriteSerializer
     queryset = Project.objects.all()
 
-class DeleteProjectView(generics.DestroyAPIView):
-    serializer_class = ProjectFetchSerializer
+class ProjectDeleteView(generics.DestroyAPIView):
+    serializer_class = ProjectReadSerializer
     queryset = Project.objects.all()
     lookup_field = 'id'
 
-class UpdateProjectView(generics.UpdateAPIView):
+class ProjectUpdateView(generics.UpdateAPIView):
     serializer_class = ProjectWriteSerializer
     queryset = Project.objects.all()
     lookup_field = 'id'
 
-class RetrieveProjectView(generics.RetrieveAPIView):
-    serializer_class = ProjectFetchSerializer
+class ProjectRetrieveView(generics.RetrieveAPIView):
+    serializer_class = ProjectReadSerializer
     queryset = Project.objects.all()
     lookup_field = 'id'
 
-class CheckProjectView(APIView):
+class ProjectCheckView(APIView):
     def get(self, request, project_number):
         exists = Project.objects.filter(project_number=project_number).exists()
         serializer = ProjectExistsSerializer({"exists": exists})
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class StatusListView(generics.ListAPIView):
-    serializer_class = StatusLookUpSerializer
+    serializer_class = StatusSerializer
     queryset = StatusLookUp.objects.all()
+
+class CurrencyListView(generics.ListAPIView):
+    serializer_class = CurrencySerializer
+    queryset = CurrencyLookUp.objects.all()
 
 #########################
 # User views
@@ -83,29 +88,25 @@ class StatusListView(generics.ListAPIView):
 
 # View to get list of users
 class UserListView(generics.ListAPIView):
-    serializer_class = UserListSerializer
+    serializer_class = UserSerializer
     queryset = User.objects.all()
-
 
 # view to register a new user
 class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
     queryset = User.objects.all()
 
+class UserRetrieveView(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    lookup_field = 'id'
+
 # View to retrieve the authenticated user's info
 class CurrentUserView(generics.RetrieveAPIView):
-    serializer_class = UserDetailSerializer
+    serializer_class = UserSerializer
 
     def get_object(self):
         return self.request.user
-    
-
-class UserDetailView(generics.RetrieveAPIView):
-    # need to add permissions to this view
-    serializer_class = UserDetailSerializer
-    queryset = User.objects.all()
-    lookup_field = 'id'  # Fetch user by ID
-
 
 #########################
 # File views

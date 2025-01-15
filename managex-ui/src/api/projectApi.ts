@@ -1,7 +1,7 @@
 import axiosInstance from "./axiosConfig"
-import { SerializedProject, SerializedStatus } from "./server-response-types"
-import { Project } from "../features/projects/project-types"
-import { FilterState } from "../features/filter/filter-types"
+import { SerializedProject, SerializedStatus } from "../types/server-response-types"
+import { Project } from "../types/project-types"
+import { FilterState } from "../types/filter-types"
 import { ProjectTransformer } from "../utils/transforms"
 
 // Utility function to convert FilterState to query parameters

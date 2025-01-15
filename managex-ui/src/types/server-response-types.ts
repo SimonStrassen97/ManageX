@@ -1,15 +1,17 @@
 export interface SerializedStatus {
-  id: number
+  status_id: number
   status_label: string
 }
 
 interface SerializedBudget {
+  budget_id: number
   amount: number
   currency: SerializedCurrency
   approval_date: string | null
 }
 
 interface SerializedCurrency {
+  currency_id: number
   currency_label: string
   exchange_rate: number
 }
@@ -39,9 +41,6 @@ export interface SerializedUser {
   username: string
   first_name: string
   last_name: string
-}
-
-export interface SerializedUserDetailed extends SerializedUser {
   email: string
 }
 

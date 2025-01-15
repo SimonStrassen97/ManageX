@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosConfig"
-import { SerializedUser, SerializedUserDetailed } from "./server-response-types"
-import { NewUser } from "../features/users/user-types"
+import { SerializedUser, SerializedUserDetailed } from "../types/server-response-types"
+import { NewUser } from "../types/user-types"
 
 export const fetchUsers = async () => {
   return await axiosInstance.get<SerializedUser[]>("/api/users/")

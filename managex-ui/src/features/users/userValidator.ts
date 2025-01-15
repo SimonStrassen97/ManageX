@@ -1,4 +1,4 @@
-import { NewUser } from "./user-types"
+import { NewUser } from "../../types/user-types"
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,20}$/

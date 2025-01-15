@@ -1,10 +1,10 @@
-import { SerializedProject } from "../api/server-response-types"
+import { SerializedProject } from "../types/server-response-types"
 import {
   Project,
   ProjectInfo,
   Budget,
   Timeline,
-} from "../features/projects/project-types"
+} from "../types/project-types"
 
 export function stringToDate(dateString: string | null): Date | null {
   if (!dateString) return null
@@ -103,8 +103,8 @@ export class ProjectTransformer {
   }
 }
 
-import { SerializedStatus } from "../api/server-response-types"
-import { Status } from "../features/projects/project-types"
+import { SerializedStatus } from "../types/server-response-types"
+import { Status } from "../types/project-types"
 
 export class StatusTransformer {
   static serializeStatus(status: Status): SerializedStatus {
@@ -132,10 +132,10 @@ export class StatusTransformer {
   }
 }
 
-import { SerializedUserDetailed } from "../api/server-response-types"
-import { CurrentUser } from "../features/users/user-types"
-import { SerializedUser } from "../api/server-response-types"
-import { User } from "../features/users/user-types"
+import { SerializedUserDetailed } from "../types/server-response-types"
+import { CurrentUser } from "../types/user-types"
+import { SerializedUser } from "../types/server-response-types"
+import { User } from "../types/user-types"
 
 export class UserTransformer {
   static serializeUser(
@@ -184,8 +184,8 @@ export class UserTransformer {
   }
 }
 
-import { SerializedToken } from "../api/server-response-types"
-import { AuthToken } from "../features/auth/auth-types"
+import { SerializedToken } from "../types/server-response-types"
+import { AuthToken } from "../types/auth-types"
 
 export class TokenTransformer {
   static serializeToken(token: AuthToken): SerializedToken {
@@ -203,8 +203,8 @@ export class TokenTransformer {
   }
 }
 
-import { SerializedProjectFile } from "../api/server-response-types"
-import { ProjectFile, ProjectFileUpload } from "../features/files/file-types"
+import { SerializedProjectFile } from "../types/server-response-types"
+import { ProjectFile, ProjectFileUpload } from "../types/file-types"
 
 export class FileTransformer {
   static serializeFile(

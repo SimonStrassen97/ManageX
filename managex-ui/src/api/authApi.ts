@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosConfig"
-import { SerializedToken } from "./server-response-types"
-import { LoginData } from "../features/auth/auth-types"
+import { SerializedToken } from "../types/server-response-types"
+import { LoginData } from "../types/auth-types"
 
 export const fetchToken = async (loginData: LoginData) => {
   return await axiosInstance.post<SerializedToken>("/api/token/", loginData)

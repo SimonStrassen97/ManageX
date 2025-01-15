@@ -1,7 +1,7 @@
 // src/features/auth/authSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { authThunk, refreshThunk } from "./authThunks";
-import { AuthState } from "./auth-types";
+import { AuthState } from "../../types/auth-types";
 import { AppError } from "../../utils/error-handling";
 
 const initialState: AuthState = {

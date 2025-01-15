@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosConfig"
-import { SerializedProjectFile } from "./server-response-types"
-import { ProjectFileUpload } from "../features/files/file-types"
+import { SerializedProjectFile } from "../types/server-response-types"
+import { ProjectFileUpload } from "../types/file-types"
 
 export const uploadFile = async (projectFile: ProjectFileUpload) => {
   return await axiosInstance.post<SerializedProjectFile>(

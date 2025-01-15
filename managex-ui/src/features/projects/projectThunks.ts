@@ -5,8 +5,8 @@ import {
   checkProjectNumberAvailability,
   fetchStatusList,
 } from "../../api/projectApi"
-import { Project, Status } from "./project-types"
-import { FilterState } from "../filter/filter-types"
+import { Project, Status } from "../../types/project-types"
+import { FilterState } from "../../types/filter-types"
 import { ProjectTransformer, StatusTransformer } from "../../utils/transforms"
 import { handleError, AppError } from "../../utils/error-handling"
 

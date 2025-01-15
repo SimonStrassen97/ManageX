@@ -1,4 +1,4 @@
-import { Project } from "./project-types"
+import { Project } from "../../types/project-types"
 import { stringToDate } from "../../utils/transforms"
 import { checkProjectNumberAvailability } from "../../api/projectApi"
 

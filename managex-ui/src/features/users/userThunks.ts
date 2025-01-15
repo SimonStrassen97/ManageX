@@ -1,7 +1,7 @@
 // src/features/users/userThunks.ts
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchUsers, fetchCurrentUser, registerUser } from "../../api/usersApi";
-import { CurrentUser, User, NewUser } from "./user-types";
+import { CurrentUser, User, NewUser } from "../../types/user-types";
 import { UserTransformer } from "../../utils/transforms";
 import { handleError, AppError} from "../../utils/error-handling";
 

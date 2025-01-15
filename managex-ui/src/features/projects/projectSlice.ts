@@ -4,7 +4,7 @@ import {
   addProjectThunk,
   fetchStatusListThunk,
 } from "./projectThunks"
-import { Project, Status, ProjectsState, StatusState } from "./project-types"
+import { Project, Status, ProjectsState, StatusState } from "../../types/project-types"
 import { AppError } from "../../utils/error-handling"
 
 // Define the initial state

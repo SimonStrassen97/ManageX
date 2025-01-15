@@ -5,7 +5,7 @@ import { DatePicker } from "../../components/DatePicker"
 import { Dropdown } from "../../components/Dropdown"
 import { Button } from "../../components/Button"
 import { setStartDate, setEndDate, setStatus } from "./filterSlice"
-import { Status, statusOptions, FilterState } from "./filter-types"
+import { Status, statusOptions, FilterState } from "../../types/filter-types"
 import { RootState, AppDispatch } from "../../app/store"
 
 export const FilterWindow: React.FC = () => {

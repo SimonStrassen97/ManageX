@@ -1,7 +1,7 @@
 // src/features/auth/authThunks.ts
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchToken, refreshToken } from "../../api/authApi";
-import { LoginData, AuthToken } from "./auth-types";
+import { LoginData, AuthToken } from "../../types/auth-types";
 import { TokenTransformer } from "../../utils/transforms";
 import { handleError, AppError } from "../../utils/error-handling";
 

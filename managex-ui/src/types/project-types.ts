@@ -1,4 +1,4 @@
-import { AppError } from "../../utils/error-handling"
+import { AppError } from "../utils/error-handling"
 
 export interface Status {
   id: number
