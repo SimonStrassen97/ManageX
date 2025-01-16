@@ -1,29 +1,32 @@
 // src/features/users/user-types.ts
-import { AppError } from "../utils/error-handling";
+import { AppError } from "../utils/error-handling"
 
 export interface User {
-  id: number;
-  username: string;
-  first_name: string;
-  last_name: string;
+  id: number
+  username: string
+  first_name: string
+  last_name: string
+  email: string
 }
 
 export interface UsersState {
-  users: User[];
-  loading: boolean;
-  error: AppError | null;
-}
-
-export interface CurrentUser extends User {
-  email: string;
+  users: User[]
+  loading: boolean
+  error: AppError | null
 }
 
 export interface CurrentUserState {
-  user: CurrentUser | null;
-  loading: boolean;
-  error: AppError | null;
+  user: User | null
+  loading: boolean
+  error: AppError | null
 }
 
-export interface NewUser extends Omit<CurrentUser, "id"> {
-  password: string;
+export interface UsersState {
+  users: User[]
+  loading: boolean
+  error: AppError | null
+}
+
+export interface NewUser extends Omit<User, "id"> {
+  password: string
 }

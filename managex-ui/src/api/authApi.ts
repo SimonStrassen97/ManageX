@@ -1,9 +1,9 @@
 import axiosInstance from "./axiosConfig"
-import { SerializedToken } from "../types/server-response-types"
+import { TokenResponse } from "../types/server-response-types"
 import { LoginData } from "../types/auth-types"
 
 export const fetchToken = async (loginData: LoginData) => {
-  return await axiosInstance.post<SerializedToken>("/api/token/", loginData)
+  return await axiosInstance.post<TokenResponse>("/api/token/", loginData)
 }
 
 export const refreshToken = async ({
@@ -11,7 +11,7 @@ export const refreshToken = async ({
 }: {
   refreshToken: string
 }) => {
-  return await axiosInstance.post<SerializedToken>("/api/token/refresh/", {
+  return await axiosInstance.post<TokenResponse>("/api/token/refresh/", {
     refresh: refreshToken,
   })
 }

@@ -97,7 +97,7 @@ def validate_file_extension(value):
         raise ValidationError('Unsupported file extension.')
         
 class ProjectFile(models.Model):
-    project_number = models.OneToOneField(Project, on_delete=models.CASCADE, related_name='file')
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='files', null=False)
     file = models.FileField(upload_to='project_files/', validators=[validate_file_extension])
     filename = models.CharField(max_length=255)
     DATECREATE = models.DateTimeField(auto_now_add=True)

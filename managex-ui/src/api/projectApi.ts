@@ -1,8 +1,9 @@
 import axiosInstance from "./axiosConfig"
-import { SerializedProject, SerializedStatus } from "../types/server-response-types"
+import { ProjectResponse, StatusResponse } from "../types/server-response-types"
 import { Project } from "../types/project-types"
 import { FilterState } from "../types/filter-types"
 import { ProjectTransformer } from "../utils/transforms"
+import { AddProjectRequest } from "../types/server-request-types"
 
 // Utility function to convert FilterState to query parameters
 const convertFilterStateToParams = (
@@ -18,30 +19,19 @@ const convertFilterStateToParams = (
 export const fetchProjects = async (filters: FilterState) => {
   const paramsObj = convertFilterStateToParams(filters)
   const params = new URLSearchParams(paramsObj).toString()
-  return await axiosInstance.get<SerializedProject[]>(`api/projects/?${params}`)
+  return await axiosInstance.get<ProjectResponse[]>(`api/projects/?${params}`)
 }
 
-export const addProject = async (project: Project) => {
-  const serializedProject = ProjectTransformer.serializeProject(project)
-  return await axiosInstance.post<SerializedProject>(
+export const addProject = async (new_project: AddProjectRequest) => {
+  return await axiosInstance.post<ProjectResponse>(
     "api/projects/create/",
-    serializedProject,
+    new_project,
   )
 }
 
 export const checkProjectNumberAvailability = async (projectNumber: string) => {
-  try {
-    const response = await axiosInstance.get(
-      `/api/projects/check/${projectNumber}/`,
-    )
-    const isAvailable = !response.data.exists
-    return isAvailable // Return true if the project number is available
-  } catch (error) {
-    console.error("Error checking project number availability:", error)
-    return false // Return false if there is an error
-  }
+  return await axiosInstance.get(`/api/projects/check/${projectNumber}/`)
 }
-
 export const fetchStatusList = async () => {
-  return await axiosInstance.get<SerializedStatus[]>("/api/status/")
+  return await axiosInstance.get<StatusResponse[]>("/api/status/")
 }

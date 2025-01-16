@@ -1,10 +1,5 @@
-import { SerializedProject } from "../types/server-response-types"
-import {
-  Project,
-  ProjectInfo,
-  Budget,
-  Timeline,
-} from "../types/project-types"
+import { ProjectResponse } from "../types/server-response-types"
+import { Project, ProjectInfo, Budget, Timeline } from "../types/project-types"
 
 export function stringToDate(dateString: string | null): Date | null {
   if (!dateString) return null
@@ -18,217 +13,134 @@ export function dateToString(date: Date | null): string | null {
 }
 
 export class ProjectTransformer {
-  static serializeProject(project: Project): SerializedProject {
-    return {
-      project_number: project.project_number,
-      project_name: project.project_info.project_name,
-      project_lead: project.project_info.project_lead,
-      project_status: project.project_info.project_status,
-      confirmed_project_status: project.project_info.confirmed_project_status,
-      budget: project.budget
-        ? {
-            approval_date: project.budget.approval_date,
-            amount: project.budget.amount,
-            currency: {
-              currency_label: project.budget.currency.currency_label,
-              exchange_rate: project.budget.currency.exchange_rate as number,
-            },
-          }
-        : null,
-      timeline: {
-        start_date: project.timeline.start_date,
-        order_date: project.timeline.order_date,
-        acceptance_date: project.timeline.acceptance_date,
-        delivery_date: project.timeline.delivery_date,
-        finish_date: project.timeline.finish_date,
-      },
+  static fromServer(
+    projectResponse: ProjectResponse | ProjectResponse[],
+  ): Project | Project[] {
+    if (Array.isArray(projectResponse)) {
+      return projectResponse.map(pr => this.fromServerSingle(pr))
+    } else {
+      return this.fromServerSingle(projectResponse)
     }
   }
 
-  static serializeProjects(projects: Project[]): SerializedProject[] {
-    const serializedProjects: SerializedProject[] = projects.map(project =>
-      this.serializeProject(project),
-    )
-    return serializedProjects
-  }
-
-  static deserializeProject(serializedProject: SerializedProject): Project {
+  private static fromServerSingle(projectResponse: ProjectResponse): Project {
     const projectInfo: ProjectInfo = {
-      project_name: serializedProject.project_name,
-      project_lead: serializedProject.project_lead,
-      project_status: serializedProject.project_status,
-      confirmed_project_status: serializedProject.confirmed_project_status,
+      project_number: projectResponse.project_number,
+      project_name: projectResponse.project_name,
+      project_lead: projectResponse.project_lead.username,
+      project_status: projectResponse.project_status.status_label,
+      confirmed_project_status:
+        projectResponse.confirmed_project_status.status_label,
     }
 
-    const budget: Budget | null = serializedProject.budget
+    const budget: Budget | null = projectResponse.budget
       ? {
-          amount: serializedProject.budget.amount,
-          approval_date: serializedProject.budget.approval_date,
-          currency: {
-            currency_label: serializedProject.budget.currency.currency_label,
-            exchange_rate: serializedProject.budget.currency.exchange_rate,
-          },
+          amount: projectResponse.budget.amount,
+          approval_date: projectResponse.budget.approval_date,
+          currency_label: projectResponse.budget.currency.currency_label,
+          exchange_rate: projectResponse.budget.currency.exchange_rate,
         }
       : null
 
     const timeline: Timeline = {
-      start_date: serializedProject.timeline.start_date,
-      order_date: serializedProject.timeline.order_date,
-      acceptance_date: serializedProject.timeline.acceptance_date,
-      delivery_date: serializedProject.timeline.delivery_date,
-      finish_date: serializedProject.timeline.finish_date,
+      start_date: projectResponse.timeline.start_date,
+      order_date: projectResponse.timeline.order_date,
+      acceptance_date: projectResponse.timeline.acceptance_date,
+      delivery_date: projectResponse.timeline.delivery_date,
+      finish_date: projectResponse.timeline.finish_date,
     }
 
     return {
-      project_id: serializedProject.id as number,
-      project_number: serializedProject.project_number,
+      project_id: projectResponse.project_id,
       project_info: projectInfo,
       budget: budget,
       timeline: timeline,
     }
   }
-
-  static deserializeProjects(
-    serializedProjects: SerializedProject[],
-  ): Project[] {
-    const projects: Project[] = serializedProjects.map(serializedProject =>
-      this.deserializeProject(serializedProject),
-    )
-
-    return projects
-  }
-
-  static createProjectsFromProject(project: Project): Project[] {
-    return [project]
-  }
 }
 
-import { SerializedStatus } from "../types/server-response-types"
+import { StatusResponse } from "../types/server-response-types"
 import { Status } from "../types/project-types"
 
 export class StatusTransformer {
-  static serializeStatus(status: Status): SerializedStatus {
-    return {
-      id: status.id,
-      status_label: status.status_label,
+  static fromServer(
+    statusResponse: StatusResponse | StatusResponse[],
+  ): Status | Status[] {
+    if (Array.isArray(statusResponse)) {
+      return statusResponse.map(sr => this.fromServerSingle(sr))
+    } else {
+      return this.fromServerSingle(statusResponse)
     }
   }
 
-  static deserializeStatus(serializedStatus: SerializedStatus): Status {
+  private static fromServerSingle(statusResponse: StatusResponse): Status {
     return {
-      id: serializedStatus.id,
-      status_label: serializedStatus.status_label,
+      id: statusResponse.status_id,
+      status_label: statusResponse.status_label,
     }
-  }
-
-  static serializeStatuses(statuses: Status[]): SerializedStatus[] {
-    return statuses.map(status => this.serializeStatus(status))
-  }
-
-  static deserializeStatuses(serializedStatuses: SerializedStatus[]): Status[] {
-    return serializedStatuses.map(serializedStatus =>
-      this.deserializeStatus(serializedStatus),
-    )
   }
 }
 
-import { SerializedUserDetailed } from "../types/server-response-types"
-import { CurrentUser } from "../types/user-types"
-import { SerializedUser } from "../types/server-response-types"
+import { UserResponse } from "../types/server-response-types"
 import { User } from "../types/user-types"
 
 export class UserTransformer {
-  static serializeUser(
-    user: User | CurrentUser,
-  ): SerializedUser | SerializedUserDetailed {
-    const baseUser = {
-      id: user.id,
-      username: user.username,
-      first_name: user.first_name,
-      last_name: user.last_name,
+  static fromServer(
+    userResponse: UserResponse | UserResponse[],
+  ): User | User[] {
+    if (Array.isArray(userResponse)) {
+      return userResponse.map(ur => this.fromServerSingle(ur))
+    } else {
+      return this.fromServerSingle(userResponse)
     }
-
+  }
+  private static fromServerSingle(userResponse: UserResponse): User {
     return {
-      ...baseUser,
-      email: "email" in user ? user.email : "", // Fallback for missing email
+      id: userResponse.user_id,
+      username: userResponse.username,
+      first_name: userResponse.first_name,
+      last_name: userResponse.last_name,
+      email: userResponse.email,
     }
-  }
-
-  static deserializeUser(
-    serializedUser: SerializedUser | SerializedUserDetailed,
-  ): SerializedUserDetailed {
-    const baseUser = {
-      id: serializedUser.id,
-      username: serializedUser.username,
-      first_name: serializedUser.first_name,
-      last_name: serializedUser.last_name,
-    }
-
-    return {
-      ...baseUser,
-      email: "email" in serializedUser ? serializedUser.email : "", // Fallback for missing email
-    }
-  }
-
-  static serializeUsers(users: User[]): SerializedUser[] {
-    const serializedUsers: SerializedUser[] = users.map(
-      user => this.serializeUser(user) as SerializedUser,
-    )
-    return serializedUsers
-  }
-
-  static deserializeUsers(serializedUsers: SerializedUser[]): User[] {
-    return serializedUsers.map(
-      serializedUser => this.deserializeUser(serializedUser) as User,
-    )
   }
 }
 
-import { SerializedToken } from "../types/server-response-types"
+import { TokenResponse } from "../types/server-response-types"
 import { AuthToken } from "../types/auth-types"
 
 export class TokenTransformer {
-  static serializeToken(token: AuthToken): SerializedToken {
+  static fromServer(tokenResponse: TokenResponse): AuthToken {
     return {
-      access: token.access,
-      refresh: token.refresh,
-    }
-  }
-
-  static deserializeToken(serializedToken: SerializedToken): AuthToken {
-    return {
-      access: serializedToken.access,
-      refresh: serializedToken.refresh,
+      access: tokenResponse.access,
+      refresh: tokenResponse.refresh,
     }
   }
 }
 
-import { SerializedProjectFile } from "../types/server-response-types"
-import { ProjectFile, ProjectFileUpload } from "../types/file-types"
+import { ProjectFileResponse } from "../types/server-response-types"
+import { ProjectFile } from "../types/file-types"
+import { UploadFileRequest } from "../types/server-request-types"
 
 export class FileTransformer {
-  static serializeFile(
-    projectFileUpload: ProjectFileUpload,
-  ): ProjectFileUpload {
-    return {
-      file: projectFileUpload.file,
-      project_number: projectFileUpload.project_number,
+  static fromServer(
+    projectFileResponse: ProjectFileResponse | ProjectFileResponse[],
+  ): ProjectFile | ProjectFile[] {
+    if (Array.isArray(projectFileResponse)) {
+      return projectFileResponse.map(pfr => this.fromServerSingle(pfr))
+    } else {
+      return this.fromServerSingle(projectFileResponse)
     }
   }
 
-  static deserializeFile(serializedFile: SerializedProjectFile): ProjectFile {
+  private static fromServerSingle(
+    projectFileResponse: ProjectFileResponse,
+  ): ProjectFile {
     return {
-      id: serializedFile.id,
-      project_number: serializedFile.project_number,
-      file: serializedFile.file, // File content is not returned from the server
-      filename: serializedFile.filename,
-      DATECREATE: serializedFile.DATECREATE,
+      file_id: projectFileResponse.file_id,
+      project_number: projectFileResponse.project_number,
+      file: projectFileResponse.file,
+      filename: projectFileResponse.filename,
+      date_created: projectFileResponse.DATECREATE,
     }
-  }
-
-  static deserializeFiles(
-    serializedFiles: SerializedProjectFile[],
-  ): ProjectFile[] {
-    return serializedFiles.map(this.deserializeFile)
   }
 }

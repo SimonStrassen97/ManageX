@@ -26,13 +26,13 @@ export const ProjectList = () => {
           </thead>
           <tbody>
             {projects.map(project => (
-              <tr key={project.project_number}>
-                <td>{project.project_number}</td>
+              <tr key={project.project_id}>
+                <td>{project.project_info.project_number}</td>
                 <td>{project.project_info.project_name}</td>
                 <td>{project.project_info.project_lead}</td>
                 <td>{project.project_info.project_status}</td>
                 <td>{project.budget?.amount || "N/A"}</td>
-                <td>{project.budget?.currency.currency_label || "N/A"}</td>
+                <td>{project.budget?.currency_label || "N/A"}</td>
                 <td>
                   {new Date(project.timeline.start_date).toLocaleDateString()}
                 </td>

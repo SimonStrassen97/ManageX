@@ -3,12 +3,13 @@ from ..models import Project, ProjectBudget, ProjectTimeline, StatusLookUp, Curr
 from django.contrib.auth.models import User
 
 class ProjectFileSerializer(serializers.ModelSerializer):
-    project_number = serializers.CharField(source='project_number.project_number')
+    file_id = serializers.IntegerField(source='id')
+    project = serializers.CharField(source='project.project_number')
     file = serializers.SerializerMethodField()
 
     class Meta:
         model = ProjectFile
-        fields = ['id', 'project_number', 'file', 'filename', 'DATECREATE']
+        fields = ['file_id', 'project_number', 'file', 'filename', 'DATECREATE']
 
     def get_file(self, obj):
         request = self.context.get('request')

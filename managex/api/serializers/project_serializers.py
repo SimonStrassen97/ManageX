@@ -19,6 +19,7 @@ class CurrencySerializer(serializers.ModelSerializer):
 
 class BudgetReadSerializer(serializers.ModelSerializer):
     currency = CurrencySerializer()
+    budget_id = serializers.IntegerField(source='id')
 
     class Meta:
         model = ProjectBudget

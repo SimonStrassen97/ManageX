@@ -7,13 +7,9 @@ export interface Status {
 
 export interface Budget {
   amount: number
-  currency: Currency
-  approval_date: string | null
-}
-
-export interface Currency {
   currency_label: string
   exchange_rate?: number
+  approval_date: string | null
 }
 
 export interface Timeline {
@@ -25,6 +21,7 @@ export interface Timeline {
 }
 
 export interface ProjectInfo {
+  project_number: string
   project_name: string
   project_lead: string
   project_status: string
@@ -32,8 +29,7 @@ export interface ProjectInfo {
 }
 
 export interface Project {
-  project_id?: number
-  project_number: string
+  project_id: number
   project_info: ProjectInfo
   budget?: Budget | null
   timeline: Timeline

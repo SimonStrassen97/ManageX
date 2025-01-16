@@ -1,9 +1,9 @@
 // src/features/auth/authThunks.ts
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchToken, refreshToken } from "../../api/authApi";
-import { LoginData, AuthToken } from "../../types/auth-types";
-import { TokenTransformer } from "../../utils/transforms";
-import { handleError, AppError } from "../../utils/error-handling";
+import { createAsyncThunk } from "@reduxjs/toolkit"
+import { fetchToken, refreshToken } from "../../api/authApi"
+import { LoginData, AuthToken } from "../../types/auth-types"
+import { TokenTransformer } from "../../utils/transforms"
+import { handleError, AppError } from "../../utils/error-handling"
 
 // Define the async thunk for login action
 export const authThunk = createAsyncThunk<
@@ -12,13 +12,13 @@ export const authThunk = createAsyncThunk<
   { rejectValue: AppError }
 >("auth/login", async (loginData: LoginData, { rejectWithValue }) => {
   try {
-    const response = await fetchToken(loginData);
-    const authToken = TokenTransformer.deserializeToken(response.data);
-    return authToken;
+    const response = await fetchToken(loginData)
+    const authToken = TokenTransformer.fromServer(response.data)
+    return authToken
   } catch (error: any) {
-    return handleError(error, rejectWithValue);
+    return handleError(error, rejectWithValue)
   }
-});
+})
 
 // Define the async thunk for refreshing the token
 export const refreshThunk = createAsyncThunk<
@@ -27,10 +27,10 @@ export const refreshThunk = createAsyncThunk<
   { rejectValue: AppError }
 >("auth/refresh", async (refreshTokenValue: string, { rejectWithValue }) => {
   try {
-    const response = await refreshToken({ refreshToken: refreshTokenValue });
-    const newToken = TokenTransformer.deserializeToken(response.data);
-    return newToken;
+    const response = await refreshToken({ refreshToken: refreshTokenValue })
+    const newToken = TokenTransformer.fromServer(response.data)
+    return newToken
   } catch (error: any) {
-    return handleError(error, rejectWithValue);
+    return handleError(error, rejectWithValue)
   }
-});
+})

@@ -1,22 +1,22 @@
-export interface SerializedStatus {
+export interface StatusResponse {
   status_id: number
   status_label: string
 }
 
-interface SerializedBudget {
+interface BudgetResponse {
   budget_id: number
   amount: number
-  currency: SerializedCurrency
+  currency: CurrencyResponse
   approval_date: string | null
 }
 
-interface SerializedCurrency {
+interface CurrencyResponse {
   currency_id: number
   currency_label: string
   exchange_rate: number
 }
 
-interface SerializedTimeline {
+interface TimelineResponse {
   // date string from DRF: YYYY-MM-DD
   start_date: string
   order_date: string | null
@@ -25,32 +25,32 @@ interface SerializedTimeline {
   finish_date: string
 }
 
-export interface SerializedProject {
-  id?: number
-  project_name: string
-  project_number: string
-  project_lead: string
-  project_status: string
-  confirmed_project_status: string
-  budget?: SerializedBudget | null
-  timeline: SerializedTimeline
-}
-
-export interface SerializedUser {
-  id: number
+export interface UserResponse {
+  user_id: number
   username: string
   first_name: string
   last_name: string
   email: string
 }
 
-export interface SerializedToken {
+export interface ProjectResponse {
+  project_id: number
+  project_name: string
+  project_number: string
+  project_lead: UserResponse
+  project_status: StatusResponse
+  confirmed_project_status: StatusResponse
+  budget?: BudgetResponse | null
+  timeline: TimelineResponse
+}
+
+export interface TokenResponse {
   access: string
   refresh: string
 }
 
-export interface SerializedProjectFile {
-  id: number
+export interface ProjectFileResponse {
+  file_id: number
   project_number: string
   file: string // URL or path to the file
   filename: string

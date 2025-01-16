@@ -10,7 +10,10 @@ import { DatePicker, Button, Dropdown, Input } from "../../components"
 import { dateToString, stringToDate } from "../../utils/transforms"
 import { validateProject } from "./projectValidator"
 import { FileUploader } from "../../components/FileUploader"
-import { ProjectFileUpload } from "../../types/file-types"
+import {
+  UploadFileRequest,
+  AddProjectRequest,
+} from "../../types/server-request-types"
 import { uploadFileThunk } from "../files/fileThunks"
 import { fetchUsersThunk } from "../users/userThunks"
 import { fetchStatusListThunk } from "../projects/projectThunks"
@@ -20,7 +23,7 @@ interface AddProjectModalProps {
   onClose: () => void
 }
 
-const initialFormData: Project = {
+const initialFormData: AddProjectRequest = {
   project_number: "",
   project_info: {
     project_name: "",
@@ -49,7 +52,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
   onClose,
 }) => {
   const dispatch = useDispatch<AppDispatch>() // Type-safe dispatch
-  const [formData, setFormData] = useState<Project>(initialFormData)
+  const [formData, setFormData] = useState<AddProjectRequest>(initialFormData)
   const [investFile, setInvestFile] = useState<File | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -75,7 +78,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
 
     try {
       await dispatch(addProjectThunk(formData))
-      const uploadFile: ProjectFileUpload = {
+      const uploadFile: UploadFileRequest = {
         file: investFile || null,
         project_number: formData.project_number,
       }

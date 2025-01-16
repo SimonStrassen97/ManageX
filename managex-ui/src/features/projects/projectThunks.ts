@@ -9,6 +9,7 @@ import { Project, Status } from "../../types/project-types"
 import { FilterState } from "../../types/filter-types"
 import { ProjectTransformer, StatusTransformer } from "../../utils/transforms"
 import { handleError, AppError } from "../../utils/error-handling"
+import { AddProjectRequest } from "../../types/server-request-types"
 
 // Define the async thunk for fetching projects with filters
 export const fetchProjectsThunk = createAsyncThunk<
@@ -20,7 +21,7 @@ export const fetchProjectsThunk = createAsyncThunk<
   async (filters: FilterState, { rejectWithValue }) => {
     try {
       const response = await fetchProjects(filters)
-      const projects = ProjectTransformer.deserializeProjects(response.data)
+      const projects = ProjectTransformer.fromServer(response.data)
       return projects
     } catch (error: any) {
       return handleError(error, rejectWithValue)
@@ -31,17 +32,20 @@ export const fetchProjectsThunk = createAsyncThunk<
 // Define the async thunk for adding a project
 export const addProjectThunk = createAsyncThunk<
   Project,
-  Project,
+  AddProjectRequest,
   { rejectValue: AppError }
->("projects/addProject", async (project: Project, { rejectWithValue }) => {
-  try {
-    const response = await addProject(project)
-    const newProject = ProjectTransformer.deserializeProject(response.data)
-    return newProject
-  } catch (error: any) {
-    return handleError(error, rejectWithValue)
-  }
-})
+>(
+  "projects/addProject",
+  async (project: AddProjectRequest, { rejectWithValue }) => {
+    try {
+      const response = await addProject(project)
+      const newProject = ProjectTransformer.fromServer(response.data)
+      return newProject
+    } catch (error: any) {
+      return handleError(error, rejectWithValue)
+    }
+  },
+)
 
 export const checkProjectNumberAvailabilityThunk = createAsyncThunk<
   boolean,
@@ -52,7 +56,8 @@ export const checkProjectNumberAvailabilityThunk = createAsyncThunk<
   async (projectNumber: string, { rejectWithValue }) => {
     try {
       const response = await checkProjectNumberAvailability(projectNumber)
-      return response.data.available
+      const isAvailable = !response.data.exists
+      return isAvailable // Return true if the project number is available
     } catch (error: any) {
       return handleError(error, rejectWithValue)
     }
@@ -66,7 +71,7 @@ export const fetchStatusListThunk = createAsyncThunk<
 >("statuses/fetchStatusList", async (_, { rejectWithValue }) => {
   try {
     const response = await fetchStatusList()
-    const statuses = StatusTransformer.deserializeStatuses(response.data)
+    const statuses = StatusTransformer.fromServer(response.data)
     return statuses
   } catch (error: any) {
     return handleError(error, rejectWithValue)
