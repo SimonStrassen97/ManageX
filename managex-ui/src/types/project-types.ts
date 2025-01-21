@@ -1,7 +1,7 @@
 import { AppError } from "../utils/error-handling"
 
 export interface Status {
-  id: number
+  status_id: number
   status_label: string
 }
 
@@ -25,7 +25,7 @@ export interface ProjectInfo {
   project_name: string
   project_lead: string
   project_status: string
-  confirmed_project_status: string
+  confirmed_project_status: string | null
 }
 
 export interface Project {

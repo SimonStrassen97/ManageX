@@ -25,12 +25,10 @@ interface AddProjectModalProps {
 
 const initialFormData: AddProjectRequest = {
   project_number: "",
-  project_info: {
-    project_name: "",
-    project_lead: localStorage.getItem("user") || "",
-    project_status: "planned",
-    confirmed_project_status: "",
-  },
+  project_name: "",
+  project_lead_id: 1,
+  project_status_id: 1,
+  confirmed_project_status_id: null,
   timeline: {
     start_date: dateToString(new Date())!,
     order_date: "",
@@ -41,9 +39,7 @@ const initialFormData: AddProjectRequest = {
   budget: {
     amount: 0,
     approval_date: null,
-    currency: {
-      currency_label: "CHF",
-    },
+    currency_id: 1,
   },
 }
 
@@ -58,14 +54,12 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
 
   const users = useSelector((state: RootState) => state.users.users)
   const statuses = useSelector((state: RootState) => state.status.statuses)
-
+  
+  //probably not needed since already in store. (maybe not yet but should be upon app start)
   useEffect(() => {
     dispatch(fetchUsersThunk())
     dispatch(fetchStatusListThunk())
   }, [dispatch])
-
-  const ACCEPTED_TYPES =
-    ".pdf,.pptx,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation"
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -118,33 +112,45 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
           <Input
             label="Project Name"
             type="text"
-            value={formData.project_info?.project_name || ""}
+            value={formData.project_name}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setFormData(prev => ({
                 ...prev,
-                project_info: {
-                  ...prev.project_info,
-                  project_name: e.target.value,
-                },
+                project_name: e.target.value,
               }))
             }
             error={errors.project_name}
           />
           <Dropdown
             label="Project Lead"
-            value={formData.project_info?.project_lead || ""}
+            value={
+              users.find(user => user.id === formData.project_lead_id)?.username || ""
+            }
             options={users.map(user => user.username)}
             disable_all={true}
-            onChange={(project_lead: string) =>
+            onChange={(username: string) => {
+              const selectedUser = users.find(user => user.username === username)
               setFormData(prev => ({
                 ...prev,
-                project_info: {
-                  ...prev.project_info,
-                  project_lead,
-                },
+                project_lead_id: selectedUser ? selectedUser.id : prev.project_lead_id,
               }))
-            }
+            }}
             error={errors.project_lead}
+          />
+          <Dropdown
+            label="Project Status"
+            value={
+              statuses.find(status => status.status_id === formData.project_status_id)?.status_label || ""
+            }
+            options={statuses.map(status => status.status_label)}
+            onChange={(status_label: string) => {
+              const selectedStatus = statuses.find(status => status.status_label === status_label)
+              setFormData(prev => ({
+                ...prev,
+                project_status_id: selectedStatus ? selectedStatus.status_id : prev.project_status_id,
+              }))
+            }}
+            error={errors.project_status}
           />
           <DatePicker
             label="Start Date"
@@ -161,108 +167,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
             required
             error={errors.start_date}
           />
-          <DatePicker
-            label="Acceptance Date"
-            value={formData.timeline.acceptance_date as string}
-            onChange={date =>
-              setFormData(prev => ({
-                ...prev,
-                timeline: {
-                  ...prev.timeline,
-                  acceptance_date: date,
-                },
-              }))
-            }
-            required
-            error={errors.acceptance_date}
-          />
-          <DatePicker
-            label="Order Date"
-            value={formData.timeline.order_date as string}
-            onChange={date =>
-              setFormData(prev => ({
-                ...prev,
-                timeline: {
-                  ...prev.timeline,
-                  order_date: date,
-                },
-              }))
-            }
-            required
-            error={errors.order_date}
-          />
-          <DatePicker
-            label="Delivery Date"
-            value={formData.timeline.delivery_date as string}
-            onChange={date =>
-              setFormData(prev => ({
-                ...prev,
-                timeline: {
-                  ...prev.timeline,
-                  delivery_date: date,
-                },
-              }))
-            }
-            error={errors.delivery_date}
-          />
-          <DatePicker
-            label="Finish Date"
-            value={formData.timeline.finish_date}
-            onChange={date =>
-              setFormData(prev => ({
-                ...prev,
-                timeline: {
-                  ...prev.timeline,
-                  finish_date: date,
-                },
-              }))
-            }
-            error={errors.finish_date}
-          />
-          <Input
-            label="Budget Amount"
-            type="number"
-            value={formData.budget?.amount || ""}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setFormData(prev => ({
-                ...prev,
-                budget: {
-                  ...prev.budget,
-                  approval_date: prev.budget?.approval_date || null,
-                  amount: Number(e.target.value),
-                  currency: prev.budget?.currency || {
-                    currency_label: "CHF",
-                  }, // Ensure currency is included
-                },
-              }))
-            }
-            error={errors.amount}
-          />
-          <Dropdown
-            label="Currency"
-            value={formData.budget?.currency.currency_label || "CHF"}
-            options={["CHF", "EUR"]}
-            onChange={(currency: string) =>
-              setFormData(prev => ({
-                ...prev,
-                budget: {
-                  approval_date: prev.budget?.approval_date || null,
-                  amount: prev.budget?.amount || 0,
-                  currency: {
-                    currency_label: currency,
-                  },
-                },
-              }))
-            }
-          />
-          <FileUploader
-            accept={ACCEPTED_TYPES}
-            multiple={false}
-            onFileChange={(file: File | null) => {
-              setInvestFile(file)
-            }}
-            error={errors.files}
-          />
+          {/* Add other form fields here */}
           <div className="modal-actions">
             <Button label="Add Project" type="submit" />
             <Button label="Cancel" type="button" onClick={handleClose} />

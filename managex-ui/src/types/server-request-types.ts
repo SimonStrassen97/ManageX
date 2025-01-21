@@ -3,7 +3,7 @@ export interface AddProjectRequest {
   project_number: string
   project_lead_id: number
   project_status_id: number
-  confirmed_project_status_id: number
+  confirmed_project_status_id: number | null
   budget: {
     amount: number
     currency_id: number

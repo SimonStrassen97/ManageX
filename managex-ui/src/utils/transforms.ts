@@ -29,8 +29,7 @@ export class ProjectTransformer {
       project_name: projectResponse.project_name,
       project_lead: projectResponse.project_lead.username,
       project_status: projectResponse.project_status.status_label,
-      confirmed_project_status:
-        projectResponse.confirmed_project_status.status_label,
+      confirmed_project_status: projectResponse.confirmed_project_status?.status_label ?? null,
     }
 
     const budget: Budget | null = projectResponse.budget
@@ -75,7 +74,7 @@ export class StatusTransformer {
 
   private static fromServerSingle(statusResponse: StatusResponse): Status {
     return {
-      id: statusResponse.status_id,
+      status_id: statusResponse.status_id,
       status_label: statusResponse.status_label,
     }
   }

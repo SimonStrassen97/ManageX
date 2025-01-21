@@ -15,6 +15,7 @@ class CurrencyLookUpAdmin(admin.ModelAdmin):
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('id', 'project_name', 'project_number', 'project_lead', 'timeline', 'project_status', 'confirmed_project_status', 'budget')
     search_fields = ('project_name', 'project_number')
+    list_editable = ('project_name', 'project_number', 'project_lead', 'project_status', 'confirmed_project_status')
 
 @admin.register(ProjectBudget)
 class ProjectBudgetAdmin(admin.ModelAdmin):

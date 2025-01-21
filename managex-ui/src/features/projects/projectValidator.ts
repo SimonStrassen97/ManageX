@@ -1,11 +1,12 @@
 import { Project } from "../../types/project-types"
 import { stringToDate } from "../../utils/transforms"
 import { checkProjectNumberAvailability } from "../../api/projectApi"
+import { AddProjectRequest } from "../../types/server-request-types"
 
 const projectNumberRegex = /^B\d{2}-\d{2}$/
 
 export const validateProject = async (
-  project: Project,
+  project: AddProjectRequest,
 ): Promise<Record<string, string>> => {
   const newErrors: Record<string, string> = {}
 
@@ -22,10 +23,10 @@ export const validateProject = async (
     }
   }
 
-  if (!project.project_info?.project_name?.trim()) {
+  if (!project.project_name?.trim()) {
     newErrors.project_name = "Project name is required"
   }
-  if (!project.project_info?.project_lead?.trim()) {
+  if (!project.project_lead_id) {
     newErrors.project_lead = "Project lead is required"
   }
   if (!project.timeline.start_date) {
@@ -53,7 +54,7 @@ export const validateProject = async (
 }
 
 export const validateProjects = async (
-  projects: Project[],
+  projects: AddProjectRequest[],
 ): Promise<Record<string, Record<string, string>>> => {
   const allErrors: Record<string, Record<string, string>> = {}
 

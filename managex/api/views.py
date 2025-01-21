@@ -27,7 +27,7 @@ class ProjectsListView(generics.ListAPIView):
         queryset = Project.objects.all()
         # Get query parameters
         project_lead = self.request.query_params.get('project_lead', None)
-        status = self.request.query_params.get('status', None)
+        projecct_status = self.request.query_params.get('status', None)
         project_number = self.request.query_params.get('project_number', None)
         project_name = self.request.query_params.get('project_name', None)
         project_start_date = self.request.query_params.get('project_start_date', None)
@@ -36,8 +36,8 @@ class ProjectsListView(generics.ListAPIView):
         # Apply filters if provided
         if project_lead:
             queryset = queryset.filter(project_lead__username=project_lead)  # Filter by project lead
-        if status:
-            queryset = queryset.filter(project_status__status_label=status)  # Filter by status
+        if projecct_status:
+            queryset = queryset.filter(project_status__status_label=projecct_status)  # Filter by status
         if project_number:
             queryset = queryset.filter(project_number=project_number)  # Filter by project number
         if project_name:
