@@ -16,7 +16,7 @@ export interface UsersState {
 }
 
 export interface CurrentUserState {
-  user: User | null
+  user: User
   loading: boolean
   error: AppError | null
 }

@@ -2,37 +2,50 @@ import React from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "../../app/store"
 
-export const ProjectList = () => {
-  // Ensure projects is properly typed as Project[]
+interface ProjectListProps {
+  showBudget: boolean
+  filterByUser?: string
+}
+
+export const ProjectList: React.FC<ProjectListProps> = ({
+  showBudget,
+  filterByUser,
+}) => {
   const projects = useSelector((state: RootState) => state.projects.projects)
+  const filteredProjects = filterByUser
+    ? projects.filter(
+        project => project.project_info.project_lead === filterByUser,
+      )
+    : projects
 
   return (
     <div>
       <h2>Project List</h2>
-      {projects.length > 0 ? ( // Check if there are projects
+      {filteredProjects.length > 0 ? (
         <table>
           <thead>
             <tr>
-              {/* Define table headers explicitly */}
               <th>Project Number</th>
               <th>Project Name</th>
               <th>Project Lead</th>
               <th>Status</th>
-              <th>Budget (Amount)</th>
-              <th>Budget (Currency)</th>
+              {showBudget && <th>Budget (Amount)</th>}
+              {showBudget && <th>Budget (Currency)</th>}
               <th>Timeline (Start Date)</th>
               <th>Timeline (Finish Date)</th>
             </tr>
           </thead>
           <tbody>
-            {projects.map(project => (
+            {filteredProjects.map(project => (
               <tr key={project.project_id}>
                 <td>{project.project_info.project_number}</td>
                 <td>{project.project_info.project_name}</td>
                 <td>{project.project_info.project_lead}</td>
                 <td>{project.project_info.project_status}</td>
-                <td>{project.budget?.amount || "N/A"}</td>
-                <td>{project.budget?.currency_label || "N/A"}</td>
+                {showBudget && <td>{project.budget?.amount || "N/A"}</td>}
+                {showBudget && (
+                  <td>{project.budget?.currency_label || "N/A"}</td>
+                )}
                 <td>
                   {new Date(project.timeline.start_date).toLocaleDateString()}
                 </td>
@@ -44,7 +57,7 @@ export const ProjectList = () => {
           </tbody>
         </table>
       ) : (
-        <p>No projects available.</p> // Fallback if no projects exist
+        <p>No projects available.</p>
       )}
     </div>
   )

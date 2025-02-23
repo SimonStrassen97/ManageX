@@ -1,0 +1,1014 @@
+[
+  {
+    "model": "admin.logentry",
+    "pk": 1,
+    "fields": {
+      "action_time": "2024-12-14T12:21:29.149Z",
+      "user": 1,
+      "content_type": 8,
+      "object_id": "1",
+      "object_repr": "planned",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 2,
+    "fields": {
+      "action_time": "2024-12-14T12:21:34.015Z",
+      "user": 1,
+      "content_type": 8,
+      "object_id": "2",
+      "object_repr": "started",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 3,
+    "fields": {
+      "action_time": "2024-12-14T12:21:38.541Z",
+      "user": 1,
+      "content_type": 8,
+      "object_id": "3",
+      "object_repr": "finished",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 4,
+    "fields": {
+      "action_time": "2024-12-14T12:23:21.536Z",
+      "user": 1,
+      "content_type": 9,
+      "object_id": "1",
+      "object_repr": "Maschine (ID: B20-99)",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 5,
+    "fields": {
+      "action_time": "2024-12-14T12:23:49.023Z",
+      "user": 1,
+      "content_type": 9,
+      "object_id": "2",
+      "object_repr": "MAschine 2 (ID: B20-01)",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 6,
+    "fields": {
+      "action_time": "2024-12-14T12:24:11.740Z",
+      "user": 1,
+      "content_type": 9,
+      "object_id": "3",
+      "object_repr": "Unterhalt (ID: B00-00)",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 7,
+    "fields": {
+      "action_time": "2024-12-14T12:25:09.819Z",
+      "user": 1,
+      "content_type": 7,
+      "object_id": "1",
+      "object_repr": "CHF",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 8,
+    "fields": {
+      "action_time": "2024-12-14T12:25:19.775Z",
+      "user": 1,
+      "content_type": 7,
+      "object_id": "2",
+      "object_repr": "EUR",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 9,
+    "fields": {
+      "action_time": "2024-12-14T12:26:33.142Z",
+      "user": 1,
+      "content_type": 11,
+      "object_id": "1",
+      "object_repr": "Project B20-99 is planned from 2024-12-01 to None",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 10,
+    "fields": {
+      "action_time": "2024-12-14T12:27:04.625Z",
+      "user": 1,
+      "content_type": 11,
+      "object_id": "1",
+      "object_repr": "Project B20-99 is planned from 2024-12-01 to 2024-12-31",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"fields\": [\"Finish date\"]}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 11,
+    "fields": {
+      "action_time": "2024-12-14T12:39:11.750Z",
+      "user": 1,
+      "content_type": 11,
+      "object_id": "2",
+      "object_repr": "Project B20-01 is planned from 2024-10-01 to 2024-10-31",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 12,
+    "fields": {
+      "action_time": "2024-12-14T12:39:36.901Z",
+      "user": 1,
+      "content_type": 11,
+      "object_id": "3",
+      "object_repr": "Project B00-00 is planned from 2025-01-01 to 2025-02-02",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 13,
+    "fields": {
+      "action_time": "2024-12-14T12:41:27.681Z",
+      "user": 1,
+      "content_type": 10,
+      "object_id": "1",
+      "object_repr": "Approval for Maschine given on 2024-12-01 for 100",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 14,
+    "fields": {
+      "action_time": "2024-12-14T12:42:12.997Z",
+      "user": 1,
+      "content_type": 10,
+      "object_id": "2",
+      "object_repr": "Approval for MAschine 2 given on 2024-10-22 for 30000",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 15,
+    "fields": {
+      "action_time": "2024-12-14T12:42:34.645Z",
+      "user": 1,
+      "content_type": 10,
+      "object_id": "3",
+      "object_repr": "Approval for Unterhalt given on 2025-02-22 for 333333",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 16,
+    "fields": {
+      "action_time": "2024-12-14T12:43:32.504Z",
+      "user": 1,
+      "content_type": 4,
+      "object_id": "2",
+      "object_repr": "hansp",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 17,
+    "fields": {
+      "action_time": "2024-12-14T12:44:01.063Z",
+      "user": 1,
+      "content_type": 9,
+      "object_id": "3",
+      "object_repr": "Unterhalt (ID: B00-00)",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"fields\": [\"Project lead\"]}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 18,
+    "fields": {
+      "action_time": "2025-01-09T21:24:52.300Z",
+      "user": 1,
+      "content_type": 9,
+      "object_id": "4",
+      "object_repr": "test (ID: B25-00)",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 19,
+    "fields": {
+      "action_time": "2025-01-09T21:50:34.183Z",
+      "user": 1,
+      "content_type": 9,
+      "object_id": "5",
+      "object_repr": "test (ID: B25-00)",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 20,
+    "fields": {
+      "action_time": "2025-01-09T22:07:55.613Z",
+      "user": 1,
+      "content_type": 9,
+      "object_id": "6",
+      "object_repr": "tst (ID: B25-00)",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 21,
+    "fields": {
+      "action_time": "2025-01-09T22:13:05.155Z",
+      "user": 1,
+      "content_type": 9,
+      "object_id": "7",
+      "object_repr": "test (ID: B25-00)",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 1,
+    "fields": {
+      "name": "Can add log entry",
+      "content_type": 1,
+      "codename": "add_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 2,
+    "fields": {
+      "name": "Can change log entry",
+      "content_type": 1,
+      "codename": "change_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 3,
+    "fields": {
+      "name": "Can delete log entry",
+      "content_type": 1,
+      "codename": "delete_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 4,
+    "fields": {
+      "name": "Can view log entry",
+      "content_type": 1,
+      "codename": "view_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 5,
+    "fields": {
+      "name": "Can add permission",
+      "content_type": 2,
+      "codename": "add_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 6,
+    "fields": {
+      "name": "Can change permission",
+      "content_type": 2,
+      "codename": "change_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 7,
+    "fields": {
+      "name": "Can delete permission",
+      "content_type": 2,
+      "codename": "delete_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 8,
+    "fields": {
+      "name": "Can view permission",
+      "content_type": 2,
+      "codename": "view_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 9,
+    "fields": {
+      "name": "Can add group",
+      "content_type": 3,
+      "codename": "add_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 10,
+    "fields": {
+      "name": "Can change group",
+      "content_type": 3,
+      "codename": "change_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 11,
+    "fields": {
+      "name": "Can delete group",
+      "content_type": 3,
+      "codename": "delete_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 12,
+    "fields": {
+      "name": "Can view group",
+      "content_type": 3,
+      "codename": "view_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 13,
+    "fields": {
+      "name": "Can add user",
+      "content_type": 4,
+      "codename": "add_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 14,
+    "fields": {
+      "name": "Can change user",
+      "content_type": 4,
+      "codename": "change_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 15,
+    "fields": {
+      "name": "Can delete user",
+      "content_type": 4,
+      "codename": "delete_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 16,
+    "fields": {
+      "name": "Can view user",
+      "content_type": 4,
+      "codename": "view_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 17,
+    "fields": {
+      "name": "Can add content type",
+      "content_type": 5,
+      "codename": "add_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 18,
+    "fields": {
+      "name": "Can change content type",
+      "content_type": 5,
+      "codename": "change_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 19,
+    "fields": {
+      "name": "Can delete content type",
+      "content_type": 5,
+      "codename": "delete_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 20,
+    "fields": {
+      "name": "Can view content type",
+      "content_type": 5,
+      "codename": "view_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 21,
+    "fields": {
+      "name": "Can add session",
+      "content_type": 6,
+      "codename": "add_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 22,
+    "fields": {
+      "name": "Can change session",
+      "content_type": 6,
+      "codename": "change_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 23,
+    "fields": {
+      "name": "Can delete session",
+      "content_type": 6,
+      "codename": "delete_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 24,
+    "fields": {
+      "name": "Can view session",
+      "content_type": 6,
+      "codename": "view_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 25,
+    "fields": {
+      "name": "Can add currency look up",
+      "content_type": 7,
+      "codename": "add_currencylookup"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 26,
+    "fields": {
+      "name": "Can change currency look up",
+      "content_type": 7,
+      "codename": "change_currencylookup"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 27,
+    "fields": {
+      "name": "Can delete currency look up",
+      "content_type": 7,
+      "codename": "delete_currencylookup"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 28,
+    "fields": {
+      "name": "Can view currency look up",
+      "content_type": 7,
+      "codename": "view_currencylookup"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 29,
+    "fields": {
+      "name": "Can add status look up",
+      "content_type": 8,
+      "codename": "add_statuslookup"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 30,
+    "fields": {
+      "name": "Can change status look up",
+      "content_type": 8,
+      "codename": "change_statuslookup"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 31,
+    "fields": {
+      "name": "Can delete status look up",
+      "content_type": 8,
+      "codename": "delete_statuslookup"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 32,
+    "fields": {
+      "name": "Can view status look up",
+      "content_type": 8,
+      "codename": "view_statuslookup"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 33,
+    "fields": {
+      "name": "Can add project",
+      "content_type": 9,
+      "codename": "add_project"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 34,
+    "fields": {
+      "name": "Can change project",
+      "content_type": 9,
+      "codename": "change_project"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 35,
+    "fields": {
+      "name": "Can delete project",
+      "content_type": 9,
+      "codename": "delete_project"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 36,
+    "fields": {
+      "name": "Can view project",
+      "content_type": 9,
+      "codename": "view_project"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 37,
+    "fields": {
+      "name": "Can add project budget",
+      "content_type": 10,
+      "codename": "add_projectbudget"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 38,
+    "fields": {
+      "name": "Can change project budget",
+      "content_type": 10,
+      "codename": "change_projectbudget"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 39,
+    "fields": {
+      "name": "Can delete project budget",
+      "content_type": 10,
+      "codename": "delete_projectbudget"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 40,
+    "fields": {
+      "name": "Can view project budget",
+      "content_type": 10,
+      "codename": "view_projectbudget"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 41,
+    "fields": {
+      "name": "Can add project timeline",
+      "content_type": 11,
+      "codename": "add_projecttimeline"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 42,
+    "fields": {
+      "name": "Can change project timeline",
+      "content_type": 11,
+      "codename": "change_projecttimeline"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 43,
+    "fields": {
+      "name": "Can delete project timeline",
+      "content_type": 11,
+      "codename": "delete_projecttimeline"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 44,
+    "fields": {
+      "name": "Can view project timeline",
+      "content_type": 11,
+      "codename": "view_projecttimeline"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 45,
+    "fields": {
+      "name": "Can add project file",
+      "content_type": 12,
+      "codename": "add_projectfile"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 46,
+    "fields": {
+      "name": "Can change project file",
+      "content_type": 12,
+      "codename": "change_projectfile"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 47,
+    "fields": {
+      "name": "Can delete project file",
+      "content_type": 12,
+      "codename": "delete_projectfile"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 48,
+    "fields": {
+      "name": "Can view project file",
+      "content_type": 12,
+      "codename": "view_projectfile"
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$870000$rSFt2UvtzDJPdZeyyvVk5Y$2OSlbeA4to94NT6HetMWTgy7zGIXEgoux/9JG4rdKQA=",
+      "last_login": "2025-01-09T21:24:26.228Z",
+      "is_superuser": true,
+      "username": "simonst",
+      "first_name": "",
+      "last_name": "",
+      "email": "simon.strassen@outlook.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2024-12-14T12:17:35.918Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "password": "!wtGaxoKZjGhsZ64fhoySeB0FZmxJ4FckGprWh5N4",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "hansp",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-12-14T12:43:32.502Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 1,
+    "fields": { "app_label": "admin", "model": "logentry" }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 2,
+    "fields": { "app_label": "auth", "model": "permission" }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 3,
+    "fields": { "app_label": "auth", "model": "group" }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 4,
+    "fields": { "app_label": "auth", "model": "user" }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 5,
+    "fields": { "app_label": "contenttypes", "model": "contenttype" }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 6,
+    "fields": { "app_label": "sessions", "model": "session" }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 7,
+    "fields": { "app_label": "api", "model": "currencylookup" }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 8,
+    "fields": { "app_label": "api", "model": "statuslookup" }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 9,
+    "fields": { "app_label": "api", "model": "project" }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 10,
+    "fields": { "app_label": "api", "model": "projectbudget" }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 11,
+    "fields": { "app_label": "api", "model": "projecttimeline" }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 12,
+    "fields": { "app_label": "api", "model": "projectfile" }
+  },
+  {
+    "model": "sessions.session",
+    "pk": "9s369ptsc7ixhoy550sb4cmy50lkowdz",
+    "fields": {
+      "session_data": ".eJxVjMsOwiAQRf-FtSEwhMe4dO83EGAGqRqalHZl_Hdt0oVu7znnvkRM29riNniJE4mz0OL0u-VUHtx3QPfUb7Msc1-XKctdkQcd8joTPy-H-3fQ0mjf2pGroRjCimgCOFDKsw0WORNVkwNj0tmhNQYKaPCAoJ3RKvgARWXx_gDQejbH:1tW00w:eSMZEDumR99l1C1Da8BPI7TQpUg30zN67T3vL2bdnco",
+      "expire_date": "2025-01-23T21:24:26.233Z"
+    }
+  },
+  {
+    "model": "sessions.session",
+    "pk": "tlb9pa8mq4qiuxqtfl8xtc0t7pqqv10e",
+    "fields": {
+      "session_data": ".eJxVjEsOAiEQBe_C2hCan-DSvWcgTQMyaiAZZlbGuxuSWej2VdV7s4D7VsM-8hqWxC4M2Ol3i0jP3CZID2z3zqm3bV0inwo_6OC3nvLrerh_BxVHnbUF8qo4kEZQImlz0oqcpggmW-dtiRLlWUE0hMKhFyDBlWK815YksM8X3-I3bw:1tMR5h:zGie8GjF6Nu91_eC22Sg0ntiAn8Q_wLRXcxHFvqpvDo",
+      "expire_date": "2024-12-28T12:17:49.586Z"
+    }
+  },
+  {
+    "model": "api.statuslookup",
+    "pk": 1,
+    "fields": { "status_label": "planned" }
+  },
+  {
+    "model": "api.statuslookup",
+    "pk": 2,
+    "fields": { "status_label": "started" }
+  },
+  {
+    "model": "api.statuslookup",
+    "pk": 3,
+    "fields": { "status_label": "finished" }
+  },
+  {
+    "model": "api.currencylookup",
+    "pk": 1,
+    "fields": { "currency_label": "CHF", "exchange_rate": 1.0 }
+  },
+  {
+    "model": "api.currencylookup",
+    "pk": 2,
+    "fields": { "currency_label": "EUR", "exchange_rate": 0.94 }
+  },
+  {
+    "model": "api.project",
+    "pk": 1,
+    "fields": {
+      "project_name": "Maschine",
+      "project_number": "B20-99",
+      "project_lead": 1,
+      "project_status": 1,
+      "confirmed_project_status": 1,
+      "DATECREATE": "2024-12-14T12:23:21.535Z"
+    }
+  },
+  {
+    "model": "api.project",
+    "pk": 2,
+    "fields": {
+      "project_name": "MAschine 2",
+      "project_number": "B20-01",
+      "project_lead": 1,
+      "project_status": 2,
+      "confirmed_project_status": 1,
+      "DATECREATE": "2024-12-14T12:23:49.022Z"
+    }
+  },
+  {
+    "model": "api.project",
+    "pk": 3,
+    "fields": {
+      "project_name": "Unterhalt",
+      "project_number": "B00-00",
+      "project_lead": 2,
+      "project_status": 2,
+      "confirmed_project_status": 2,
+      "DATECREATE": "2024-12-14T12:24:11.739Z"
+    }
+  },
+  {
+    "model": "api.project",
+    "pk": 8,
+    "fields": {
+      "project_name": "test",
+      "project_number": "B25-00",
+      "project_lead": 1,
+      "project_status": 1,
+      "confirmed_project_status": null,
+      "DATECREATE": "2025-01-09T22:28:31.311Z"
+    }
+  },
+  {
+    "model": "api.project",
+    "pk": 9,
+    "fields": {
+      "project_name": "test 2",
+      "project_number": "B25-01",
+      "project_lead": 2,
+      "project_status": 1,
+      "confirmed_project_status": null,
+      "DATECREATE": "2025-01-09T22:29:35.683Z"
+    }
+  },
+  {
+    "model": "api.projectbudget",
+    "pk": 1,
+    "fields": {
+      "project": 1,
+      "amount": 100.0,
+      "currency": 2,
+      "approval_date": "2024-12-01"
+    }
+  },
+  {
+    "model": "api.projectbudget",
+    "pk": 2,
+    "fields": {
+      "project": 2,
+      "amount": 30000.0,
+      "currency": 1,
+      "approval_date": "2024-10-22"
+    }
+  },
+  {
+    "model": "api.projectbudget",
+    "pk": 3,
+    "fields": {
+      "project": 3,
+      "amount": 333333.0,
+      "currency": 1,
+      "approval_date": "2025-02-22"
+    }
+  },
+  {
+    "model": "api.projectbudget",
+    "pk": 4,
+    "fields": {
+      "project": 8,
+      "amount": 33.0,
+      "currency": 1,
+      "approval_date": null
+    }
+  },
+  {
+    "model": "api.projectbudget",
+    "pk": 5,
+    "fields": {
+      "project": 9,
+      "amount": 33.0,
+      "currency": 1,
+      "approval_date": null
+    }
+  },
+  {
+    "model": "api.projecttimeline",
+    "pk": 1,
+    "fields": {
+      "project": 1,
+      "start_date": "2024-12-01",
+      "order_date": "2024-12-09",
+      "acceptance_date": "2024-12-14",
+      "delivery_date": "2024-12-22",
+      "finish_date": "2024-12-31"
+    }
+  },
+  {
+    "model": "api.projecttimeline",
+    "pk": 2,
+    "fields": {
+      "project": 2,
+      "start_date": "2024-10-01",
+      "order_date": "2024-10-11",
+      "acceptance_date": "2024-10-18",
+      "delivery_date": "2024-10-22",
+      "finish_date": "2024-10-31"
+    }
+  },
+  {
+    "model": "api.projecttimeline",
+    "pk": 3,
+    "fields": {
+      "project": 3,
+      "start_date": "2025-01-01",
+      "order_date": null,
+      "acceptance_date": null,
+      "delivery_date": null,
+      "finish_date": "2025-02-02"
+    }
+  },
+  {
+    "model": "api.projecttimeline",
+    "pk": 4,
+    "fields": {
+      "project": 8,
+      "start_date": "2025-01-09",
+      "order_date": null,
+      "acceptance_date": null,
+      "delivery_date": null,
+      "finish_date": "2025-01-09"
+    }
+  },
+  {
+    "model": "api.projecttimeline",
+    "pk": 5,
+    "fields": {
+      "project": 9,
+      "start_date": "2025-01-09",
+      "order_date": "2025-01-10",
+      "acceptance_date": "2025-01-10",
+      "delivery_date": "2025-01-11",
+      "finish_date": "2025-01-17"
+    }
+  }
+]

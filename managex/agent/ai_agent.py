@@ -26,18 +26,20 @@ class Agent:
         self.llm = ChatOllama(model=local_llm)
         self.tools = tools
 
-    def execute_tool(self, tool_name: str, *args) -> str:
+    def invoke(self, prompt: str) -> str:
         """
-        Execute the specified tool with the given arguments.
+        Handle the input prompt by deciding the tool, executing it, and summarizing the result.
         """
-        tool = next((tool for tool in self.tools if tool.name == tool_name), None)
-        if tool:
-            return tool.execute(*args)
-        else:
-            logger.error(f"Tool '{tool_name}' not found.")
-            return f"Tool '{tool_name}' not found."
+        try:
+            tool_name, args = self._decision_making(prompt)
+            query_result = self._execute_tool(tool_name, args)
+            answer = self._summarize(prompt, query_result)
+            return answer
+        except Exception as e:
+            logger.error(f"Error in handling input: {e}")
+            return "An error occurred while processing your request."
 
-    def decision_making(self, prompt: str) -> Tuple[str, str]:
+    def _decision_making(self, prompt: str) -> Tuple[str, str]:
         """
         Use the LLM to decide which tool to use based on the prompt.
         """
@@ -48,9 +50,21 @@ class Agent:
             return json_result["tool"], json_result["query_parameter"]
         except Exception as e:
             logger.error(f"Error in decision making: {e}")
-            raise
+            raise e
 
-    def summarize(self, prompt: str, context: str) -> str:
+    def _execute_tool(self, tool_name: str, *args) -> str:
+        """
+        Execute the specified tool with the given arguments.
+        """
+        tool = next((tool for tool in self.tools if tool.name == tool_name), None)
+        if tool:
+            return tool.execute(*args)
+        else:
+            logger.error(f"Tool '{tool_name}' not found.")
+            return f"Tool '{tool_name}' not found."
+
+
+    def _summarize(self, prompt: str, context: str) -> str:
         """
         Use the LLM to summarize the result based on the prompt and context.
         """
@@ -62,18 +76,7 @@ class Agent:
             logger.error(f"Error in summarizing: {e}")
             raise
 
-    def invoke(self, prompt: str) -> str:
-        """
-        Handle the input prompt by deciding the tool, executing it, and summarizing the result.
-        """
-        try:
-            tool_name, args = self.decision_making(prompt)
-            query_result = self.execute_tool(tool_name, args)
-            answer = self.summarize(prompt, query_result)
-            return answer
-        except Exception as e:
-            logger.error(f"Error in handling input: {e}")
-            return "An error occurred while processing your request."
+
 
     def __call__(self, prompt: str) -> str:
         """
@@ -83,6 +86,13 @@ class Agent:
 
 # Example usage
 if __name__ == "__main__":
+
+    import os
+    import django
+
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'managex.settings')
+    django.setup()
+
     local_llm = "llama3.2"
     tools = [QueryDatabaseTool(), QueryVectorStoreTool()]
     agent = Agent(local_llm, tools)
