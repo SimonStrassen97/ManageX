@@ -3,13 +3,15 @@ import logging
 from typing import List, Tuple, Any
 
 from langchain_ollama import ChatOllama, OllamaLLM
-from tools import QueryDatabaseTool, QueryVectorStoreTool
 from utils.prompt_templates import decision_making_instructions, summarizer_instructions, reflection_instructions
 
 # TODO: 
-# Add state management to the agent. 
-# add reflection step to the agent. 
-# actually write tools 
+# config file to choose tools and llms
+# retrieve schema from database.
+# tool descriptions as input to orchestrator prompt template
+# handle multiple questions in one prompt.
+#      - state management 
+#      - reflection step  
 # RAG pipeline
 # integrate into django app.
 
@@ -19,12 +21,19 @@ logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 class Agent:
-    def __init__(self, local_llm: str, tools: List[Any]):
+    def __init__(self, orchestrator_llm: str):
         """
         Initialize the Agent with a local language model and a list of tools.
         """
-        self.llm = ChatOllama(model=local_llm)
-        self.tools = tools
+        self.llm = ChatOllama(model=orchestrator_llm)
+        self.tools = {}
+    
+    @classmethod
+    def register_tool(cls, tool_cls):
+        """Decorator to register a tool."""
+        instance = tool_cls()  # Instantiate the tool
+        cls.tools[instance.name] = instance  # Store in dictionary
+        return tool_cls  # Return the class unchanged
 
     def invoke(self, prompt: str) -> str:
         """
@@ -83,37 +92,3 @@ class Agent:
         Make the Agent callable.
         """
         return self.invoke(prompt)
-
-# Example usage
-if __name__ == "__main__":
-
-    import os
-    import django
-
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'managex.settings')
-    django.setup()
-
-    local_llm = "llama3.2"
-    tools = [QueryDatabaseTool(), QueryVectorStoreTool()]
-    agent = Agent(local_llm, tools)
-
-    questions = [
-        "What is the status of project B25-00?",
-        "What are the risks associated with project B25-01?",
-        "What is the budget of project B25-01?",
-        "What is the timeline for project B24-00?",
-        "When is project B25-00 finished?"
-    ]
-
-    expected_answers = [
-        "The status of project B25-00 is 'In Progress'.",
-        "No answer found.",
-        "The budget of project B25-01 is $50,000.",
-        "Project doesn't exist.",
-        "Project B25-00 is expected to be finished by 2023-01-01."
-    ]
-
-    for question, expected in zip(questions, expected_answers):
-        print(f"Question: {question}")
-        print(f"Agent's Answer: {agent(question)}")
-        print(f"Expected Answer: {expected}\n")

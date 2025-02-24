@@ -1,23 +1,26 @@
+
+# Orchestrator Prompt Templates
+
 decision_making_instructions = """Your goal is to decide what tool should be used to answer a question.
 
 The tools and their functions at your disposal are:
-1. "Query Database": Fetch project information from the database using the project number.
+1. "Query Database": Fetch information about projects from the database given the question.
 -> The database contains information about name, status, budget, project leader and timeline.
 
-2. "Query Vector Store": Perform RAG analysis on the project files using the project number.
+2. "Query Vector Store": Perform RAG analysis on the project files given the question.
 -> The project files contain additional information about the project's scope, rationale, risks, and goals.
 
 Question:
 {question}
 
-Based on the question, decide which tool to use and provide the necessary query parameter (e.g., project number) and give a short reasoning.
+Based on the question, decide which tool to use and provide the necessary data in the desired format:
 
 The output is ONLY a json object with the relevant fields. DON'T write anything else.
 
 
 {{
     'tool': string,  # The name of the tool to use (e.g., "Query Database" or "RAG Analysis")
-    'query_parameter': string,  # The query parameter needed for the tool (e.g., project number)
+    'question': string,  # The input question.
     'rationale': string,  # Your reasoning for choosing the tool (optional)
 }}
 """
@@ -60,3 +63,64 @@ Return your analysis as a JSON object:
     "knowledge_gap": "string",
     "follow_up_query": "string"
 }}"""
+
+
+
+# SQL Prompt Templates
+
+sql_generation_instructions = """
+You are an AI specialized in generating SQL commands.
+
+Your goal is to answers the input question by generating an appropriate SQL command given the database schema:
+
+Database Schema:
+Tables:
+1. Project
+   - id (Primary Key)
+   - project_number (Unique)
+   - project_name
+   - project_lead_id (Foreign Key to User)
+   - project_status_id (Foreign Key to StatusLookup)
+   - confirmed_project_status_id (Foreign Key to StatusLookup)
+   - date_created
+
+2. User
+   - id (Primary Key)
+   - username
+   - first_name
+   - last_name
+   - email
+   - is_staff
+   - is_active
+   - date_joined
+
+3. StatusLookup
+   - id (Primary Key)
+   - status_label
+
+4. ProjectBudget
+   - id (Primary Key)
+   - project_id (Foreign Key to Project)
+   - amount
+   - currency_id (Foreign Key to CurrencyLookup)
+   - approval_date
+
+5. CurrencyLookup
+   - id (Primary Key)
+   - currency_label
+   - exchange_rate
+
+6. ProjectTimeline
+   - id (Primary Key)
+   - project_id (Foreign Key to Project)
+   - start_date
+   - order_date
+   - acceptance_date
+   - delivery_date
+   - finish_date
+
+Question:
+{question}
+
+Generate the appropriate SQL command to answer the question.
+"""
