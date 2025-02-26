@@ -3,16 +3,14 @@ import logging
 from typing import List, Tuple, Any
 
 from langchain_ollama import ChatOllama, OllamaLLM
-from utils.prompt_templates import decision_making_instructions, summarizer_instructions, reflection_instructions
+from .utils.prompt_templates import decision_making_instructions, summarizer_instructions, reflection_instructions
 
 # TODO: 
-# setup slq llm and prompt template
-# config file to choose tools and llms
-# retrieve schema from database an input to prompt template.
-# tool descriptions as input to orchestrator prompt template
+# tool names, descriptions and function info as input to orchestrator prompt template --> need to assure correct input to tool
+# also return sql query
 # handle multiple questions in one prompt.
 #      - state management 
-#      - reflection step  
+#      - reflection step  -> answered questions? more questions?
 # RAG pipeline
 # integrate into django app.
 
@@ -30,9 +28,9 @@ class Agent:
         self.tools = {}
     
 
-    def register_tool(self, tool_cls):
+    def register_tool(self, tool_cls, *args, **kwargs):
         """Decorator to register a tool."""
-        instance = tool_cls()  # Instantiate the tool
+        instance = tool_cls(*args, **kwargs)  # Instantiate the tool with arguments
         self.tools[instance.name] = instance  # Store in dictionary
         return tool_cls  # Return the class unchanged
 

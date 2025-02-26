@@ -1,30 +1,34 @@
 from .BaseTool import BaseTool
 import psycopg2 as pg
 from django.conf import settings
+from langchain_ollama import ChatOllama
 from ..utils.db_schema_queries import fetch_tables, fetch_columns, fetch_primary_keys, fetch_foreign_keys
 from ..utils.prompt_templates import sql_generation_instructions
 
+
 class QueryDatabaseTool(BaseTool):
-    def __init__(self):
+    def __init__(self, sql_llm=None, db_settings=None):
         super().__init__(
             name="Query Database",
             description="Fetch project information from the database given the database schema",
-            func=self._query_database
+            func=self.tool_function
         )
-        self.sql_llm = "qwen2.5-coder:3b"
+
+        self.sql_llm = ChatOllama(model=sql_llm)
+        self.db_settings = db_settings
 
     def execute(self, question):
         result = super().execute(question)
         return self.output_parser(result)
 
     def _connect_to_db(self):
-        db_settings = settings.DATABASES['default']
+
         self.connection = pg.connect(
-            dbname=db_settings['NAME'],
-            user=db_settings['USER'],
-            password=db_settings['PASSWORD'],
-            host=db_settings['HOST'],
-            port=db_settings['PORT']
+            dbname=self.db_settings['NAME'],
+            user=self.db_settings['USER'],
+            password=self.db_settings['PASSWORD'],
+            host=self.db_settings['HOST'],
+            port=self.db_settings['PORT']
         )
         self.cursor = self.connection.cursor()
     
@@ -76,7 +80,7 @@ class QueryDatabaseTool(BaseTool):
         return schema_str
     
 
-    def _query_database(self, question):
+    def tool_function(self, question):
 
         self._connect_to_db()
 

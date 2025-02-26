@@ -10,6 +10,7 @@ class BaseTool:
         self.name = name
         self.description = description
         self.func = func
+        self.chained_tools = []
 
     def execute(self, *args, **kwargs):
         """
@@ -19,4 +20,9 @@ class BaseTool:
         :param kwargs: Keyword arguments for the function.
         :return: The result of the function execution.
         """
-        return self.func(*args, **kwargs)
+        result = self.func(*args, **kwargs)
+        for tool in self.chained_tools:
+            result = tool.execute(result)
+        return result
+    
+
