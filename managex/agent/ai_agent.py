@@ -6,8 +6,9 @@ from langchain_ollama import ChatOllama, OllamaLLM
 from utils.prompt_templates import decision_making_instructions, summarizer_instructions, reflection_instructions
 
 # TODO: 
+# setup slq llm and prompt template
 # config file to choose tools and llms
-# retrieve schema from database.
+# retrieve schema from database an input to prompt template.
 # tool descriptions as input to orchestrator prompt template
 # handle multiple questions in one prompt.
 #      - state management 
@@ -28,11 +29,11 @@ class Agent:
         self.llm = ChatOllama(model=orchestrator_llm)
         self.tools = {}
     
-    @classmethod
-    def register_tool(cls, tool_cls):
+
+    def register_tool(self, tool_cls):
         """Decorator to register a tool."""
         instance = tool_cls()  # Instantiate the tool
-        cls.tools[instance.name] = instance  # Store in dictionary
+        self.tools[instance.name] = instance  # Store in dictionary
         return tool_cls  # Return the class unchanged
 
     def invoke(self, prompt: str) -> str:
@@ -40,7 +41,7 @@ class Agent:
         Handle the input prompt by deciding the tool, executing it, and summarizing the result.
         """
         try:
-            tool_name, args = self._decision_making(prompt)
+            tool_name, args = self._make_decision(prompt)
             query_result = self._execute_tool(tool_name, args)
             answer = self._summarize(prompt, query_result)
             return answer
@@ -48,7 +49,7 @@ class Agent:
             logger.error(f"Error in handling input: {e}")
             return "An error occurred while processing your request."
 
-    def _decision_making(self, prompt: str) -> Tuple[str, str]:
+    def _make_decision(self, prompt: str) -> Tuple[str, str]:
         """
         Use the LLM to decide which tool to use based on the prompt.
         """
@@ -56,7 +57,7 @@ class Agent:
         try:
             result = self.llm.invoke(decision_making_prompt)
             json_result = json.loads(result.content)
-            return json_result["tool"], json_result["query_parameter"]
+            return json_result["tool"], json_result["tool_args"]
         except Exception as e:
             logger.error(f"Error in decision making: {e}")
             raise e

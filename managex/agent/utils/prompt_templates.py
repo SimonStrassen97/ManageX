@@ -20,7 +20,7 @@ The output is ONLY a json object with the relevant fields. DON'T write anything 
 
 {{
     'tool': string,  # The name of the tool to use (e.g., "Query Database" or "RAG Analysis")
-    'question': string,  # The input question.
+    'tool_args': string,  # The required arguments for the tool 
     'rationale': string,  # Your reasoning for choosing the tool (optional)
 }}
 """
@@ -73,54 +73,11 @@ You are an AI specialized in generating SQL commands.
 
 Your goal is to answers the input question by generating an appropriate SQL command given the database schema:
 
-Database Schema:
-Tables:
-1. Project
-   - id (Primary Key)
-   - project_number (Unique)
-   - project_name
-   - project_lead_id (Foreign Key to User)
-   - project_status_id (Foreign Key to StatusLookup)
-   - confirmed_project_status_id (Foreign Key to StatusLookup)
-   - date_created
-
-2. User
-   - id (Primary Key)
-   - username
-   - first_name
-   - last_name
-   - email
-   - is_staff
-   - is_active
-   - date_joined
-
-3. StatusLookup
-   - id (Primary Key)
-   - status_label
-
-4. ProjectBudget
-   - id (Primary Key)
-   - project_id (Foreign Key to Project)
-   - amount
-   - currency_id (Foreign Key to CurrencyLookup)
-   - approval_date
-
-5. CurrencyLookup
-   - id (Primary Key)
-   - currency_label
-   - exchange_rate
-
-6. ProjectTimeline
-   - id (Primary Key)
-   - project_id (Foreign Key to Project)
-   - start_date
-   - order_date
-   - acceptance_date
-   - delivery_date
-   - finish_date
-
-Question:
+The question is:
 {question}
+
+The database schema is:
+{schema}
 
 Generate the appropriate SQL command to answer the question.
 """
