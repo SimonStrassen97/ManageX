@@ -13,7 +13,7 @@ agent.register_tool(QueryVectorStoreTool)
 questions = [
     "What is the status of project B25-00?",
     "What are the risks associated with project B25-01?",
-    "Give me a list of all projects with a budget over $100,000.",
+    "Give me a list of all projects with a budget over 10'000.",
     "Give me a list of all projects that have not started yet.",
     "What ongoing projects does Simon have",
     "When is project B25-01 finished?"
@@ -22,8 +22,9 @@ questions = [
 expected_answers = [
     "The status of project B25-00 is 'Planned'.",
     "RAG completed but no answer found",
-    "The budget of project B25-01 is 33CHF.",
-    "Project doesn't exist.",
+    "B20-01 and B00-00",
+    "B20-99, B25-00 and B25-01.",
+    "B20-01",
     "Project B25-01 is expected to be finished by 2025-01-17."
 ]
 

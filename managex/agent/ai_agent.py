@@ -3,10 +3,11 @@ import logging
 from typing import List, Tuple, Any
 
 from langchain_ollama import ChatOllama, OllamaLLM
-from .utils.prompt_templates import decision_making_instructions, summarizer_instructions, reflection_instructions
+from .utils.prompt_templates import DECISION_TEMPLATE, SUMMARIZE_TEMPLATE, REFLECTION_TEMPLATE
 
 # TODO: 
-# tool names, descriptions and function info as input to orchestrator prompt template --> need to assure correct input to tool
+# fix json parsing error of llm result
+# function info as input to orchestrator prompt template --> need to assure correct input to tool
 # also return sql query
 # handle multiple questions in one prompt.
 #      - state management 
@@ -31,7 +32,7 @@ class Agent:
     def register_tool(self, tool_cls, *args, **kwargs):
         """Decorator to register a tool."""
         instance = tool_cls(*args, **kwargs)  # Instantiate the tool with arguments
-        self.tools[instance.name] = instance  # Store in dictionary
+        self.tools[len(self.tools)+1] = instance  # Store in dictionary
         return tool_cls  # Return the class unchanged
 
     def invoke(self, prompt: str) -> str:
@@ -39,8 +40,8 @@ class Agent:
         Handle the input prompt by deciding the tool, executing it, and summarizing the result.
         """
         try:
-            tool_name, args = self._make_decision(prompt)
-            query_result = self._execute_tool(tool_name, args)
+            tool_number, tool_name = self._make_decision(prompt)
+            query_result = self._execute_tool(tool_number, prompt)
             answer = self._summarize(prompt, query_result)
             return answer
         except Exception as e:
@@ -51,32 +52,33 @@ class Agent:
         """
         Use the LLM to decide which tool to use based on the prompt.
         """
-        decision_making_prompt = decision_making_instructions.format(question=prompt)
+        tools_info = "\n".join([f'{k}. "{tool.name}": {tool.description}' for k, tool in self.tools.items()])
+        decision_making_prompt = DECISION_TEMPLATE.format(question=prompt, tools=tools_info)
         try:
             result = self.llm.invoke(decision_making_prompt)
             json_result = json.loads(result.content)
-            return json_result["tool"], json_result["tool_args"]
+            return json_result["tool_number"], json_result["tool_name"]
         except Exception as e:
             logger.error(f"Error in decision making: {e}")
             raise e
 
-    def _execute_tool(self, tool_name: str, *args) -> str:
+    def _execute_tool(self, tool_number: str, *args) -> str:
         """
         Execute the specified tool with the given arguments.
         """
-        tool = next((tool for tool in self.tools if tool.name == tool_name), None)
+        tool = next((self.tools[k] for k in self.tools.keys() if k == tool_number), None)
         if tool:
             return tool.execute(*args)
         else:
-            logger.error(f"Tool '{tool_name}' not found.")
-            return f"Tool '{tool_name}' not found."
+            logger.error(f"Tool '{tool.name}' not found.")
+            return f"Tool '{tool.name}' not found."
 
 
     def _summarize(self, prompt: str, context: str) -> str:
         """
         Use the LLM to summarize the result based on the prompt and context.
         """
-        summarizer_prompt = summarizer_instructions.format(question=prompt, context=context)
+        summarizer_prompt = SUMMARIZE_TEMPLATE.format(question=prompt, context=context)
         try:
             summarizer_result = self.llm.invoke(summarizer_prompt)
             return summarizer_result.content.strip()

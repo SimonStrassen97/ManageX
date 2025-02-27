@@ -1,5 +1,6 @@
 from .BaseTool import BaseTool
 import psycopg2 as pg
+import json
 from django.conf import settings
 from langchain_ollama import ChatOllama
 from ..utils.db_schema_queries import fetch_tables, fetch_columns, fetch_primary_keys, fetch_foreign_keys
@@ -82,6 +83,10 @@ class QueryDatabaseTool(BaseTool):
 
     def tool_function(self, question):
 
+        print("----------------------")
+        print("Querying Database Tool")
+        print("----------------------")
+
         self._connect_to_db()
 
         # get the database schema
@@ -89,13 +94,21 @@ class QueryDatabaseTool(BaseTool):
 
         # generate the SQL query
         sql_generation_prompt = sql_generation_instructions.format(question=question, schema=db_schema)
-        sql_query = self.sql_llm.invoke()(sql_generation_prompt)
+        result = self.sql_llm.invoke(sql_generation_prompt)
+        json_content = result.content.strip().strip('```json').strip('```')
+        json_result = json.loads(json_content)
+
+        sql_query = json_result["SQL"]
 
         # query the database
         self.cursor.execute(sql_query)
         rows = self.cursor.fetchall()
 
         self._disconnect_from_db()
+
+        print("----------------------")
+        print("SQL Query:", sql_query)
+        print("----------------------")
         return rows
 
     def output_parser(self, output):

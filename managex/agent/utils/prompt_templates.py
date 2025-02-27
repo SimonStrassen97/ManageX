@@ -1,31 +1,27 @@
 
 # Orchestrator Prompt Templates
 
-decision_making_instructions = """Your goal is to decide what tool should be used to answer a question.
+DECISION_TEMPLATE = """Your goal is to decide what tool should be used to answer a question.
 
 The tools and their functions at your disposal are:
-1. "Query Database": Fetch information about projects from the database given the question.
--> The database contains information about name, status, budget, project leader and timeline.
-
-2. "Query Vector Store": Perform RAG analysis on the project files given the question.
--> The project files contain additional information about the project's scope, rationale, risks, and goals.
+{tools}
 
 Question:
 {question}
 
-Based on the question, decide which tool to use and provide the necessary data in the desired format:
+Based on the question, decide which tool to use and provide your reasoning.
 
-The output is ONLY a json object with the relevant fields. DON'T write anything else.
+The output HAS to be a VALID json object with the relevant fields and DON'T write anything else.
 
 
 {{
-    'tool': string,  # The name of the tool to use (e.g., "Query Database" or "RAG Analysis")
-    'tool_args': string,  # The required arguments for the tool 
-    'rationale': string,  # Your reasoning for choosing the tool (optional)
+    'tool_number': int,  # The number of the tool to use
+    'tool_name': string,  # The name of the tool to use 
+    'rationale': string,  # Your reasoning for choosing the tool
 }}
 """
 
-summarizer_instructions="""Your goal is to generate a short but high-quality answer from the query results to answer provided question.
+SUMMARIZE_TEMPLATE="""Your goal is to generate a short but high-quality answer from the query results to answer provided question.
 
 When EXTENDING an existing summary:
 1. Seamlessly integrate new information without repeating what's already covered
@@ -50,7 +46,7 @@ The question is: {question}
 the query results are: {context}
 """
 
-reflection_instructions = """You are analyzing if the answer: {answer} to the question: {question} is complete
+REFLECTION_TEMPLATE = """You are analyzing if the answer: {answer} to the question: {question} is complete
 
 Your tasks:
 1. Identify gaps in the answer provided
@@ -58,7 +54,7 @@ Your tasks:
 
 Ensure the follow-up question is self-contained.
 
-Return your analysis as a JSON object:
+Return your analysis as a VALID json object and DON'T wirte anything else.:
 {{ 
     "knowledge_gap": "string",
     "follow_up_query": "string"
@@ -71,7 +67,7 @@ Return your analysis as a JSON object:
 sql_generation_instructions = """
 You are an AI specialized in generating SQL commands.
 
-Your goal is to answers the input question by generating an appropriate SQL command given the database schema:
+Your goal is to generate an SQL command that can retrieve the information to answer the input question given the database schema:
 
 The question is:
 {question}
@@ -79,5 +75,10 @@ The question is:
 The database schema is:
 {schema}
 
-Generate the appropriate SQL command to answer the question.
+
+Generate the appropriate SQL command to answer the question. Make sure you always include the project number and project name in the SELECT when retrieving info about projects.
+Provide ONLY the SQL query in the JSON format:
+{{
+    "SQL": "Your SQL command here"
+}}
 """

@@ -12,6 +12,8 @@ class Config:
 
     # SQL LLM
     SQL_LLM = 'qwen2.5-coder:3b'
+    # SQL_LLM = 'llama3.2:3b'
+
 
     # Database settings
     DB_SETTINGS = {
