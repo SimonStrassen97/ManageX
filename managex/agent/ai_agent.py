@@ -56,6 +56,7 @@ class Agent:
         decision_making_prompt = DECISION_TEMPLATE.format(question=prompt, tools=tools_info)
         try:
             result = self.llm.invoke(decision_making_prompt)
+            print(result.content)
             json_result = json.loads(result.content)
             return json_result["tool_number"], json_result["tool_name"]
         except Exception as e:

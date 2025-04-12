@@ -14,8 +14,8 @@ questions = [
     "What is the status of project B25-00?",
     "What are the risks associated with project B25-01?",
     "Give me a list of all projects with a budget over 10'000.",
-    "Give me a list of all projects that have not started yet.",
-    "What ongoing projects does Simon have",
+    "Give me a list of all projects that are planned.",
+    "What ongoing projects does simonst have",
     "When is project B25-01 finished?"
 ]
 

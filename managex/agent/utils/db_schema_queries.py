@@ -11,7 +11,7 @@ AND (table_name LIKE '%api%' OR table_name = 'auth_user');
 fetch_columns = """
 SELECT column_name, data_type
 FROM information_schema.columns
-WHERE table_name = %s;
+WHERE table_name = %s  and column_name not in ('confirmed_project_status_id');
 """
 
 fetch_primary_keys = """

@@ -1,12 +1,10 @@
 import React from "react"
-import { Sidebar } from "../components/layout/Sidebar"
-import { Header } from "../components/layout/Header"
+import { Layout } from "../components/layout/Layout"
 
 export const GanttChart = () => {
   return (
-    <>
-      <Header></Header>
-      <Sidebar></Sidebar>
-    </>
+    <Layout>
+      <></>
+    </Layout>
   )
 }

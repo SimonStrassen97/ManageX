@@ -16,13 +16,7 @@ export interface UsersState {
 }
 
 export interface CurrentUserState {
-  user: User
-  loading: boolean
-  error: AppError | null
-}
-
-export interface UsersState {
-  users: User[]
+  user: User | null
   loading: boolean
   error: AppError | null
 }

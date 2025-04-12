@@ -83,10 +83,6 @@ class QueryDatabaseTool(BaseTool):
 
     def tool_function(self, question):
 
-        print("----------------------")
-        print("Querying Database Tool")
-        print("----------------------")
-
         self._connect_to_db()
 
         # get the database schema
@@ -95,6 +91,7 @@ class QueryDatabaseTool(BaseTool):
         # generate the SQL query
         sql_generation_prompt = sql_generation_instructions.format(question=question, schema=db_schema)
         result = self.sql_llm.invoke(sql_generation_prompt)
+        print(result.content)
         json_content = result.content.strip().strip('```json').strip('```')
         json_result = json.loads(json_content)
 
@@ -105,10 +102,6 @@ class QueryDatabaseTool(BaseTool):
         rows = self.cursor.fetchall()
 
         self._disconnect_from_db()
-
-        print("----------------------")
-        print("SQL Query:", sql_query)
-        print("----------------------")
         return rows
 
     def output_parser(self, output):

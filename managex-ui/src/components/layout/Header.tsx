@@ -1,38 +1,74 @@
 import React from "react"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { Button } from "../Button"
 import { useDispatch } from "react-redux"
 import { logout } from "../../features/auth/authSlice"
 import { AppDispatch } from "../../app/store"
 
 export const Header = () => {
-  const dispatch = useDispatch<AppDispatch>() // Type-safe dispatch
+  const dispatch = useDispatch<AppDispatch>()
+  const location = useLocation() // Get the current route
 
   const handleLogout = () => {
     dispatch(logout())
   }
 
+  const isActive = (path: string) => location.pathname === path // Check if the route matches
+
   return (
-    <div>
-      <header>
-        <h1>ManageX</h1>
-      </header>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/home">Home</Link>
-          </li>
-          <li>
-            <Link to="/gantt">Gantt</Link>
-          </li>
-          <li>
-            <Link to="/myprojects">My Projects</Link>
-          </li>
-          <li>
-            <Button label="Logout" onClick={handleLogout} />
-          </li>
-        </ul>
-      </nav>
-    </div>
+    <header className="fixed top-0 left-0 w-full bg-blue-900 text-white shadow-md z-50">
+      <div className="flex items-center justify-between p-4">
+        <h1 className="text-3xl font-bold">
+          Manage<span className="text-red-500">X</span>
+        </h1>
+        <nav>
+          <ul className="flex items-center space-x-4">
+            <li>
+              <Link
+                to="/home"
+                className={`hover:underline ${
+                  isActive("/home")
+                    ? "underline decoration-red-500 decoration-2 underline-offset-4"
+                    : ""
+                }`}
+              >
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/gantt"
+                className={`hover:underline ${
+                  isActive("/gantt")
+                    ? "underline decoration-red-500 decoration-2 underline-offset-4"
+                    : ""
+                }`}
+              >
+                Gantt
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/myprojects"
+                className={`hover:underline ${
+                  isActive("/myprojects")
+                    ? "underline decoration-red-500 decoration-2 underline-offset-4"
+                    : ""
+                }`}
+              >
+                My Projects
+              </Link>
+            </li>
+            <li>
+              <Button
+                label="Logout"
+                onClick={handleLogout}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+              />
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
   )
 }

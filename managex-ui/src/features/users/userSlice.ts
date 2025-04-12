@@ -41,13 +41,26 @@ const usersSlice = createSlice({
   },
 })
 
+// helper function to get the stored user from localStorage
+const getStoredUser = (): User | null => {
+  const storedUser = localStorage.getItem("user")
+  if (!storedUser) return null
+
+  try {
+    return JSON.parse(storedUser) as User
+  } catch (error) {
+    console.error("Failed to parse stored user:", error)
+    localStorage.removeItem("user") // Clear invalid user data
+    return null
+  }
+}
+
 // Define the initial state for the current user
 const initialCurrentUserState: CurrentUserState = {
-  user: null,
+  user: getStoredUser(),
   loading: false,
   error: null,
 }
-
 // Create the current user slice
 const currentUserSlice = createSlice({
   name: "currentUser",
@@ -66,7 +79,7 @@ const currentUserSlice = createSlice({
           state.loading = false
           state.user = user
           state.error = null
-          localStorage.setItem("user", user.username)
+          localStorage.setItem("user", JSON.stringify(user))
         },
       )
       .addCase(fetchCurrentUserThunk.rejected, (state, action) => {
@@ -84,7 +97,7 @@ const currentUserSlice = createSlice({
           state.loading = false
           state.user = user
           state.error = null
-          localStorage.setItem("user", user.username)
+          localStorage.setItem("user", JSON.stringify(user))
         },
       )
       .addCase(registerUserThunk.rejected, (state, action) => {

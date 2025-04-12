@@ -1,15 +1,12 @@
-import { Sidebar } from "../components/layout/Sidebar"
 import { ProjectList } from "../features/projects/ProjectList"
-import { Header } from "../components/layout/Header"
+import { Layout } from "../components/layout/Layout"
 
 import React from "react"
 
 export const Overview = () => {
   return (
-    <>
-      <Header></Header>
-      <Sidebar></Sidebar>
+    <Layout>
       <ProjectList showBudget={false} />
-    </>
+    </Layout>
   )
 }

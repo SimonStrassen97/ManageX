@@ -9,6 +9,7 @@ import { MyProjects } from "./pages/MyProjects"
 import { Login } from "./features/auth/Login"
 import { Register } from "./pages/Register"
 import { PrivateRoute } from "./components/PrivateRoutes"
+import "./index.css" // Ensure this is imported
 
 const App = () => {
   return (
