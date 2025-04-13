@@ -3,10 +3,8 @@ import { FilterWindow } from "../../features/filter/FilterWindow"
 
 export const Sidebar: React.FC = () => {
   return (
-    <div style={{ width: "250px", border: "1px solid #ccc", padding: "10px" }}>
-      <h2>Sidebar</h2>
+    <div className="p-4 border-r border-gray-300">
       <FilterWindow />
-      {/* Future sections can be added here */}
     </div>
   )
 }

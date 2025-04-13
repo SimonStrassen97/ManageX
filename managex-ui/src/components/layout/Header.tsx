@@ -4,6 +4,7 @@ import { Button } from "../Button"
 import { useDispatch } from "react-redux"
 import { logout } from "../../features/auth/authSlice"
 import { AppDispatch } from "../../app/store"
+import { ChartNoAxesGantt, UserPen, House, LogOut } from "lucide-react"
 
 export const Header = () => {
   const dispatch = useDispatch<AppDispatch>()
@@ -23,7 +24,8 @@ export const Header = () => {
         </h1>
         <nav>
           <ul className="flex items-center space-x-4">
-            <li>
+            <li className="flex items-center space-x-1 pr-2">
+              <House className="h-4" />
               <Link
                 to="/home"
                 className={`hover:underline ${
@@ -35,7 +37,8 @@ export const Header = () => {
                 Home
               </Link>
             </li>
-            <li>
+            <li className="flex items-center space-x-1 pr-2">
+              <ChartNoAxesGantt className="h-5" />
               <Link
                 to="/gantt"
                 className={`hover:underline ${
@@ -47,7 +50,8 @@ export const Header = () => {
                 Gantt
               </Link>
             </li>
-            <li>
+            <li className="flex items-center space-x-1 pr-2">
+              <UserPen className="h-4" />
               <Link
                 to="/myprojects"
                 className={`hover:underline ${
@@ -59,11 +63,12 @@ export const Header = () => {
                 My Projects
               </Link>
             </li>
-            <li>
+            <li className="flex items-center space-x-1 pr-2">
               <Button
+                svg={<LogOut className="w-5" />} // Pass the LogOut icon as the svg prop
                 label="Logout"
                 onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                className="bg-red-500 hover:bg-red-600 text-white"
               />
             </li>
           </ul>

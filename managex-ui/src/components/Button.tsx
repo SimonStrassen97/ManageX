@@ -1,6 +1,7 @@
 import React from "react"
 
 interface ButtonProps {
+  svg?: React.ReactNode // Add support for an optional SVG/icon
   label: string
   onClick?: () => void
   type?: "button" | "submit" | "reset"
@@ -9,6 +10,7 @@ interface ButtonProps {
 }
 
 export const Button: React.FC<ButtonProps> = ({
+  svg,
   label,
   onClick,
   type = "button",
@@ -18,11 +20,12 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <button
       type={type}
-      className={className} // Default 'btn' class with optional additional styles
+      className={`flex items-center justify-center space-x-2 px-4 py-2 rounded-md shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed ${className}`}
       onClick={onClick}
       disabled={disabled}
     >
-      {label}
+      {svg && <span>{svg}</span>} {/* Render the icon if provided */}
+      <span>{label}</span> {/* Render the button label */}
     </button>
   )
 }
