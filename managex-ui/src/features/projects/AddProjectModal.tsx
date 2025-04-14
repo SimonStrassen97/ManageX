@@ -54,7 +54,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
 
   const users = useSelector((state: RootState) => state.users.users)
   const statuses = useSelector((state: RootState) => state.status.statuses)
-  
+
   //probably not needed since already in store. (maybe not yet but should be upon app start)
   useEffect(() => {
     dispatch(fetchUsersThunk())
@@ -124,15 +124,20 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
           <Dropdown
             label="Project Lead"
             value={
-              users.find(user => user.id === formData.project_lead_id)?.username || ""
+              users.find(user => user.id === formData.project_lead_id)
+                ?.username || ""
             }
             options={users.map(user => user.username)}
             disable_all={true}
             onChange={(username: string) => {
-              const selectedUser = users.find(user => user.username === username)
+              const selectedUser = users.find(
+                user => user.username === username,
+              )
               setFormData(prev => ({
                 ...prev,
-                project_lead_id: selectedUser ? selectedUser.id : prev.project_lead_id,
+                project_lead_id: selectedUser
+                  ? selectedUser.id
+                  : prev.project_lead_id,
               }))
             }}
             error={errors.project_lead}
@@ -140,14 +145,20 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
           <Dropdown
             label="Project Status"
             value={
-              statuses.find(status => status.status_id === formData.project_status_id)?.status_label || ""
+              statuses.find(
+                status => status.status_id === formData.project_status_id,
+              )?.status_label || ""
             }
             options={statuses.map(status => status.status_label)}
             onChange={(status_label: string) => {
-              const selectedStatus = statuses.find(status => status.status_label === status_label)
+              const selectedStatus = statuses.find(
+                status => status.status_label === status_label,
+              )
               setFormData(prev => ({
                 ...prev,
-                project_status_id: selectedStatus ? selectedStatus.status_id : prev.project_status_id,
+                project_status_id: selectedStatus
+                  ? selectedStatus.status_id
+                  : prev.project_status_id,
               }))
             }}
             error={errors.project_status}
@@ -169,7 +180,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
           />
           {/* Add other form fields here */}
           <div className="modal-actions">
-            <Button label="Add Project" type="submit" />
+            <Button label="Add Project" type="submit" className="bg-blue-600" />
             <Button label="Cancel" type="button" onClick={handleClose} />
           </div>
         </form>

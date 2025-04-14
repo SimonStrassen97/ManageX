@@ -4,7 +4,14 @@ import { Button } from "../Button"
 import { useDispatch } from "react-redux"
 import { logout } from "../../features/auth/authSlice"
 import { AppDispatch } from "../../app/store"
-import { ChartNoAxesGantt, UserPen, House, LogOut } from "lucide-react"
+import {
+  ChartNoAxesGantt,
+  UserPen,
+  House,
+  LogOut,
+  Kanban,
+  ChartNoAxesCombined,
+} from "lucide-react"
 
 export const Header = () => {
   const dispatch = useDispatch<AppDispatch>()
@@ -17,7 +24,7 @@ export const Header = () => {
   const isActive = (path: string) => location.pathname === path // Check if the route matches
 
   return (
-    <header className="fixed top-0 left-0 w-full bg-blue-900 text-white shadow-md z-50">
+    <header className="fixed w-full bg-blue-800 text-white z-50">
       <div className="flex items-center justify-between p-4">
         <h1 className="text-3xl font-bold">
           Manage<span className="text-red-500">X</span>
@@ -61,6 +68,32 @@ export const Header = () => {
                 }`}
               >
                 My Projects
+              </Link>
+            </li>
+            <li className="flex items-center space-x-1 pr-2">
+              <ChartNoAxesCombined className="h-4" />
+              <Link
+                to="/analytics"
+                className={`hover:underline ${
+                  isActive("/analytics")
+                    ? "underline decoration-red-500 decoration-2 underline-offset-4"
+                    : ""
+                }`}
+              >
+                Analytics
+              </Link>
+            </li>
+            <li className="flex items-center space-x-1 pr-2">
+              <Kanban className="h-4" />
+              <Link
+                to="/kanban"
+                className={`hover:underline ${
+                  isActive("/kanban")
+                    ? "underline decoration-red-500 decoration-2 underline-offset-4"
+                    : ""
+                }`}
+              >
+                Kanaban
               </Link>
             </li>
             <li className="flex items-center space-x-1 pr-2">

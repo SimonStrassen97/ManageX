@@ -6,8 +6,10 @@ import { RootState } from "./app/store"
 import { GanttChart } from "./pages/GanttChart"
 import { Overview } from "./pages/Overview"
 import { MyProjects } from "./pages/MyProjects"
+import { Kanban } from "./pages/Kanban"
+import { Analytics } from "./pages/Analytics"
 import { Login } from "./features/auth/Login"
-import { Register } from "./pages/Register"
+import { Register } from "./features/auth/Register"
 import { PrivateRoute } from "./components/PrivateRoutes"
 import "./index.css" // Ensure this is imported
 
@@ -29,6 +31,14 @@ const App = () => {
           <Route
             path="/myprojects"
             element={<PrivateRoute element={<MyProjects />} />}
+          />
+          <Route
+            path="/kanban"
+            element={<PrivateRoute element={<Kanban />} />}
+          />
+          <Route
+            path="/analytics"
+            element={<PrivateRoute element={<Analytics />} />}
           />
           <Route path="/" element={<Navigate to="/home" />} />{" "}
           {/* Redirect from / to /home */}
