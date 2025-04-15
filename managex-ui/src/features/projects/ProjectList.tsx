@@ -22,7 +22,7 @@ export const ProjectList: React.FC<ProjectListProps> = ({
   const cellClass = "px-4 py-2 border border-gray-300 text-sm"
 
   return (
-    <div className="p-6 bg-white">
+    <div className="bg-white">
       {filteredProjects.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="min-w-full border-collapse border border-gray-700">

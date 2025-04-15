@@ -93,7 +93,7 @@ export const Header = () => {
                     : ""
                 }`}
               >
-                Kanaban
+                Kanban
               </Link>
             </li>
             <li className="flex items-center space-x-1 pr-2">

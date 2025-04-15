@@ -1,12 +1,16 @@
 import React from "react"
 import { KanbanCard } from "./KanbanCard"
+import { Project } from "../../types/project-types"
 
 interface KanbanColumnProps {
   status: string
-  cards: { id: string; title: string; description?: string }[]
+  projects: Project[]
 }
 
-export const KanbanColumn: React.FC<KanbanColumnProps> = ({ status }) => {
+export const KanbanColumn: React.FC<KanbanColumnProps> = ({
+  status,
+  projects,
+}) => {
   const formattedStatus =
     status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
 
@@ -18,7 +22,16 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({ status }) => {
       </div>
       {/* Scrollable content: */}
       <div className="flex-1 rounded-lg overflow-y-auto p-2 space-y-2">
-        {/* Cards */}
+        {projects.map(project => (
+          <KanbanCard
+            key={project.project_id}
+            card={{
+              card_name: project.project_info.project_name,
+              card_number: project.project_info.project_number,
+              card_leader: project.project_info.project_lead,
+            }}
+          />
+        ))}
       </div>
     </div>
   )

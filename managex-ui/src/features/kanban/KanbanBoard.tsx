@@ -21,16 +21,18 @@ export const KanbanBoard = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-200">
-      <div className="flex-grow p-4 overflow-x-auto">
+      <div className="flex-grow overflow-x-auto">
         {loading && <p>Loading statuses...</p>}
         {error && <p className="text-red-500">Error: {error}</p>}
         {!loading && !error && (
           <div className="grid grid-flow-col auto-cols-[minmax(150px,1fr)] gap-4 h-full">
             {projectStatuses.map(status => (
               <KanbanColumn
-                key={status.status_id}
                 status={status.status_label}
-                cards={project_cards}
+                projects={projects.filter(
+                  project =>
+                    project.project_info.project_status === status.status_label,
+                )}
               />
             ))}
           </div>

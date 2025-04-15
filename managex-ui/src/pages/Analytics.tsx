@@ -3,8 +3,8 @@ import { Layout } from "../components/layout/Layout"
 
 export const Analytics = () => {
   return (
-    <Layout>
-      <>Analytics</>
+    <Layout title="Analytics">
+      <></>
     </Layout>
   )
 }

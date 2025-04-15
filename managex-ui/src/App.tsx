@@ -3,7 +3,7 @@ import React from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { useSelector } from "react-redux"
 import { RootState } from "./app/store"
-import { GanttChart } from "./pages/GanttChart"
+import { Gantt } from "./pages/Gantt"
 import { Overview } from "./pages/Overview"
 import { MyProjects } from "./pages/MyProjects"
 import { Kanban } from "./pages/Kanban"
@@ -24,10 +24,7 @@ const App = () => {
             path="/home"
             element={<PrivateRoute element={<Overview />} />}
           />
-          <Route
-            path="/gantt"
-            element={<PrivateRoute element={<GanttChart />} />}
-          />
+          <Route path="/gantt" element={<PrivateRoute element={<Gantt />} />} />
           <Route
             path="/myprojects"
             element={<PrivateRoute element={<MyProjects />} />}

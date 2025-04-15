@@ -1,9 +1,9 @@
 import React from "react"
 import { Layout } from "../components/layout/Layout"
 
-export const GanttChart = () => {
+export const Gantt = () => {
   return (
-    <Layout>
+    <Layout title="Gantt Chart">
       <></>
     </Layout>
   )
