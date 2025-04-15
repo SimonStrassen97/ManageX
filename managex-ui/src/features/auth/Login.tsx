@@ -15,7 +15,8 @@ export const Login = () => {
   const { error: authError } = useSelector((state: RootState) => state.auth)
   const { error: userError } = useSelector((state: RootState) => state.users)
 
-  const handleLogin = async () => {
+  const handleLogin = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault() // Prevent default form submission behavior
     const loginData: LoginData = { username, password }
     try {
       await dispatch(authThunk(loginData)).unwrap()
@@ -54,6 +55,7 @@ export const Login = () => {
           />
           <Button
             label="Login"
+            type="submit"
             onClick={handleLogin}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded"
           />

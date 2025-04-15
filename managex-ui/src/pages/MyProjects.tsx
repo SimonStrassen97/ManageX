@@ -19,8 +19,7 @@ export const MyProjects = () => {
   }
 
   return (
-    <Layout>
-      <h1 className="text-gray-900 font-bold text-xl mb-4">My Projects</h1>
+    <Layout title="My Projects">
       <ProjectList showBudget={true} filterByUser={currentUser.username} />
       <Button
         label="Add Project"
