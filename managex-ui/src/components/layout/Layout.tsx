@@ -18,7 +18,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, title }) => {
               <h1 className="text-xl font-bold text-gray-900">{title}</h1>
             </div>
           )}
-          <main className="bg-white p-4">{children}</main>
+          <main className="flex-1 overflow-hidden">{children}</main>
         </div>
       </div>
     </div>
