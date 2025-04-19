@@ -35,7 +35,7 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
       <div
         ref={setNodeRef}
         style={style}
-        className="flex-1 rounded-b-lg bg-inherit p-2 space-y-2 "
+        className="flex-1 rounded-b-lg bg-inherit p-2 space-y-2"
       >
         <SortableContext items={cardIDs}>
           {cards.map(card => (

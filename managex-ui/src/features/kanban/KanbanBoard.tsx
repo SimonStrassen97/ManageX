@@ -15,25 +15,32 @@ export const KanbanBoard = () => {
   // const projectStatuses = useSelector(
   //   (state: RootState) => state.status.statuses,
   // )
+
   // const projects = useSelector((state: RootState) => state.projects.projects)
 
   //const projects = sampleProjects
   const projectStatuses = sampleStatus
-  const [cards, setCards] = React.useState<Card[]>(
-    sampleProjects.map(project => ({
-      card_id: project.project_id,
-      task_status: project.project_info.project_status,
-      task_number: project.project_info.project_number,
-      task_name: project.project_info.project_name,
-      task_leader: project.project_info.project_lead,
-    })),
+  const statusToIdMap = Object.fromEntries(
+    projectStatuses.map(status => [status.status_label, status.status_id]),
   )
-  const [projects, setProjects] =
-    React.useState<sampleProject[]>(sampleProjects)
+  const [cards, setCards] = React.useState<Card[]>(
+    sampleProjects.map(project => {
+      const taskStatus = project.project_info.project_status
+      return {
+        card_id: 100 + project.project_id, // make sure card_ids and column_ids are never overlapping
+        column_id: statusToIdMap[taskStatus],
+        task_status: taskStatus,
+        task_number: project.project_info.project_number,
+        task_name: project.project_info.project_name,
+        task_leader: project.project_info.project_lead,
+      }
+    }),
+  )
+
   const [activeCard, setActiveCard] = React.useState<Card | null>(null)
   const columns = projectStatuses.map(status => ({
-    column_title: status.status_label,
     column_id: status.status_id,
+    column_title: status.status_label,
   }))
 
   // Fetch statuses when the component mounts
@@ -73,59 +80,29 @@ export const KanbanBoard = () => {
 
     // Handle dragging over a column
     if (over.data.current?.type === "Column") {
-      console.log(
-        "Dragging over column: ",
-        over.data.current.column.column_title,
-      )
+      console.log("Dragging over column: ", over.data.current.column.column_id)
 
-      // Update the task_status of the dragged card to match the column
-      setCards(cards =>
-        cards.map(card =>
-          card.card_id === active.id
-            ? {
-                ...card,
-                task_status: over.data.current.column.column_title,
-              }
-            : card,
-        ),
-      )
-      return // Exit early since no reordering is needed when dragging over a column
+      setCards(cards => {
+        const activeIndex = cards.findIndex(card => card.card_id === active.id)
+
+        cards[activeIndex].column_id = over.id
+        return arrayMove(cards, activeIndex, activeIndex)
+      })
     }
 
     // Handle dragging over another card
     if (over.data.current?.type === "Card") {
       console.log("Dragging over card: ", over.data.current.card.task_number)
 
-      // Update the task_status of the dragged card to match the target card's status
-      setCards(cards =>
-        cards.map(card =>
-          card.card_id === active.id
-            ? {
-                ...card,
-                task_status: over.data.current.card.task_status,
-              }
-            : card,
-        ),
-      )
+      setCards(cards => {
+        const activeIndex = cards.findIndex(card => card.card_id === active.id)
+        const overIndex = cards.findIndex(card => card.card_id === over.id)
+
+        cards[activeIndex].column_id = cards[overIndex].column_id
+
+        return arrayMove(cards, activeIndex, overIndex)
+      })
     }
-
-    // Reorder cards within the same column
-    setCards(cards => {
-      const activeCardIndex = cards.findIndex(
-        card => card.card_id === active.id,
-      )
-      const overCardIndex = cards.findIndex(card => card.card_id === over.id)
-
-      // Only reorder if both cards are in the same column
-      if (
-        cards[activeCardIndex]?.task_status ===
-        cards[overCardIndex]?.task_status
-      ) {
-        return arrayMove(cards, activeCardIndex, overCardIndex)
-      }
-
-      return cards // No changes if cards are in different columns
-    })
   }
 
   return (
@@ -140,9 +117,7 @@ export const KanbanBoard = () => {
             <KanbanColumn
               key={column.column_id}
               column={column}
-              cards={cards.filter(
-                card => card.task_status === column.column_title,
-              )}
+              cards={cards.filter(card => card.column_id === column.column_id)}
             />
           ))}
         </div>

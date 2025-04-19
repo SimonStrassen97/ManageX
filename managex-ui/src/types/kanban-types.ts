@@ -7,6 +7,7 @@ export type Column = {
 
 export type Card = {
   card_id: ID
+  column_id: ID
   task_status: string
   task_name: string
   task_number: string
