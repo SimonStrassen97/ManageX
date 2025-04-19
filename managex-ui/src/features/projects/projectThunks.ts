@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit"
 import {
   fetchProjects,
   addProject,
+  updateProject,
   checkProjectNumberAvailability,
   fetchStatusList,
 } from "../../api/projectApi"
@@ -9,7 +10,10 @@ import { Project, Status } from "../../types/project-types"
 import { FilterState } from "../../types/filter-types"
 import { ProjectTransformer, StatusTransformer } from "../../utils/transforms"
 import { handleError, AppError } from "../../utils/error-handling"
-import { AddProjectRequest } from "../../types/server-request-types"
+import {
+  AddProjectRequest,
+  PartialProjectUpdate,
+} from "../../types/server-request-types"
 
 // Define the async thunk for fetching projects with filters
 export const fetchProjectsThunk = createAsyncThunk<
@@ -41,6 +45,23 @@ export const addProjectThunk = createAsyncThunk<
       const response = await addProject(project)
       const newProject = ProjectTransformer.fromServer(response.data)
       return newProject
+    } catch (error: any) {
+      return handleError(error, rejectWithValue)
+    }
+  },
+)
+
+export const updateProjectThunk = createAsyncThunk<
+  Project,
+  { project_id: number; updates: PartialProjectUpdate },
+  { rejectValue: AppError }
+>(
+  "projects/updateProject",
+  async ({ project_id, updates }, { rejectWithValue }) => {
+    try {
+      const response = await updateProject(project_id, updates)
+      const updatedProject = ProjectTransformer.fromServer(response.data)
+      return updatedProject
     } catch (error: any) {
       return handleError(error, rejectWithValue)
     }

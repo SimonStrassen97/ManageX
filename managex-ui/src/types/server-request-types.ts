@@ -39,6 +39,8 @@ export interface UpdateProjectRequest {
   }
 }
 
+export type PartialProjectUpdate = Partial<UpdateProjectRequest>
+
 export interface UploadFileRequest {
   project_number: string
   file: File | null

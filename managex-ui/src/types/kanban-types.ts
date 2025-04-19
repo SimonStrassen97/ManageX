@@ -1,4 +1,4 @@
-export type ID = string | number
+export type ID = number
 
 export type Column = {
   column_id: ID

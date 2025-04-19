@@ -1,43 +1,55 @@
 import React, { useEffect } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { RootState, AppDispatch } from "../../app/store"
-import { fetchStatusListThunk } from "../projects/projectThunks"
+import {
+  fetchStatusListThunk,
+  updateProjectThunk,
+} from "../projects/projectThunks"
 import { KanbanColumn } from "./KanbanColumn"
 import { sampleProject, sampleProjects, sampleStatus } from "./sampleData"
 import { DndContext, DragOverlay } from "@dnd-kit/core"
-import { Card } from "../../types/kanban-types"
+import { Card, Column } from "../../types/kanban-types"
 import { KanbanCard } from "./KanbanCard"
 import { createPortal } from "react-dom"
 import { arrayMove } from "@dnd-kit/sortable"
 
 export const KanbanBoard = () => {
   const dispatch = useDispatch<AppDispatch>()
-  // const projectStatuses = useSelector(
-  //   (state: RootState) => state.status.statuses,
-  // )
+  const projectStatuses = useSelector(
+    (state: RootState) => state.status.statuses,
+  )
 
-  // const projects = useSelector((state: RootState) => state.projects.projects)
+  const projects = useSelector((state: RootState) => state.projects.projects)
 
-  //const projects = sampleProjects
-  const projectStatuses = sampleStatus
   const statusToIdMap = Object.fromEntries(
     projectStatuses.map(status => [status.status_label, status.status_id]),
   )
-  const [cards, setCards] = React.useState<Card[]>(
-    sampleProjects.map(project => {
-      const taskStatus = project.project_info.project_status
-      return {
-        card_id: 100 + project.project_id, // make sure card_ids and column_ids are never overlapping
-        column_id: statusToIdMap[taskStatus],
-        task_status: taskStatus,
-        task_number: project.project_info.project_number,
-        task_name: project.project_info.project_name,
-        task_leader: project.project_info.project_lead,
-      }
-    }),
-  )
 
-  const [activeCard, setActiveCard] = React.useState<Card | null>(null)
+  const [cards, setCards] = React.useState<Card[]>([])
+
+  useEffect(() => {
+    if (projects.length > 0 && projectStatuses.length > 0) {
+      const statusToIdMap = Object.fromEntries(
+        projectStatuses.map(status => [status.status_label, status.status_id]),
+      )
+
+      const mappedCards: Card[] = projects.map(project => {
+        const taskStatus = project.project_info.project_status
+        return {
+          card_id: 100 + project.project_id,
+          column_id: statusToIdMap[taskStatus],
+          task_status: taskStatus,
+          task_number: project.project_info.project_number,
+          task_name: project.project_info.project_name,
+          task_leader: project.project_info.project_lead,
+        }
+      })
+
+      setCards(mappedCards)
+    }
+  }, [projects, projectStatuses])
+
+  const [sourceCard, setSourceCard] = React.useState<Card | null>(null)
   const columns = projectStatuses.map(status => ({
     column_id: status.status_id,
     column_title: status.status_label,
@@ -51,23 +63,43 @@ export const KanbanBoard = () => {
   function handleDragStart(event: any) {
     const { active } = event
     if (active.data.current?.type === "Card") {
-      setActiveCard(event.active.data.current.card)
+      // Create a shallow copy of the card to avoid mutating the original reference
+      setSourceCard({ ...event.active.data.current.card })
       return
     }
   }
 
   function handleDragEnd(event: any) {
     const { active, over } = event
-    if (active.id !== over.id) {
+
+    // Find the dragged card
+    const changedCard = cards.find(card => card.card_id === active.id)
+    if (!changedCard || !sourceCard) {
+      console.error("Source or target card not found")
       return
     }
-    if (event.over) {
-      console.log(
-        "Dropped " + event.active.id + " on droppable area " + event.over.id,
+
+    const oldColumnId = sourceCard.column_id
+    const newColumnId = changedCard.column_id
+    if (newColumnId !== oldColumnId) {
+      // Update the card's column_id to the new column
+
+      const updatedProject = {
+        project_id: sourceCard.card_id - 100, // Reverse the card_id logic to get the project_id
+        new_status_id: newColumnId,
+      }
+      // Dispatch the asyncThunk to update the backend
+      dispatch(
+        updateProjectThunk({
+          project_id: sourceCard.card_id - 100, // Reverse the card_id logic to get the project_id
+          updates: { project_status_id: newColumnId }, // Only update the status
+        }),
       )
     }
 
     // TODO: Update projects in the backend
+
+    setSourceCard(null)
   }
 
   function handleDragOver(event: any) {
@@ -83,10 +115,13 @@ export const KanbanBoard = () => {
       console.log("Dragging over column: ", over.data.current.column.column_id)
 
       setCards(cards => {
-        const activeIndex = cards.findIndex(card => card.card_id === active.id)
+        const newCards = [...cards]
+        const activeIndex = newCards.findIndex(
+          card => card.card_id === active.id,
+        )
 
-        cards[activeIndex].column_id = over.id
-        return arrayMove(cards, activeIndex, activeIndex)
+        newCards[activeIndex].column_id = over.id
+        return arrayMove(newCards, activeIndex, activeIndex)
       })
     }
 
@@ -95,12 +130,15 @@ export const KanbanBoard = () => {
       console.log("Dragging over card: ", over.data.current.card.task_number)
 
       setCards(cards => {
-        const activeIndex = cards.findIndex(card => card.card_id === active.id)
-        const overIndex = cards.findIndex(card => card.card_id === over.id)
+        const newCards = [...cards]
+        const activeIndex = newCards.findIndex(
+          card => card.card_id === active.id,
+        )
+        const overIndex = newCards.findIndex(card => card.card_id === over.id)
 
-        cards[activeIndex].column_id = cards[overIndex].column_id
+        newCards[activeIndex].column_id = newCards[overIndex].column_id
 
-        return arrayMove(cards, activeIndex, overIndex)
+        return arrayMove(newCards, activeIndex, overIndex)
       })
     }
   }
@@ -124,7 +162,7 @@ export const KanbanBoard = () => {
       </div>
       {createPortal(
         <DragOverlay>
-          {activeCard && <KanbanCard card={activeCard} />}
+          {sourceCard && <KanbanCard card={sourceCard} />}
         </DragOverlay>,
         document.body,
       )}

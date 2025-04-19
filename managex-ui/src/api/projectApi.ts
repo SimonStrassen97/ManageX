@@ -3,7 +3,10 @@ import { ProjectResponse, StatusResponse } from "../types/server-response-types"
 import { Project } from "../types/project-types"
 import { FilterState } from "../types/filter-types"
 import { ProjectTransformer } from "../utils/transforms"
-import { AddProjectRequest } from "../types/server-request-types"
+import {
+  AddProjectRequest,
+  PartialProjectUpdate,
+} from "../types/server-request-types"
 
 // Utility function to convert FilterState to query parameters
 const convertFilterStateToParams = (
@@ -34,4 +37,14 @@ export const checkProjectNumberAvailability = async (projectNumber: string) => {
 }
 export const fetchStatusList = async () => {
   return await axiosInstance.get<StatusResponse[]>("/api/status/")
+}
+
+export const updateProject = async (
+  project_id: number,
+  updates: PartialProjectUpdate,
+) => {
+  return await axiosInstance.patch(
+    `/api/projects/update/${project_id}/`,
+    updates,
+  )
 }

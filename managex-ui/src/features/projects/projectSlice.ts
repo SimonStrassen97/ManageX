@@ -3,9 +3,16 @@ import {
   fetchProjectsThunk,
   addProjectThunk,
   fetchStatusListThunk,
+  updateProjectThunk,
 } from "./projectThunks"
-import { Project, Status, ProjectsState, StatusState } from "../../types/project-types"
+import {
+  Project,
+  Status,
+  ProjectsState,
+  StatusState,
+} from "../../types/project-types"
 import { AppError } from "../../utils/error-handling"
+import { PartialProjectUpdate } from "../../types/server-request-types"
 
 // Define the initial state
 const initialProjectState: ProjectsState = {
@@ -50,6 +57,29 @@ const projectSlice = createSlice({
         },
       )
       .addCase(addProjectThunk.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload as AppError
+      })
+
+      .addCase(updateProjectThunk.pending, state => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(
+        updateProjectThunk.fulfilled,
+        (state, action: PayloadAction<Project>) => {
+          state.loading = false
+          state.error = null
+          const updatedProject = action.payload
+          const index = state.projects.findIndex(
+            project => project.project_id === updatedProject.project_id,
+          )
+          if (index !== -1) {
+            state.projects[index] = updatedProject
+          }
+        },
+      )
+      .addCase(updateProjectThunk.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload as AppError
       })
