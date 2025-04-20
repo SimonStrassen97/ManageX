@@ -67,53 +67,61 @@ class ProjectReadSerializer(serializers.ModelSerializer):
         read_only_fields = ['project_id', 'project_lead', 'project_status', 'confirmed_project_status']
 
 class ProjectWriteSerializer(serializers.ModelSerializer):
-    project_lead = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), source='project_lead_id')
-    project_status = serializers.PrimaryKeyRelatedField(queryset=StatusLookUp.objects.all(), source='project_status_id')
-    confirmed_project_status = serializers.PrimaryKeyRelatedField(queryset=StatusLookUp.objects.all(), required=False, allow_null=True, source='confirmed_project_status_id')
-    budget = BudgetWriteSerializer()
-    timeline = ProjectTimelineSerializer()
+    project_lead_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), source='project_lead')  # Map project_lead_id to project_lead
+    project_status_id = serializers.PrimaryKeyRelatedField(queryset=StatusLookUp.objects.all(), source='project_status')  # Map project_status_id to project_status
+    confirmed_project_status_id = serializers.PrimaryKeyRelatedField(
+        queryset=StatusLookUp.objects.all(), 
+        required=False, 
+        allow_null=True, 
+        source='confirmed_project_status'  # Map confirmed_project_status_id to confirmed_project_status
+    )
+    budget = BudgetWriteSerializer() 
+    timeline = ProjectTimelineSerializer()  
 
     class Meta:
         model = Project
         fields = [
             'project_name',
             'project_number',
-            'project_lead_id',
-            'project_status_id',
-            'confirmed_project_status_id',
+            'project_lead_id', 
+            'project_status_id',  # This field will map to project_status
+            'confirmed_project_status_id',  # This field will map to confirmed_project_status
             'budget',
             'timeline'
         ]
 
     def create(self, validated_data):
-        # Separate nested fields for ProjectBudget and ProjectTimeline to create those objects
+        # Extract nested fields
         budget_data = validated_data.pop('budget')
         timeline_data = validated_data.pop('timeline')
-        
+
+        # Create the project
         project = Project.objects.create(**validated_data)
+
+        # Create related budget and timeline
         ProjectBudget.objects.create(project=project, **budget_data)
         ProjectTimeline.objects.create(project=project, **timeline_data)
-        
+
         return project
-    
+
     def update(self, instance, validated_data):
-        # Separate nested fields for ProjectBudget and ProjectTimeline to update those objects
+        # Extract nested fields
         budget_data = validated_data.pop('budget', None)
         timeline_data = validated_data.pop('timeline', None)
 
         # Update the project instance
         instance.project_name = validated_data.get('project_name', instance.project_name)
         instance.project_number = validated_data.get('project_number', instance.project_number)
-        instance.project_lead_id = validated_data.get('project_lead_id', instance.project_lead_id)
-        instance.project_status_id = validated_data.get('project_status_id', instance.project_status_id)
-        instance.confirmed_project_status_id = validated_data.get('confirmed_project_status_id', instance.confirmed_project_status_id)
+        instance.project_lead = validated_data.get('project_lead', instance.project_lead)
+        instance.project_status = validated_data.get('project_status', instance.project_status)
+        instance.confirmed_project_status = validated_data.get('confirmed_project_status_id', instance.confirmed_project_status)
         instance.save()
 
         # Update the budget instance
         if budget_data:
             budget = instance.budget
             budget.amount = budget_data.get('amount', budget.amount)
-            budget.currency_id = budget_data.get('currency', budget.currency_id)
+            budget.currency_id = budget_data.get('currency_id', budget.currency_id)
             budget.approval_date = budget_data.get('approval_date', budget.approval_date)
             budget.save()
 

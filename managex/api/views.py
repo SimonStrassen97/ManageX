@@ -63,6 +63,19 @@ class ProjectUpdateView(generics.UpdateAPIView):
     queryset = Project.objects.all()
     lookup_field = 'id'
 
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+
+        # Deserialize with write serializer
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        # Use read serializer for response
+        read_serializer = ProjectReadSerializer(instance)
+        return Response(read_serializer.data, status=status.HTTP_200_OK)
+
 class ProjectRetrieveView(generics.RetrieveAPIView):
     serializer_class = ProjectReadSerializer
     queryset = Project.objects.all()
