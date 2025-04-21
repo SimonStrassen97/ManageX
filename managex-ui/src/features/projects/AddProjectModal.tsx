@@ -178,6 +178,21 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
             required
             error={errors.start_date}
           />
+          <DatePicker
+            label="Finish Date"
+            value={formData.timeline.finish_date}
+            onChange={date =>
+              setFormData(prev => ({
+                ...prev,
+                timeline: {
+                  ...prev.timeline,
+                  finish_date: date,
+                },
+              }))
+            }
+            required
+            error={errors.finish_date}
+          />
           {/* Add other form fields here */}
           <div className="modal-actions">
             <Button label="Add Project" type="submit" className="bg-blue-600" />

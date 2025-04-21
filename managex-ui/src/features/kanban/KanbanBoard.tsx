@@ -15,50 +15,71 @@ import { arrayMove } from "@dnd-kit/sortable"
 
 export const KanbanBoard = () => {
   const dispatch = useDispatch<AppDispatch>()
+  const [cards, setCards] = React.useState<Card[]>([])
+  const [sourceCard, setSourceCard] = React.useState<Card | null>(null)
   const projectStatuses = useSelector(
     (state: RootState) => state.status.statuses,
   )
-
   const projects = useSelector((state: RootState) => state.projects.projects)
-
-  const statusToIdMap = Object.fromEntries(
-    projectStatuses.map(status => [status.status_label, status.status_id]),
+  const getColumnCards = React.useCallback(
+    (columnId: number) => {
+      return cards.filter(card => card.column_id === columnId)
+    },
+    [cards],
   )
+  const columns = projectStatuses.map(status => ({
+    column_id: status.status_id,
+    column_title: status.status_label,
+  }))
 
-  const [cards, setCards] = React.useState<Card[]>([])
+  useEffect(() => {
+    dispatch(fetchStatusListThunk())
+  }, [dispatch])
 
+  // TODO: need this to set cards with projects,
+  // but this reshuffles when projects change,
+  // which it does after every drag event that cahnges column and updates backend
   useEffect(() => {
     if (projects.length > 0 && projectStatuses.length > 0) {
       const statusToIdMap = Object.fromEntries(
         projectStatuses.map(status => [status.status_label, status.status_id]),
       )
 
-      const mappedCards: Card[] = projects.map(project => {
+      const initialCards: Card[] = projects.map(project => {
         const taskStatus = project.project_info.project_status
         return {
           card_id: 100 + project.project_id,
           column_id: statusToIdMap[taskStatus],
-          task_status: taskStatus,
           task_number: project.project_info.project_number,
           task_name: project.project_info.project_name,
           task_leader: project.project_info.project_lead,
         }
       })
 
-      setCards(mappedCards)
+      setCards(initialCards)
     }
-  }, [projects, projectStatuses])
+  }, [projectStatuses, projects])
 
-  const [sourceCard, setSourceCard] = React.useState<Card | null>(null)
-  const columns = projectStatuses.map(status => ({
-    column_id: status.status_id,
-    column_title: status.status_label,
-  }))
-
-  // Fetch statuses when the component mounts
-  useEffect(() => {
-    dispatch(fetchStatusListThunk())
-  }, [dispatch])
+  function moveCard(cards: Card[], active: any, over: any) {
+    const newCards = [...cards]
+    const activeIndex = newCards.findIndex(card => card.card_id === active.id)
+    const overIndex = newCards.findIndex(card => card.card_id === over.id) // will be -1 if over a column --> move to end of column
+    // handgle dragging over a card
+    if (over.data.current?.type === "Card") {
+      newCards[activeIndex] = {
+        ...newCards[activeIndex],
+        column_id: newCards[overIndex].column_id,
+      }
+    }
+    //handle dragging over a column
+    else if (over.data.current?.type === "Column") {
+      newCards[activeIndex] = {
+        ...newCards[activeIndex],
+        column_id: over.id,
+      }
+    }
+    return arrayMove(newCards, activeIndex, overIndex)
+  }
 
   function handleDragStart(event: any) {
     const { active } = event
@@ -72,32 +93,28 @@ export const KanbanBoard = () => {
   function handleDragEnd(event: any) {
     const { active, over } = event
 
-    // Find the dragged card
-    const changedCard = cards.find(card => card.card_id === active.id)
-    if (!changedCard || !sourceCard) {
-      console.error("Source or target card not found")
+    if (!over || active.id === over.id) {
+      setSourceCard(null)
       return
     }
 
-    const oldColumnId = sourceCard.column_id
-    const newColumnId = changedCard.column_id
-    if (newColumnId !== oldColumnId) {
-      // Update the card's column_id to the new column
-
-      const updatedProject = {
-        project_id: sourceCard.card_id - 100, // Reverse the card_id logic to get the project_id
-        new_status_id: newColumnId,
+    setCards(prevCards => {
+      const newCards = moveCard(prevCards, active, over)
+      // Find the dragged card in the new state
+      const changedCard = newCards.find(card => card.card_id === active.id)
+      if (changedCard && sourceCard) {
+        const oldColumnId = sourceCard.column_id
+        const newColumnId = changedCard.column_id
+        if (newColumnId !== oldColumnId) {
+          const updatedProject = {
+            project_id: sourceCard.card_id - 100,
+            updates: { project_status_id: newColumnId },
+          }
+          dispatch(updateProjectThunk(updatedProject))
+        }
       }
-      // Dispatch the asyncThunk to update the backend
-      dispatch(
-        updateProjectThunk({
-          project_id: sourceCard.card_id - 100, // Reverse the card_id logic to get the project_id
-          updates: { project_status_id: newColumnId }, // Only update the status
-        }),
-      )
-    }
-
-    // TODO: Update projects in the backend
+      return newCards
+    })
 
     setSourceCard(null)
   }
@@ -109,38 +126,7 @@ export const KanbanBoard = () => {
     if (!over || active.id === over.id) {
       return
     }
-
-    // Handle dragging over a column
-    if (over.data.current?.type === "Column") {
-      console.log("Dragging over column: ", over.data.current.column.column_id)
-
-      setCards(cards => {
-        const newCards = [...cards]
-        const activeIndex = newCards.findIndex(
-          card => card.card_id === active.id,
-        )
-
-        newCards[activeIndex].column_id = over.id
-        return arrayMove(newCards, activeIndex, activeIndex)
-      })
-    }
-
-    // Handle dragging over another card
-    if (over.data.current?.type === "Card") {
-      console.log("Dragging over card: ", over.data.current.card.task_number)
-
-      setCards(cards => {
-        const newCards = [...cards]
-        const activeIndex = newCards.findIndex(
-          card => card.card_id === active.id,
-        )
-        const overIndex = newCards.findIndex(card => card.card_id === over.id)
-
-        newCards[activeIndex].column_id = newCards[overIndex].column_id
-
-        return arrayMove(newCards, activeIndex, overIndex)
-      })
-    }
+    setCards(cards => moveCard(cards, active, over))
   }
 
   return (
@@ -155,7 +141,7 @@ export const KanbanBoard = () => {
             <KanbanColumn
               key={column.column_id}
               column={column}
-              cards={cards.filter(card => card.column_id === column.column_id)}
+              cards={getColumnCards(column.column_id)}
             />
           ))}
         </div>
