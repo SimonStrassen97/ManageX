@@ -1,7 +1,19 @@
 from rest_framework import serializers
-from ..models import Project, ProjectBudget, ProjectTimeline, StatusLookUp, CurrencyLookUp
+from ..models import Project, ProjectBudget, ProjectTimeline, StatusLookUp, CurrencyLookUp, KanbanOrder
 from django.contrib.auth.models import User
 from .user_serializers import UserSerializer
+
+class KanbanOrderReadSerializer(serializers.ModelSerializer):
+    project_id = serializers.IntegerField(source='project.id')
+
+    class Meta:
+        model = KanbanOrder
+        fields = ['project_id', 'order']
+
+class KanbanOrderWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KanbanOrder
+        fields = ['project', 'order']
 
 class StatusSerializer(serializers.ModelSerializer):
     status_id = serializers.IntegerField(source='id')

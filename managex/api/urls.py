@@ -1,6 +1,6 @@
 
 from django.urls import path
-from .views import ProjectsListView, ProjectCreateView, ProjectDeleteView, ProjectUpdateView, ProjectRetrieveView, ProjectCheckView
+from .views import ProjectsListView, ProjectCreateView, ProjectDeleteView, ProjectUpdateView, ProjectRetrieveView, ProjectCheckView, KanbanOrderListView, KanbanOrderUpdateView
 from .views import UserListView, UserRegistrationView, UserRetrieveView, CurrentUserView
 from .views import FileUploadView, FileRetrievalView
 from .views import StatusListView
@@ -19,4 +19,6 @@ urlpatterns = [
     path('api/users/me/', CurrentUserView.as_view(), name='current_user'),  # Authenticated user's details
     path('api/files/upload/', FileUploadView.as_view(), name='file_upload'),  # Upload a file
     path('api/files/retrieve/<str:project_number>/', FileRetrievalView.as_view(), name='file_download'),  # Download a file
+    path('api/kanban-order/', KanbanOrderListView.as_view(), name='kanban-oarder'),  # kanban order
+    path('api/kanban-order/update/', KanbanOrderUpdateView.as_view(), name='kanban-order-update'),  # kanban order update
 ] 

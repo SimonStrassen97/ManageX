@@ -5,9 +5,9 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
-from .models import Project, ProjectFile, StatusLookUp, CurrencyLookUp
+from .models import Project, ProjectFile, StatusLookUp, CurrencyLookUp, KanbanOrder
 from django.contrib.auth.models import User
-from .serializers.project_serializers import ProjectReadSerializer, ProjectWriteSerializer, ProjectExistsSerializer
+from .serializers.project_serializers import ProjectReadSerializer, ProjectWriteSerializer, ProjectExistsSerializer, KanbanOrderReadSerializer, KanbanOrderWriteSerializer
 from .serializers.project_serializers import StatusSerializer, CurrencySerializer
 from .serializers.user_serializers import UserSerializer, UserRegistrationSerializer
 from .serializers.file_serializers import ProjectFileSerializer
@@ -94,6 +94,36 @@ class StatusListView(generics.ListAPIView):
 class CurrencyListView(generics.ListAPIView):
     serializer_class = CurrencySerializer
     queryset = CurrencyLookUp.objects.all()
+
+class KanbanOrderListView(generics.ListAPIView):
+    queryset = KanbanOrder.objects.select_related('project').all().order_by('order')
+    serializer_class = KanbanOrderReadSerializer
+
+class KanbanOrderUpdateView(APIView):
+    def put(self, request):
+        """
+        Expects a list of objects: [{ "project_id": <id>, "order": <order> }, ...]
+        """
+        order_data = request.data
+        if not isinstance(order_data, list):
+            return Response({"error": "Expected a list of order objects."}, status=status.HTTP_400_BAD_REQUEST)
+
+        project_ids = []
+        for entry in order_data:
+            project_id = entry.get("project_id")
+            order = entry.get("order")
+            if project_id is None or order is None:
+                continue
+            KanbanOrder.objects.filter(project_id=project_id).update(order=order)
+            project_ids.append(project_id)
+
+        # Optionally, delete KanbanOrder entries not in the new order
+        KanbanOrder.objects.exclude(project_id__in=project_ids).delete()
+
+        # Return the new order
+        orders = KanbanOrder.objects.select_related('project').all().order_by('order')
+        serializer = KanbanOrderReadSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 #########################
 # User views

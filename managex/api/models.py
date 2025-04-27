@@ -106,3 +106,9 @@ class ProjectFile(models.Model):
         return f"{self.project.project_number} - {self.filename}"
 
 
+class KanbanOrder(models.Model):
+    project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name="kanban_order")
+    order = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.project.project_number} - Order: {self.order}"

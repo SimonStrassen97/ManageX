@@ -6,6 +6,7 @@ import {
   updateProjectThunk,
 } from "../projects/projectThunks"
 import { KanbanColumn } from "./KanbanColumn"
+import { fetchKanbanOrder, updateKanbanOrder } from "../../api/projectApi"
 import { sampleProject, sampleProjects, sampleStatus } from "./sampleData"
 import { DndContext, DragOverlay } from "@dnd-kit/core"
 import { Card, Column } from "../../types/kanban-types"
@@ -60,6 +61,36 @@ export const KanbanBoard = () => {
     }
   }, [projectStatuses, projects])
 
+  useEffect(() => {
+    const loadOrder = async () => {
+      const orderRes = await fetchKanbanOrder()
+      const order = orderRes.data
+      const statusToIdMap = Object.fromEntries(
+        projectStatuses.map(status => [status.status_label, status.status_id]),
+      )
+      // Sort projects according to the order array
+      const orderedProjects = order
+        .map(entry => projects.find(p => p.project_id === entry.project_id))
+        .filter((project): project is (typeof projects)[number] => !!project)
+
+      setCards(
+        orderedProjects.map(project => {
+          const taskStatus = project.project_info.project_status
+          return {
+            card_id: 100 + project.project_id,
+            column_id: statusToIdMap[taskStatus],
+            task_number: project.project_info.project_number,
+            task_name: project.project_info.project_name,
+            task_leader: project.project_info.project_lead,
+          }
+        }),
+      )
+    }
+    if (projects.length > 0 && projectStatuses.length > 0) {
+      loadOrder()
+    }
+  }, [projects, projectStatuses])
+
   function moveCard(cards: Card[], active: any, over: any) {
     const newCards = [...cards]
     const activeIndex = newCards.findIndex(card => card.card_id === active.id)
@@ -113,6 +144,12 @@ export const KanbanBoard = () => {
           dispatch(updateProjectThunk(updatedProject))
         }
       }
+      // Build KanbanOrder as array of { project_id, order }
+      const kanbanOrder = newCards.map((card, idx) => ({
+        project_id: card.card_id - 100,
+        order: idx,
+      }))
+      updateKanbanOrder(kanbanOrder)
       return newCards
     })
 

@@ -3,6 +3,7 @@ import { ProjectResponse, StatusResponse } from "../types/server-response-types"
 import { Project } from "../types/project-types"
 import { FilterState } from "../types/filter-types"
 import { ProjectTransformer } from "../utils/transforms"
+import { KanbanOrder } from "../types/kanban-types"
 import {
   AddProjectRequest,
   PartialProjectUpdate,
@@ -47,4 +48,12 @@ export const updateProject = async (
     `/api/projects/update/${project_id}/`,
     updates,
   )
+}
+
+export const fetchKanbanOrder = async () => {
+  return await axiosInstance.get<KanbanOrder>("/api/kanban-order/")
+}
+
+export const updateKanbanOrder = async (order: KanbanOrder) => {
+  return await axiosInstance.put("/api/kanban-order/", order)
 }

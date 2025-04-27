@@ -12,3 +12,10 @@ export type Card = {
   task_number: string
   task_leader: string
 }
+
+export type KanbanOrderEntry = {
+  project_id: number
+  order: number
+}
+
+export type KanbanOrder = KanbanOrderEntry[]
