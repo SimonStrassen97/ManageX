@@ -37,30 +37,6 @@ export const KanbanBoard = () => {
     dispatch(fetchStatusListThunk())
   }, [dispatch])
 
-  // TODO: need this to set cards with projects,
-  // but this reshuffles when projects change,
-  // which it does after every drag event that cahnges column and updates backend
-  useEffect(() => {
-    if (projects.length > 0 && projectStatuses.length > 0) {
-      const statusToIdMap = Object.fromEntries(
-        projectStatuses.map(status => [status.status_label, status.status_id]),
-      )
-
-      const initialCards: Card[] = projects.map(project => {
-        const taskStatus = project.project_info.project_status
-        return {
-          card_id: 100 + project.project_id,
-          column_id: statusToIdMap[taskStatus],
-          task_number: project.project_info.project_number,
-          task_name: project.project_info.project_name,
-          task_leader: project.project_info.project_lead,
-        }
-      })
-
-      setCards(initialCards)
-    }
-  }, [projectStatuses, projects])
-
   useEffect(() => {
     const loadOrder = async () => {
       const orderRes = await fetchKanbanOrder()
@@ -124,7 +100,7 @@ export const KanbanBoard = () => {
   function handleDragEnd(event: any) {
     const { active, over } = event
 
-    if (!over || active.id === over.id) {
+    if (!over) {
       setSourceCard(null)
       return
     }

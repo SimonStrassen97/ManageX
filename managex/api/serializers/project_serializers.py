@@ -43,26 +43,43 @@ class BudgetReadSerializer(serializers.ModelSerializer):
         return representation
 
 class BudgetWriteSerializer(serializers.ModelSerializer):
-    currency = serializers.PrimaryKeyRelatedField(queryset=CurrencyLookUp.objects.all())
+    currency_id = serializers.PrimaryKeyRelatedField(queryset=CurrencyLookUp.objects.all(), source='currency')  # Map currency_id to currency
 
     class Meta:
         model = ProjectBudget
-        fields = ['amount', 'currency', 'approval_date']
+        fields = ['amount', 'currency_id', 'approval_date']
 
-class ProjectTimelineSerializer(serializers.ModelSerializer):
+class ProjectTimelineReadSerializer(serializers.ModelSerializer):
     timeline_id = serializers.IntegerField(source='id')
 
     class Meta:
         model = ProjectTimeline
-        fields = ['timeline_id', 'start_date', 'order_date', 'acceptance_date', 'delivery_date', 'finish_date']
+        fields = [
+            'timeline_id',
+            'start_date',
+            'order_date',
+            'acceptance_date',
+            'delivery_date',
+            'finish_date'
+        ]
 
+class ProjectTimelineWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectTimeline
+        fields = [
+            'start_date',
+            'order_date',
+            'acceptance_date',
+            'delivery_date',
+            'finish_date'
+        ]
 class ProjectReadSerializer(serializers.ModelSerializer):
     project_id = serializers.IntegerField(source='id')
     project_lead = UserSerializer()  # Nested user serializer
     project_status = StatusSerializer()  # Nested status serializer
     confirmed_project_status = StatusSerializer()  # Nested confirmed status serializer
     budget = BudgetReadSerializer()
-    timeline = ProjectTimelineSerializer()
+    timeline = ProjectTimelineReadSerializer()
 
     class Meta:
         model = Project
@@ -88,7 +105,7 @@ class ProjectWriteSerializer(serializers.ModelSerializer):
         source='confirmed_project_status'  # Map confirmed_project_status_id to confirmed_project_status
     )
     budget = BudgetWriteSerializer() 
-    timeline = ProjectTimelineSerializer()  
+    timeline = ProjectTimelineWriteSerializer()  
 
     class Meta:
         model = Project

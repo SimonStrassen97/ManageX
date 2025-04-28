@@ -11,6 +11,7 @@ from .serializers.project_serializers import ProjectReadSerializer, ProjectWrite
 from .serializers.project_serializers import StatusSerializer, CurrencySerializer
 from .serializers.user_serializers import UserSerializer, UserRegistrationSerializer
 from .serializers.file_serializers import ProjectFileSerializer
+from django.db import models
 
 
 #########################
@@ -95,9 +96,32 @@ class CurrencyListView(generics.ListAPIView):
     serializer_class = CurrencySerializer
     queryset = CurrencyLookUp.objects.all()
 
+# class KanbanOrderListView(generics.ListAPIView):
+#     queryset = KanbanOrder.objects.select_related('project').all().order_by('order')
+#     serializer_class = KanbanOrderReadSerializer
+
 class KanbanOrderListView(generics.ListAPIView):
-    queryset = KanbanOrder.objects.select_related('project').all().order_by('order')
     serializer_class = KanbanOrderReadSerializer
+
+    def get_queryset(self):
+        # Get all projects
+        all_projects = Project.objects.all()
+        # Get all KanbanOrder entries
+        kanban_orders = KanbanOrder.objects.select_related('project').all()
+        existing_project_ids = set(ko.project_id for ko in kanban_orders)
+        # Find projects missing from KanbanOrder
+        missing_projects = [p for p in all_projects if p.id not in existing_project_ids]
+        # If KanbanOrder is empty, or missing projects, append them at the end
+        if missing_projects:
+            # Find the current max order value
+            max_order = kanban_orders.aggregate(max_order=models.Max('order'))['max_order'] or -1
+            for idx, project in enumerate(missing_projects, start=1):
+                KanbanOrder.objects.create(
+                    project=project,
+                    order=max_order + idx
+                )
+        # Return the updated queryset
+        return KanbanOrder.objects.select_related('project').all().order_by('order')
 
 class KanbanOrderUpdateView(APIView):
     def put(self, request):

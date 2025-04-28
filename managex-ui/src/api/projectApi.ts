@@ -55,5 +55,5 @@ export const fetchKanbanOrder = async () => {
 }
 
 export const updateKanbanOrder = async (order: KanbanOrder) => {
-  return await axiosInstance.put("/api/kanban-order/", order)
+  return await axiosInstance.put("/api/kanban-order/update/", order)
 }
