@@ -7,7 +7,11 @@ import {
 } from "../projects/projectThunks"
 import { KanbanColumn } from "./KanbanColumn"
 import { fetchKanbanOrder, updateKanbanOrder } from "../../api/projectApi"
-import { sampleProject, sampleProjects, sampleStatus } from "./sampleData"
+import {
+  sampleProject,
+  sampleProjects,
+  sampleStatus,
+} from "../../utils/sampleData"
 import { DndContext, DragOverlay } from "@dnd-kit/core"
 import { Card, Column } from "../../types/kanban-types"
 import { KanbanCard } from "./KanbanCard"
