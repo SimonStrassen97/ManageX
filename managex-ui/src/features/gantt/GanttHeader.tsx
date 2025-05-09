@@ -22,18 +22,27 @@ function getYearGroups(dateArray: string[]) {
   if (count > 0) groups.push({ year: currentYear, count })
   return groups
 }
-
+// ...existing code...
 export const GanttHeader: React.FC<GanttHeaderProps> = ({ dateArray }) => {
   const yearGroups = getYearGroups(dateArray)
+  const cellWidth = 40 // px, must match min-w-[40px] below
+  const minWidth = dateArray.length * cellWidth
+
   return (
-    <div className="flex flex-col">
+    <div
+      className="flex flex-col overflow-x-auto border-gray-800 rounded-t-lg shadow-lg"
+      style={{ minWidth: `${minWidth}px` }}
+    >
       {/* Year row */}
-      <div className="flex flex-row">
+      <div className="flex flex-row rounded-lg border-lg border-b">
         {yearGroups.map(group => (
           <div
             key={group.year}
-            className="bg-gray-800 p-2 text-white text-xs text-center border-l border-gray-600"
-            style={{ minWidth: `${group.count * 80}px` }}
+            style={{
+              flex: `${group.count} 0 0`, // Flex-grow, flex-shrink, flex-basis
+              minWidth: `${group.count * cellWidth}px`,
+            }}
+            className=" bg-gray-300 p-2 text-lg text-center text-gray-500 font-bold border-l"
           >
             <span className="whitespace-nowrap">{group.year}</span>
           </div>
@@ -44,9 +53,10 @@ export const GanttHeader: React.FC<GanttHeaderProps> = ({ dateArray }) => {
         {dateArray.map(date => (
           <div
             key={date}
-            className=" bg-gray-700 p-2 text-xs text-center border-l border-gray-600"
+            style={{ minWidth: `${cellWidth}px` }}
+            className="flex-1 bg-gray-300 p-2 text-xs text-center border-l"
           >
-            <span className="text-white whitespace-nowrap">
+            <span className="text-gray-500 whitespace-nowrap">
               {date.slice(5)} {/* MM-DD */}
             </span>
           </div>
@@ -55,3 +65,4 @@ export const GanttHeader: React.FC<GanttHeaderProps> = ({ dateArray }) => {
     </div>
   )
 }
+// ...existing code...

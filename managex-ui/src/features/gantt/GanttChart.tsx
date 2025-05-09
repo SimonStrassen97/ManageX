@@ -4,19 +4,19 @@ import { RootState, AppDispatch } from "../../app/store"
 import { GanttHeader } from "./GanttHeader"
 import { GanttRow } from "./GanttRow"
 
-function getDateRange(minDate: Date, maxDate: Date): string[] {
-  const dateArray: string[] = []
-  const current = new Date(minDate)
+function getMonthRange(minDate: Date, maxDate: Date): string[] {
+  const monthArray: string[] = []
+  let current = new Date(minDate.getFullYear(), minDate.getMonth(), 1)
 
   while (current <= maxDate) {
     const year = current.getFullYear()
     const month = (current.getMonth() + 1).toString().padStart(2, "0")
-    const day = current.getDate().toString().padStart(2, "0")
-    dateArray.push(`${year}-${month}-${day}`)
-    current.setDate(current.getDate() + 1)
+    monthArray.push(`${year}-${month}`)
+    // Move to the first day of the next month
+    current = new Date(current.getFullYear(), current.getMonth() + 1, 1)
   }
 
-  return dateArray
+  return monthArray
 }
 
 export const GanttChart = () => {
@@ -26,17 +26,17 @@ export const GanttChart = () => {
 
   useEffect(() => {
     setDateArray(prev => {
-      const newDates = getDateRange(
-        new Date("2024-01-01"),
-        new Date("2025-12-31"),
+      const newDates = getMonthRange(
+        new Date("2022-01-01"),
+        new Date("2025-11-05"),
       )
       return newDates
     })
   }, [])
 
   return (
-    <div className="flex flex-1 w-full h-full p-4 bg-gray-900">
-      <div className="flex flex-col w-full h-full bg-gray-800 rounded-lg shadow-lg overflow-auto">
+    <div className="flex flex-1 w-full h-full p-4">
+      <div className="flex flex-col w-full shadow-lg overflow-auto">
         <GanttHeader dateArray={dateArray} />
         {projects.map(project => (
           <GanttRow key={project.project_id} project={{ ...project }} />
