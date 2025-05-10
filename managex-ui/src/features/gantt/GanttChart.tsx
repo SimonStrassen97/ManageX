@@ -39,7 +39,11 @@ export const GanttChart = () => {
       <div className="flex flex-col w-full shadow-lg overflow-auto">
         <GanttHeader dateArray={dateArray} />
         {projects.map(project => (
-          <GanttRow key={project.project_id} project={{ ...project }} />
+          <GanttRow
+            key={project.project_id}
+            project={{ ...project }}
+            dateArray={dateArray}
+          />
         ))}
       </div>
     </div>
