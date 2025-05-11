@@ -27,3 +27,11 @@ export const GanttBarEnd = () => {
     </div>
   )
 }
+
+export const GanttBarStartEnd = () => {
+  return (
+    <div className="flex-1 flex min-w-[40px] items-center justify-center">
+      <div className="h-4 min-w-[25px] bg-blue-600 rounded-lg"></div>
+    </div>
+  )
+}
