@@ -8,14 +8,22 @@ import {
   GanttBarStart,
   GanttBarEnd,
   GanttBarStartEnd,
-} from "./GanttAttributes"
+} from "./GanttBar"
+
+import { GanttCell } from "./GanttCell"
+import { GANTT_CELL_WIDTH, GANTT_INFO_CELL_WIDTH } from "./GanttConstant"
 
 interface GanttRowProps {
+  row_idx: number
   project: Project
   dateArray: string[]
 }
 
-export const GanttRow: React.FC<GanttRowProps> = ({ project, dateArray }) => {
+export const GanttRow: React.FC<GanttRowProps> = ({
+  row_idx,
+  project,
+  dateArray,
+}) => {
   const startDate = new Date(project.timeline.start_date)
   const endDate = new Date(project.timeline.finish_date)
 
@@ -26,70 +34,80 @@ export const GanttRow: React.FC<GanttRowProps> = ({ project, dateArray }) => {
   const startYM = getYearMonth(startDate)
   const endYM = getYearMonth(endDate)
 
-  let withinBar = false
-
   return (
     <div className="flex flex-row">
-      {dateArray.map(dateYM => {
-        // Only render bars for months between start and end (inclusive)
+      <GanttCell
+        min_width={GANTT_INFO_CELL_WIDTH}
+        isFirstCol={true}
+        isFirstRow={row_idx === 0}
+        className="bg-gray-300"
+      >
+        <span className="text-xs font-bold text-gray-500">
+          {project.project_info.project_name}
+        </span>
+      </GanttCell>
+      {dateArray.map((dateYM, idx) => {
         if (dateYM < startYM || dateYM > endYM) {
           return (
-            <div
+            <GanttCell
               key={dateYM}
-              style={{ minWidth: `40px` }}
-              className="py-2 border-l border-b border-gray-300"
+              min_width={GANTT_CELL_WIDTH}
+              isFirstCol={idx === 0}
+              isFirstRow={row_idx === 0}
+              className="border-gray-300"
             />
           )
         }
-
-        // If start and end are the same month
         if (startYM === endYM && dateYM === startYM) {
           return (
-            <div
+            <GanttCell
               key={dateYM + "-startend"}
-              style={{ minWidth: `40px` }}
-              className="py-2 border-l border-b border-gray-300"
+              min_width={GANTT_CELL_WIDTH}
+              isFirstCol={idx === 0}
+              isFirstRow={row_idx === 0}
+              className="border-gray-300"
             >
               <GanttBarStartEnd />
-            </div>
+            </GanttCell>
           )
         }
-
-        // Start month
         if (dateYM === startYM) {
           return (
-            <div
+            <GanttCell
               key={dateYM + "-start"}
-              style={{ minWidth: `40px` }}
-              className="py-2 border-l border-b border-gray-300"
+              min_width={GANTT_CELL_WIDTH}
+              isFirstCol={idx === 0}
+              isFirstRow={row_idx === 0}
+              className="border-gray-300"
             >
               <GanttBarStart />
-            </div>
+            </GanttCell>
           )
         }
-
-        // End month
         if (dateYM === endYM) {
           return (
-            <div
+            <GanttCell
               key={dateYM + "-end"}
-              style={{ minWidth: `40px` }}
-              className="py-2 border-l border-b border-gray-300"
+              min_width={GANTT_CELL_WIDTH}
+              isFirstCol={idx === 0}
+              isFirstRow={row_idx === 0}
+              className="border-gray-300"
             >
               <GanttBarEnd />
-            </div>
+            </GanttCell>
           )
         }
-
         // In between
         return (
-          <div
+          <GanttCell
             key={dateYM}
-            style={{ minWidth: `40px` }}
-            className="py-2 border-l border-b border-gray-300"
+            min_width={GANTT_CELL_WIDTH}
+            isFirstCol={idx === 0}
+            isFirstRow={row_idx === 0}
+            className="border-gray-300"
           >
             <GanttBar />
-          </div>
+          </GanttCell>
         )
       })}
     </div>

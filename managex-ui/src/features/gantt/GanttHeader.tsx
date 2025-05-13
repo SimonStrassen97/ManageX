@@ -1,4 +1,6 @@
 import React from "react"
+import { GanttCell } from "./GanttCell"
+import { GANTT_CELL_WIDTH, GANTT_INFO_CELL_WIDTH } from "./GanttConstant"
 
 interface GanttHeaderProps {
   dateArray: string[]
@@ -25,44 +27,49 @@ function getYearGroups(dateArray: string[]) {
 // ...existing code...
 export const GanttHeader: React.FC<GanttHeaderProps> = ({ dateArray }) => {
   const yearGroups = getYearGroups(dateArray)
-  const cellWidth = 40 // px, must match min-w-[40px] below
-  const minWidth = dateArray.length * cellWidth
+  const minWidth = dateArray.length * GANTT_CELL_WIDTH
 
   return (
-    <div
-      className="flex flex-col overflow-x-auto border-gray-800 rounded-t-lg shadow-lg"
-      style={{ minWidth: `${minWidth}px` }}
-    >
-      {/* Year row */}
-      <div className="flex flex-row rounded-lg border-lg border-b">
-        {yearGroups.map(group => (
-          <div
-            key={group.year}
-            style={{
-              flex: `${group.count} 0 0`, // Flex-grow, flex-shrink, flex-basis
-              minWidth: `${group.count * cellWidth}px`,
-            }}
-            className=" bg-gray-300 p-2 text-lg text-center text-gray-500 font-bold border-l"
-          >
-            <span className="whitespace-nowrap">{group.year}</span>
-          </div>
-        ))}
-      </div>
-      {/* Day/Month row */}
-      <div className="flex flex-row">
-        {dateArray.map(date => (
-          <div
-            key={date}
-            style={{ minWidth: `${cellWidth}px` }}
-            className="flex-1 bg-gray-300 p-2 text-xs text-center border-l"
-          >
-            <span className="text-gray-500 whitespace-nowrap">
-              {date.slice(5)} {/* MM-DD */}
-            </span>
-          </div>
-        ))}
+    <div className="flex flex-row bg-gray-300 border-b">
+      <GanttCell
+        min_width={GANTT_INFO_CELL_WIDTH}
+        isFirstCol={true}
+        isFirstRow={true}
+        flex_grow_coefficient={0}
+        className="bg-gray-300"
+      >
+        <span className="text-gray-500 font-bold whitespace-nowrap">Task</span>
+      </GanttCell>
+      <div
+        className="flex flex-col w-full bg-gray-300"
+        style={{ minWidth: `${minWidth}px` }}
+      >
+        {/* Year row */}
+        <div className="flex flex-row">
+          {yearGroups.map((group, idx) => (
+            <GanttCell
+              key={group.year}
+              min_width={group.count * GANTT_CELL_WIDTH}
+              flex_grow_coefficient={group.count}
+              isFirstRow={true}
+            >
+              <span className="text-gray-500 font-bold whitespace-nowrap">
+                {group.year}
+              </span>
+            </GanttCell>
+          ))}
+        </div>
+        {/* Day/Month row */}
+        <div className="flex flex-row">
+          {dateArray.map((date, idx) => (
+            <GanttCell key={date} min_width={GANTT_CELL_WIDTH}>
+              <span className="text-gray-500 whitespace-nowrap">
+                {date.slice(5)}
+              </span>
+            </GanttCell>
+          ))}
+        </div>
       </div>
     </div>
   )
 }
-// ...existing code...

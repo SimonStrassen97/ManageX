@@ -35,12 +35,13 @@ export const GanttChart = () => {
   }, [])
 
   return (
-    <div className="flex flex-1 w-full h-full p-4">
-      <div className="flex flex-col w-full shadow-lg overflow-auto">
+    <div className="flex flex-1 w-full p-4">
+      <div className="flex flex-col w-full shadow-lg overflow-auto border-2 border-gray-300 rounded-md">
         <GanttHeader dateArray={dateArray} />
-        {projects.map(project => (
+        {projects.map((project, idx) => (
           <GanttRow
             key={project.project_id}
+            row_idx={idx}
             project={{ ...project }}
             dateArray={dateArray}
           />
