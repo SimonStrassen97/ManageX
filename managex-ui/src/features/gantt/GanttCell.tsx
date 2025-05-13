@@ -12,8 +12,8 @@ interface GanttCellProps {
 export const GanttCell: React.FC<GanttCellProps> = ({
   min_width,
   children,
-  isFirstCol,
-  isFirstRow,
+  isFirstCol = false,
+  isFirstRow = false,
   flex_grow_coefficient = 1,
   className = "",
 }) => {

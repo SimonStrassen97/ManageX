@@ -6,6 +6,7 @@ interface GanttHeaderProps {
   dateArray: string[]
 }
 
+// group date array by year to get the number of months in each year
 function getYearGroups(dateArray: string[]) {
   // Returns [{ year: "2024", count: 5 }, ...]
   const groups: { year: string; count: number }[] = []
@@ -24,7 +25,6 @@ function getYearGroups(dateArray: string[]) {
   if (count > 0) groups.push({ year: currentYear, count })
   return groups
 }
-// ...existing code...
 export const GanttHeader: React.FC<GanttHeaderProps> = ({ dateArray }) => {
   const yearGroups = getYearGroups(dateArray)
   const minWidth = dateArray.length * GANTT_CELL_WIDTH
@@ -38,7 +38,9 @@ export const GanttHeader: React.FC<GanttHeaderProps> = ({ dateArray }) => {
         flex_grow_coefficient={0}
         className="bg-gray-300"
       >
-        <span className="text-gray-500 font-bold whitespace-nowrap">Task</span>
+        <span className="text-gray-500 font-bold whitespace-nowrap">
+          Projects
+        </span>
       </GanttCell>
       <div
         className="flex flex-col w-full bg-gray-300"

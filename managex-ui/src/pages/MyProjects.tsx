@@ -24,7 +24,7 @@ export const MyProjects = () => {
       <Button
         label="Add Project"
         onClick={() => setIsModalOpen(true)}
-        className="my-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded"
+        className="m-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded"
         svg={<Plus className="h-4" />}
       />
       <AddProjectModal

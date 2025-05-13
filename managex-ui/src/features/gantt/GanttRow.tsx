@@ -41,6 +41,7 @@ export const GanttRow: React.FC<GanttRowProps> = ({
         isFirstCol={true}
         isFirstRow={row_idx === 0}
         className="bg-gray-300"
+        flex_grow_coefficient={0}
       >
         <span className="text-xs font-bold text-gray-500">
           {project.project_info.project_name}

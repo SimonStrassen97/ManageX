@@ -1,6 +1,7 @@
 import React from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "../../app/store"
+import { ListCell } from "./ProjectListCell"
 
 interface ProjectListProps {
   showBudget: boolean
@@ -18,70 +19,71 @@ export const ProjectList: React.FC<ProjectListProps> = ({
       )
     : projects
 
-  // Define a reusable class for table cells
-  const cellClass = "px-4 py-2 border border-gray-300 text-sm"
-
   return (
-    <div className="bg-white">
-      {filteredProjects.length > 0 ? (
-        <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse border border-gray-700">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className={cellClass}>Project Number</th>
-                <th className={cellClass}>Project Name</th>
-                <th className={cellClass}>Project Lead</th>
-                <th className={cellClass}>Status</th>
-                {showBudget && <th className={cellClass}>Budget (Amount)</th>}
-                {showBudget && <th className={cellClass}>Budget (Currency)</th>}
-                <th className={cellClass}>Timeline (Start Date)</th>
-                <th className={cellClass}>Timeline (Finish Date)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredProjects.map(project => (
-                <tr
-                  key={project.project_id}
-                  className="text-gray-700 hover:bg-blue-600 hover:text-white"
-                >
-                  <td className={cellClass}>
-                    {project.project_info.project_number}
-                  </td>
-                  <td className={cellClass}>
-                    {project.project_info.project_name}
-                  </td>
-                  <td className={cellClass}>
-                    {project.project_info.project_lead}
-                  </td>
-                  <td className={cellClass}>
-                    {project.project_info.project_status}
-                  </td>
-                  {showBudget && (
-                    <td className={cellClass}>
-                      {project.budget?.amount || "N/A"}
-                    </td>
-                  )}
-                  {showBudget && (
-                    <td className={cellClass}>
-                      {project.budget?.currency_label || "N/A"}
-                    </td>
-                  )}
-                  <td className={cellClass}>
-                    {new Date(project.timeline.start_date).toLocaleDateString()}
-                  </td>
-                  <td className={cellClass}>
-                    {new Date(
-                      project.timeline.finish_date,
-                    ).toLocaleDateString()}
-                  </td>
+    <div className="flex flex-1 w-full p-4">
+      <div className="flex flex-col w-full shadow-lg overflow-auto rounded-md">
+        {filteredProjects.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="min-w-full border-collapse border border-gray-700">
+              <thead>
+                <tr className="bg-gray-300 border">
+                  <ListCell as="th">Project Number</ListCell>
+                  <ListCell as="th">Project Name</ListCell>
+                  <ListCell as="th">Project Lead</ListCell>
+                  <ListCell as="th">Status</ListCell>
+                  {showBudget && <ListCell as="th">Budget (Amount)</ListCell>}
+                  {showBudget && <ListCell as="th">Budget (Currency)</ListCell>}
+                  <ListCell as="th">Timeline (Start Date)</ListCell>
+                  <ListCell as="th">Timeline (Finish Date)</ListCell>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <p className="text-gray-600">No projects available.</p>
-      )}
+              </thead>
+              <tbody>
+                {filteredProjects.map(project => (
+                  <tr
+                    key={project.project_id}
+                    className="text-gray-700 hover:bg-blue-600 hover:text-white"
+                  >
+                    <ListCell className="border-gray-300">
+                      {project.project_info.project_number}
+                    </ListCell>
+                    <ListCell className="border-gray-300">
+                      {project.project_info.project_name}
+                    </ListCell>
+                    <ListCell className="border-gray-300">
+                      {project.project_info.project_lead}
+                    </ListCell>
+                    <ListCell className="border-gray-300">
+                      {project.project_info.project_status}
+                    </ListCell>
+                    {showBudget && (
+                      <ListCell className="border-gray-300">
+                        {project.budget?.amount || "N/A"}
+                      </ListCell>
+                    )}
+                    {showBudget && (
+                      <ListCell className="border-gray-300">
+                        {project.budget?.currency_label || "N/A"}
+                      </ListCell>
+                    )}
+                    <ListCell className="border-gray-300">
+                      {new Date(
+                        project.timeline.start_date,
+                      ).toLocaleDateString()}
+                    </ListCell>
+                    <ListCell className="border-gray-300">
+                      {new Date(
+                        project.timeline.finish_date,
+                      ).toLocaleDateString()}
+                    </ListCell>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-gray-600">No projects available.</p>
+        )}
+      </div>
     </div>
   )
 }

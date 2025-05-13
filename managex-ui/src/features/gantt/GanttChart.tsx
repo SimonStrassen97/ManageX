@@ -4,6 +4,20 @@ import { RootState, AppDispatch } from "../../app/store"
 import { GanttHeader } from "./GanttHeader"
 import { GanttRow } from "./GanttRow"
 
+function getMinMaxDate(
+  projects: { timeline: { start_date: string; finish_date: string } }[],
+) {
+  if (!projects.length) return [null, null]
+
+  const startDates = projects.map(p => new Date(p.timeline.start_date))
+  const endDates = projects.map(p => new Date(p.timeline.finish_date))
+
+  const minDate = new Date(Math.min(...startDates.map(d => d.getTime())))
+  const maxDate = new Date(Math.max(...endDates.map(d => d.getTime())))
+
+  return [minDate, maxDate]
+}
+
 function getMonthRange(minDate: Date, maxDate: Date): string[] {
   const monthArray: string[] = []
   let current = new Date(minDate.getFullYear(), minDate.getMonth(), 1)
@@ -25,14 +39,10 @@ export const GanttChart = () => {
   const [dateArray, setDateArray] = useState<string[]>([])
 
   useEffect(() => {
-    setDateArray(prev => {
-      const newDates = getMonthRange(
-        new Date("2022-01-01"),
-        new Date("2025-11-05"),
-      )
-      return newDates
-    })
-  }, [])
+    const [minDate, maxDate] = getMinMaxDate(projects)
+    if (!minDate || !maxDate) return
+    setDateArray(getMonthRange(minDate, maxDate))
+  }, [projects])
 
   return (
     <div className="flex flex-1 w-full p-4">
