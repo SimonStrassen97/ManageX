@@ -4,15 +4,17 @@ import {
   addProjectThunk,
   fetchStatusListThunk,
   updateProjectThunk,
+  fetchCurrencyListThunk,
 } from "./projectThunks"
 import {
   Project,
   Status,
+  Currency,
   ProjectsState,
   StatusState,
+  CurrencyState,
 } from "../../types/project-types"
 import { AppError } from "../../utils/error-handling"
-import { PartialProjectUpdate } from "../../types/server-request-types"
 
 // Define the initial state
 const initialProjectState: ProjectsState = {
@@ -119,3 +121,34 @@ const statusSlice = createSlice({
 })
 
 export const statusReducer = statusSlice.reducer
+
+const initialCurrencyState: CurrencyState = {
+  currencies: [],
+  loading: false,
+  error: null,
+}
+const currencySlice = createSlice({
+  name: "currencies",
+  initialState: initialCurrencyState,
+  reducers: {},
+  extraReducers: builder => {
+    builder
+      .addCase(fetchCurrencyListThunk.pending, state => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(
+        fetchCurrencyListThunk.fulfilled,
+        (state, action: PayloadAction<Currency[]>) => {
+          state.loading = false
+          state.currencies = action.payload
+        },
+      )
+      .addCase(fetchCurrencyListThunk.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.error.message || "Failed to fetch currencies"
+      })
+  },
+})
+
+export const currencyReducer = currencySlice.reducer

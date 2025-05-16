@@ -40,6 +40,10 @@ export const fetchStatusList = async () => {
   return await axiosInstance.get<StatusResponse[]>("/api/status/")
 }
 
+export const fetchCurrencyList = async () => {
+  return await axiosInstance.get("/api/currency/")
+}
+
 export const updateProject = async (
   project_id: number,
   updates: PartialProjectUpdate,

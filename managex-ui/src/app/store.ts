@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit"
 import { authReducer } from "../features/auth/authSlice"
 import { filterReducer } from "../features/filter/filterSlice"
 import {
+  currencyReducer,
   projectReducer,
   statusReducer,
 } from "../features/projects/projectSlice"
@@ -13,6 +14,7 @@ export const store = configureStore({
     filters: filterReducer,
     users: usersReducer,
     status: statusReducer,
+    currencies: currencyReducer,
     currentuser: currentUserReducer,
     projects: projectReducer,
   },

@@ -1,9 +1,10 @@
 
 from django.urls import path
-from .views import ProjectsListView, ProjectCreateView, ProjectDeleteView, ProjectUpdateView, ProjectRetrieveView, ProjectCheckView, KanbanOrderListView, KanbanOrderUpdateView
+from .views import ProjectsListView, ProjectCreateView, ProjectDeleteView, ProjectUpdateView, ProjectRetrieveView, ProjectCheckView
+from .views import KanbanOrderListView, KanbanOrderUpdateView
 from .views import UserListView, UserRegistrationView, UserRetrieveView, CurrentUserView
 from .views import FileUploadView, FileRetrievalView
-from .views import StatusListView
+from .views import StatusListView, CurrencyListView
 
 urlpatterns = [
     path('api/projects/', ProjectsListView.as_view(), name='projects'),  # All projects with filtering
@@ -13,6 +14,7 @@ urlpatterns = [
     path('api/projects/<int:id>/', ProjectRetrieveView.as_view(), name='retrieve_project'),  # Retrieve a projec
     path('api/projects/check/<str:project_number>/', ProjectCheckView.as_view(), name='check_project_availability'),  # Retrieve a project
     path('api/status/', StatusListView.as_view(), name='status'),
+    path('api/currency/', CurrencyListView.as_view(), name='currency'),  # Currency list
     path('api/users/', UserListView.as_view(), name='users'),  # All users with filtering
     path('api/users/<int:id>/', UserRetrieveView.as_view(), name='user_detail'),  # Retrieve a user
     path('api/users/register/', UserRegistrationView.as_view(), name='register_user'),  # Register a new user

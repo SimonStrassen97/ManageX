@@ -5,8 +5,9 @@ import {
   updateProject,
   checkProjectNumberAvailability,
   fetchStatusList,
+  fetchCurrencyList,
 } from "../../api/projectApi"
-import { Project, Status } from "../../types/project-types"
+import { Currency, Project, Status } from "../../types/project-types"
 import { FilterState } from "../../types/filter-types"
 import { ProjectTransformer, StatusTransformer } from "../../utils/transforms"
 import { handleError, AppError } from "../../utils/error-handling"
@@ -94,6 +95,20 @@ export const fetchStatusListThunk = createAsyncThunk<
     const response = await fetchStatusList()
     const statuses = StatusTransformer.fromServer(response.data)
     return statuses
+  } catch (error: any) {
+    return handleError(error, rejectWithValue)
+  }
+})
+
+export const fetchCurrencyListThunk = createAsyncThunk<
+  Currency[],
+  void,
+  { rejectValue: AppError }
+>("currencies/fetchCurrencyList", async (_, { rejectWithValue }) => {
+  try {
+    const response = await fetchCurrencyList()
+    const currencies = StatusTransformer.fromServer(response.data)
+    return currencies
   } catch (error: any) {
     return handleError(error, rejectWithValue)
   }

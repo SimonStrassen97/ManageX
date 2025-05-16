@@ -19,12 +19,12 @@ export const Dropdown = <T extends string | number>({
   error = null,
 }: DropdownProps<T>) => {
   return (
-    <div className="flex flex-col space-y-2 py-2">
-      <label className="text-sm font-medium text-gray-700">{label}</label>
+    <div className="flex flex-col py-2">
+      <label className="text-sm font-medium">{label}</label>
       <select
         value={value}
         onChange={e => onChange(e.target.value as T)}
-        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700"
+        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm hover:ring-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700"
       >
         {!disable_all && <option value="">All</option>}
         {options.map(option => (

@@ -23,8 +23,8 @@ export const Input: React.FC<InputProps> = ({
   error = null,
 }) => {
   return (
-    <div className={`flex flex-col space-y-2 ${className}`}>
-      <label className="text-sm font-medium text-gray-700">
+    <div className={`flex flex-col py-2 ${className}`}>
+      <label className="text-sm font-medium">
         {label}
         {required && <span className="text-red-500">*</span>}
       </label>
@@ -34,7 +34,7 @@ export const Input: React.FC<InputProps> = ({
         placeholder={placeholder}
         onChange={onChange}
         required={required}
-        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700"
+        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm hover:ring-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700"
       />
       {error && <ErrorMessage message={error} />}
     </div>

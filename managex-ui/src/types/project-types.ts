@@ -5,6 +5,11 @@ export interface Status {
   status_label: string
 }
 
+export interface Currency {
+  currency_id: number
+  currency_label: string
+}
+
 export interface Budget {
   amount: number
   currency_label: string
@@ -44,6 +49,12 @@ export interface ProjectsState {
 
 export interface StatusState {
   statuses: Status[]
+  loading: boolean
+  error: string | null
+}
+
+export interface CurrencyState {
+  currencies: Currency[]
   loading: boolean
   error: string | null
 }

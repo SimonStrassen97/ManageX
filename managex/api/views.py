@@ -50,9 +50,15 @@ class ProjectsListView(generics.ListAPIView):
 
         return queryset
 
-class ProjectCreateView(generics.CreateAPIView):
-    serializer_class = ProjectWriteSerializer
-    queryset = Project.objects.all()
+class ProjectCreateView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = ProjectWriteSerializer(data=request.data)
+        if serializer.is_valid():
+            project = serializer.save()
+            # Use the read serializer for the response
+            read_serializer = ProjectReadSerializer(project)
+            return Response(read_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ProjectDeleteView(generics.DestroyAPIView):
     serializer_class = ProjectReadSerializer

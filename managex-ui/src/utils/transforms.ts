@@ -29,7 +29,8 @@ export class ProjectTransformer {
       project_name: projectResponse.project_name,
       project_lead: projectResponse.project_lead.username,
       project_status: projectResponse.project_status.status_label,
-      confirmed_project_status: projectResponse.confirmed_project_status?.status_label ?? null,
+      confirmed_project_status:
+        projectResponse.confirmed_project_status?.status_label ?? null,
     }
 
     const budget: Budget | null = projectResponse.budget
@@ -95,7 +96,7 @@ export class UserTransformer {
   }
   private static fromServerSingle(userResponse: UserResponse): User {
     return {
-      id: userResponse.user_id,
+      id: userResponse.id,
       username: userResponse.username,
       first_name: userResponse.first_name,
       last_name: userResponse.last_name,
