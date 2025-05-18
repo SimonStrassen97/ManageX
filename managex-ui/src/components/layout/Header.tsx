@@ -98,11 +98,12 @@ export const Header = () => {
             </li>
             <li className="flex items-center space-x-1 pr-2">
               <Button
-                svg={<LogOut className="w-5" />} // Pass the LogOut icon as the svg prop
                 label="Logout"
                 onClick={handleLogout}
                 className="bg-red-500 hover:bg-red-600 text-white"
-              />
+              >
+                <LogOut className="w-5" />
+              </Button>
             </li>
           </ul>
         </nav>

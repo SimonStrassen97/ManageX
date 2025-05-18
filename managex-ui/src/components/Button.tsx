@@ -1,7 +1,7 @@
 import React from "react"
 
 interface ButtonProps {
-  svg?: React.ReactNode // Add support for an optional SVG/icon
+  children?: React.ReactNode // Add support for an optional SVG/icon
   label: string
   onClick?: () => void
   type?: "button" | "submit" | "reset"
@@ -10,7 +10,7 @@ interface ButtonProps {
 }
 
 export const Button: React.FC<ButtonProps> = ({
-  svg,
+  children,
   label,
   onClick,
   type = "button",
@@ -24,7 +24,7 @@ export const Button: React.FC<ButtonProps> = ({
       onClick={onClick}
       disabled={disabled}
     >
-      {svg && <span>{svg}</span>} {/* Render the icon if provided */}
+      {children} {/* Render the icon if provided */}
       <span>{label}</span> {/* Render the button label */}
     </button>
   )

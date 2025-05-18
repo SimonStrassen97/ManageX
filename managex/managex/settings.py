@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api.apps.APIConfigs',
+    'ai_agent.apps.AiAgentConfig',
     'rest_framework',
     'corsheaders'
 ]
